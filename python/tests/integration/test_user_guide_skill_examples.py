@@ -104,6 +104,19 @@ def test_skill_md_section_3_spectrum_workflow(synth_capture):
     assert 0.0 <= fit["frequency"] <= 0.5
     assert {"amplitude", "phase", "dc_offset", "rmse"} <= set(fit.keys())
 
+    # Lean SNDR path (also documented in §3)
+    from adctoolbox import quick_sndr
+    m = quick_sndr(aout, fs=fs)
+    assert set(m.keys()) == {"sndr_dbc", "enob"}
+    assert m["enob"] > 0
+    m_rect = quick_sndr(aout, fs=fs, win_type='rectangular')
+    assert set(m_rect.keys()) == {"sndr_dbc", "enob"}
+
+    # Virtuoso-style entry point (also §3); no-plot path to avoid GUI in CI
+    from adctoolbox import analyze_spectrum_virtuoso
+    m_v = analyze_spectrum_virtuoso(aout, fs=fs, create_plot=False)
+    assert {"sndr_dbc", "sfdr_dbc", "enob"} <= set(m_v.keys())
+
 
 # ----------------------------------------------------------------------
 # SKILL.md §4 — basic digital calibration

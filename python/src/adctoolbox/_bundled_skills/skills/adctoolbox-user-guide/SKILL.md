@@ -62,7 +62,8 @@ Most analysis functions return `dict`. Notable exceptions and dict-key gotchas:
 
 | Function | Return |
 |---|---|
-| `analyze_spectrum`, `analyze_spectrum_polar` | `dict` — keys: `enob`, `sndr_dbc`, `sfdr_dbc`, `snr_dbc`, `thd_dbc`, `sig_pwr_dbfs`, `noise_floor_dbfs`, `nsd_dbfs_hz`, `harmonics_dbc` |
+| `analyze_spectrum`, `analyze_spectrum_polar`, `analyze_spectrum_virtuoso` | `dict` — keys: `enob`, `sndr_dbc`, `sfdr_dbc`, `snr_dbc`, `thd_dbc`, `sig_pwr_dbfs`, `noise_floor_dbfs`, `nsd_dbfs_hz`, `harmonics_dbc` |
+| `quick_sndr` | `dict` — minimal: only `sndr_dbc`, `enob`. No SFDR/THD/HD/NSD breakdown. |
 | `compute_spectrum` | `dict` — top-level keys `metrics` (same as above) and `plot_data` (`freq`, `power_spectrum_db_plot`, `complex_spectrum`, `fundamental_bin`, …) |
 | `fit_sine_4param` | `dict` — `frequency` (normalized), `amplitude`, `phase`, `dc_offset`, `rmse`, `fitted_signal`, `residuals` |
 | `find_coherent_frequency` | `tuple (fin_actual_hz, best_bin)` |
@@ -102,12 +103,30 @@ fin_hz, k_bin = find_coherent_frequency(fs, fin_target_hz, n_fft=len(aout))
 
 Pick the variant by output:
 - `analyze_spectrum` — magnitude spectrum + SNDR/SFDR/ENOB/THD metrics dict
+  (default — annotated white-bg plot, Hann window)
+- `analyze_spectrum_virtuoso` — same metrics, but Cadence Virtuoso /
+  ADE-Explorer dark-theme stem plot. Defaults to rectangular window
+  (one stem = one bin, no main-lobe smearing).
 - `analyze_spectrum_polar` — phase-aware (I/Q or mixer contexts); same keys
+- `quick_sndr` — **lean** SNDR + ENOB only. Use in optimization loops,
+  parameter sweeps, spec gates. No plot, no SFDR/THD/HD/NSD breakdown.
+  Returns just `{sndr_dbc, enob}`.
 - `compute_spectrum` (from `adctoolbox.spectrum`) — both metrics and plot-ready
   data (access via `result["plot_data"]["freq"]` etc.)
 - `find_coherent_frequency` — pre-step at *signal generation* time, not analysis
 - `fit_sine_4param` — pre-step for nonlinearity work; remember its
   `"frequency"` key is normalized `Fin/Fs`
+
+For the lean path:
+
+```python
+from adctoolbox import quick_sndr
+m = quick_sndr(aout, fs=fs)
+print(m["sndr_dbc"], m["enob"])
+# Override the window when the upstream stimulus is coherent and
+# you want a clean rectangular FFT instead of Hann:
+m = quick_sndr(aout, fs=fs, win_type='rectangular')
+```
 
 ## 4. Basic workflow — digital calibration
 

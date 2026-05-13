@@ -11,6 +11,7 @@ import numpy as np
 from adctoolbox.spectrum.compute_spectrum import compute_spectrum
 from adctoolbox.spectrum.plot_spectrum import plot_spectrum
 
+
 def analyze_spectrum(data, fs=1.0, osr=1, max_scale_range=None, win_type='hann', side_bin=None,
                      max_harmonic=5, nf_method=2, assumed_sig_pwr_dbfs=np.nan, coherent_averaging=False,
                      create_plot: bool = True, show_title=True, show_label=True, plot_harmonics_up_to=3, ax=None):
@@ -18,6 +19,10 @@ def analyze_spectrum(data, fs=1.0, osr=1, max_scale_range=None, win_type='hann',
     Spectral analysis and plotting. (Wrapper function for modular core and plotting)
 
     This function first calculates all metrics and then conditionally plots the spectrum.
+
+    For the Virtuoso/ADE-Explorer dark-theme stem plot variant, see
+    `analyze_spectrum_virtuoso` (separate function with its own defaults —
+    rectangular window, dark-theme plotter).
 
     Parameters:
         data: Input data (N,) or (M, N)
@@ -77,6 +82,56 @@ def analyze_spectrum(data, fs=1.0, osr=1, max_scale_range=None, win_type='hann',
             show_label=show_label,
             plot_harmonics_up_to=plot_harmonics_up_to,
             ax=ax
+        )
+
+    return results['metrics']
+
+
+def analyze_spectrum_virtuoso(data, fs=1.0, osr=1, max_scale_range=None, win_type='rectangular',
+                              side_bin=None, max_harmonic=5, nf_method=2,
+                              assumed_sig_pwr_dbfs=np.nan, coherent_averaging=False,
+                              create_plot: bool = True, show_title=True, show_label=True,
+                              plot_harmonics_up_to=3, ax=None):
+    """
+    Same as `analyze_spectrum`, but defaults are tuned for Cadence Virtuoso /
+    ADE-Explorer aesthetics:
+
+      - `win_type` defaults to 'rectangular' (one stem = one bin, no main-lobe
+        smearing — matches what ADE Explorer renders by default).
+      - Plot rendered by `plot_spectrum_virtuoso` (black canvas, red stems,
+        yellow/cyan annotation markers, fine dotted grid).
+
+    All other parameters and the returned metric dict are identical to
+    `analyze_spectrum`.  Pass `win_type='hann'` explicitly if you want
+    Hann metrics with the Virtuoso plot style.
+    """
+    # Local import to avoid circular at module load for the typical (analyzer) path
+    from adctoolbox.spectrum.plot_spectrum_virtuoso import plot_spectrum_virtuoso
+
+    results = compute_spectrum(
+        data=data,
+        fs=fs,
+        max_scale_range=max_scale_range,
+        win_type=win_type,
+        side_bin=side_bin,
+        osr=osr,
+        max_harmonic=max_harmonic,
+        nf_method=nf_method,
+        coherent_averaging=coherent_averaging,
+        assumed_sig_pwr_dbfs=assumed_sig_pwr_dbfs,
+    )
+
+    collided = results['plot_data'].get('collided_harmonics', [])
+    if collided and show_label:
+        print(f"[Warning from analyze_spectrum_virtuoso]: Harmonics {collided} alias to fundamental (excluded from THD)")
+
+    if create_plot:
+        plot_spectrum_virtuoso(
+            compute_results=results,
+            show_title=show_title,
+            show_label=show_label,
+            plot_harmonics_up_to=plot_harmonics_up_to,
+            ax=ax,
         )
 
     return results['metrics']
