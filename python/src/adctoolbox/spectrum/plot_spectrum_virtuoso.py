@@ -21,6 +21,11 @@ when the underlying metrics / plot_data layout evolves.
 import numpy as np
 import matplotlib.pyplot as plt
 
+from adctoolbox.spectrum.plot_spectrum import (
+    _noise_floor_axis_min,
+    _should_label_harmonic,
+)
+
 
 # Color palette — single place to retune the dark theme
 _C_STEM   = '#ff3030'   # red, slightly brighter than 'r' for visibility on black
@@ -71,7 +76,6 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
     M    = compute_results['M']
     fs   = compute_results['fs']
     osr  = compute_results['osr']
-    Nd2_inband = len(freq) // osr
     v_offset = plot_data.get('v_offset', 0.0)
     nf_line_level = metrics['nsd_dbfs_hz'] + 10 * np.log10(fs / N) + v_offset
 
@@ -89,9 +93,12 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
     ax.yaxis.label.set_color('white')
     ax.title.set_color('white')
 
-    # ---- Stem bars ---------------------------------------------------
+    # ---- Axis floor + stem bars --------------------------------------
+    minx = _noise_floor_axis_min(nf_line_level)
     if baseline_db is None:
-        baseline_db = float(np.min(spec_db)) - 5.0
+        baseline_db = minx
+    else:
+        minx = min(minx, baseline_db)
     ax.vlines(freq, baseline_db, spec_db, colors=_C_STEM, linewidth=0.8)
 
     # ---- Grid --------------------------------------------------------
@@ -99,16 +106,7 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
     ax.grid(True, which='major', linestyle=':', color='white', alpha=0.35, linewidth=0.6)
     ax.grid(True, which='minor', linestyle=':', color='white', alpha=0.15, linewidth=0.4)
 
-    # ---- Adaptive y-axis (same logic as plot_spectrum.py) ------------
-    minx = -100
-    for threshold in [-100, -120, -140, -160, -180]:
-        below = np.sum(spec_db[:Nd2_inband] < threshold)
-        if below / max(len(spec_db[:Nd2_inband]), 1) * 100 > 5.0:
-            minx = threshold - 20
-        else:
-            break
-    minx = max(minx, -200)
-    minx = min(minx, baseline_db)            # never crop below the stems
+    # ---- Y-axis follows the plotted NSD/bin line ---------------------
     ax.set_xlim(fs / N, fs / 2)
     ax.set_ylim(minx, 0)
 
@@ -132,6 +130,8 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
             if order > plot_harmonics_up_to or order in collided_harmonics:
                 continue
             bin_center = harmonic_bins[idx]
+            if not _should_label_harmonic(spec_db[bin_center], nf_line_level):
+                continue
             ax.plot(bin_center * fs / N, spec_db[bin_center],
                     's', color=_C_HARM, markersize=5)
             ax.text(bin_center * fs / N, spec_db[bin_center] + 3, str(order),

@@ -5,12 +5,49 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 from adctoolbox.spectrum.compute_spectrum import compute_spectrum
-from adctoolbox.spectrum.plot_spectrum import plot_spectrum
+from adctoolbox.spectrum.plot_spectrum import (
+    _noise_floor_axis_min,
+    _should_label_harmonic,
+    plot_spectrum,
+)
 
 
 # Create output directory for test figures
 output_dir = Path(__file__).parent / "test_output"
 output_dir.mkdir(exist_ok=True)
+
+
+@pytest.mark.parametrize(
+    "nf_line_level,expected",
+    [
+        (-113.1, -140),
+        (-80.0, -100),
+        (-79.9, -100),
+        (-179.9, -200),
+        (-220.0, -200),
+    ],
+)
+def test_noise_floor_axis_min_uses_20db_tick_below_nsd_line(nf_line_level, expected):
+    assert _noise_floor_axis_min(nf_line_level) == expected
+
+
+@pytest.mark.parametrize(
+    "harmonic_power_db,nf_line_level,expected",
+    [
+        (-132.0, -113.1, True),
+        (-133.1, -113.1, True),
+        (-133.2, -113.1, False),
+        (-150.0, -113.1, False),
+        (-120.0, np.nan, True),
+        (np.nan, -113.1, False),
+    ],
+)
+def test_should_label_harmonic_skips_bins_buried_below_nsd_line(
+    harmonic_power_db,
+    nf_line_level,
+    expected,
+):
+    assert _should_label_harmonic(harmonic_power_db, nf_line_level) is expected
 
 
 @pytest.mark.parametrize("hd2_target,hd3_target", [

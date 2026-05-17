@@ -8,6 +8,26 @@ a pure plotting function that can be used with pre-computed metrics.
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+def _noise_floor_axis_min(nf_line_level, step_db=20, margin_steps=1, floor_db=-200):
+    """Choose a readable y-axis floor from the plotted NSD/bin line."""
+    if not np.isfinite(nf_line_level):
+        return -100
+
+    axis_min = step_db * np.floor(nf_line_level / step_db)
+    axis_min -= margin_steps * step_db
+    return max(float(axis_min), floor_db)
+
+
+def _should_label_harmonic(harmonic_power_db, nf_line_level, margin_db=20):
+    """Skip harmonic labels buried well below the plotted NSD/bin line."""
+    if not np.isfinite(harmonic_power_db):
+        return False
+    if not np.isfinite(nf_line_level):
+        return True
+    return harmonic_power_db >= nf_line_level - margin_db
+
+
 def plot_spectrum(compute_results, show_title=True, show_label=True, plot_harmonics_up_to=3, ax=None):
     """
     Pure spectrum plotting using pre-computed analysis results.
@@ -39,7 +59,6 @@ def plot_spectrum(compute_results, show_title=True, show_label=True, plot_harmon
     M = compute_results['M']
     fs = compute_results['fs']
     osr = compute_results['osr']
-    Nd2_inband = len(freq) // osr
     v_offset = plot_data.get('v_offset', 0.0)
     nf_line_level = metrics['nsd_dbfs_hz'] + 10 * np.log10(fs / N) + v_offset
 
@@ -95,7 +114,10 @@ def plot_spectrum(compute_results, show_title=True, show_label=True, plot_harmon
         # Plot harmonics
         if plot_harmonics_up_to > 0:
             for harm in harmonics:
-                if harm['harmonic_num'] <= plot_harmonics_up_to:
+                if (
+                    harm['harmonic_num'] <= plot_harmonics_up_to
+                    and _should_label_harmonic(harm['power_db'], nf_line_level)
+                ):
                     ax.plot(harm['freq'], harm['power_db'], 'rs', markersize=5)
                     ax.text(harm['freq'], harm['power_db'] + 3, str(harm['harmonic_num']),
                             fontname='Arial', fontsize=12, ha='center')
@@ -106,16 +128,8 @@ def plot_spectrum(compute_results, show_title=True, show_label=True, plot_harmon
                 fontname='Arial', fontsize=10, ha='center')
 
     # --- Set axis limits ---
-    # Adaptive y-axis: start at -100 dB, extend if >5% of data is below each threshold
-    minx = -100
-    for threshold in [-100, -120, -140, -160, -180]:
-        below_threshold = np.sum(spec_db[:Nd2_inband] < threshold)
-        percentage = below_threshold / len(spec_db[:Nd2_inband]) * 100
-        if percentage > 5.0:
-            minx = threshold - 20  # Extend to next level
-        else:
-            break
-    minx = max(minx, -200)  # Absolute floor
+    # Put the lower limit one 20 dB tick below the plotted NSD/bin line.
+    minx = _noise_floor_axis_min(nf_line_level)
     ax.set_xlim(fs/N, fs/2)
     ax.set_ylim(minx, 0)
 
