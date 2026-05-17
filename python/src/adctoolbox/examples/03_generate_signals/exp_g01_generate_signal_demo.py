@@ -56,7 +56,7 @@ results = []
 for idx, (title, signal) in enumerate(signals):
     plt.sca(axes[idx])
 
-    result = analyze_spectrum(signal, fs=Fs, show_plot=True, show_title=False,
+    result = analyze_spectrum(signal, fs=Fs, create_plot=True, show_title=False,
                              show_label=True, ax=axes[idx])
     results.append(result)
 
@@ -66,8 +66,8 @@ for idx, (title, signal) in enumerate(signals):
     # Print metrics
     print(f"{idx+1}. {title:35s} | "
           f"ENOB={result['enob']:5.2f}b | "
-          f"SNR={result['snr_db']:6.2f}dB | "
-          f"SNDR={result['sndr_db']:6.2f}dB | "
+          f"SNR={result['snr_dbc']:6.2f}dB | "
+          f"SNDR={result['sndr_dbc']:6.2f}dB | "
           f"NSD={result['nsd_dbfs_hz']:7.2f}dBFS/Hz")
 
 plt.suptitle('ADC Signal Quality with Thermal Noise', fontsize=13, fontweight='bold', y=0.995)

@@ -19,13 +19,12 @@ nsd_ref = snr_to_nsd(snr_ref, fs=Fs, osr=1)
 print(f"[Sinewave] Fs=[{Fs/1e6:.2f} MHz], Fin=[{Fin/1e6:.2f} MHz], Bin/N=[{Fin_bin}/{N_fft}], A=[{A:.3f} Vpeak]")
 print(f"[Nonideal] Noise RMS=[{noise_rms*1e6:.2f} uVrms], Theoretical SNR=[{snr_ref:.2f} dB], Theoretical NSD=[{nsd_ref:.2f} dBFS/Hz]\n")
 
-
 t = np.arange(N_fft) / Fs
 signal = A * np.sin(2*np.pi*Fin*t) + np.random.randn(N_fft) * noise_rms
 
 result = analyze_spectrum(signal, fs=Fs)
 
-print(f"[analyze_spectrum] ENoB=[{result['enob']:.2f} b], SNDR=[{result['sndr_db']:.2f} dB], SFDR=[{result['sfdr_db']:.2f} dB], SNR=[{result['snr_db']:.2f} dB], NSD=[{result['nsd_dbfs_hz']:.2f} dBFS/Hz]")
+print(f"[analyze_spectrum] ENoB=[{result['enob']:.2f} b], SNDR=[{result['sndr_dbc']:.2f} dB], SFDR=[{result['sfdr_dbc']:.2f} dB], SNR=[{result['snr_dbc']:.2f} dB], NSD=[{result['nsd_dbfs_hz']:.2f} dBFS/Hz]")
 
 print("\n[Figure displayed - close the window to exit]")
 plt.show()

@@ -1,33 +1,39 @@
 # ADCToolbox
 
-Comprehensive toolbox for ADC characterization, calibration, and performance analysis.
-
 [![CI](https://github.com/Arcadia-1/ADCToolbox/actions/workflows/ci.yml/badge.svg)](https://github.com/Arcadia-1/ADCToolbox/actions/workflows/ci.yml)
 [![Documentation](https://github.com/Arcadia-1/ADCToolbox/actions/workflows/docs.yml/badge.svg)](https://arcadia-1.github.io/ADCToolbox/)
 [![PyPI version](https://badge.fury.io/py/adctoolbox.svg)](https://badge.fury.io/py/adctoolbox)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/adctoolbox)](https://pypi.org/project/adctoolbox/)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/Arcadia-1/ADCToolbox?style=social)](https://github.com/Arcadia-1/ADCToolbox/stargazers)
 
-## Documentation
 
-📚 **[Full Documentation](https://arcadia-1.github.io/ADCToolbox/)** - Complete API reference, algorithm guides, and tutorials
-
-- **[Installation Guide](https://arcadia-1.github.io/ADCToolbox/installation.html)** - Getting started
-- **[Quick Start](https://arcadia-1.github.io/ADCToolbox/quickstart.html)** - First steps with examples
-- **[Algorithm Reference](https://arcadia-1.github.io/ADCToolbox/algorithms/index.html)** - 15 detailed algorithm guides
-- **[API Documentation](https://arcadia-1.github.io/ADCToolbox/api/index.html)** - Function signatures and parameters
-- **[Changelog](https://arcadia-1.github.io/ADCToolbox/changelog.html)** - Version history
+> **A Comprehensive Toolbox for ADC Characterization, Calibration, and Visualization.**
+>
+> *Unlocking ADC Insights through Multi-Dimensional Analysis.*
 
 ## Features
 
-- **45 Ready-to-Run Examples**: Basic (2) + Spectrum Analysis (14) + Signal Generation (6) + Analog Debug (13) + Digital Debug (5) + Metrics (5)
-- **Spectrum Analysis**: FFT-based analysis with ENOB, SNR, SFDR, THD, windowing, averaging, and polar visualization
-- **Signal Generation**: Thermal noise, jitter, quantization, static/dynamic nonlinearity, and interference modeling
-- **Analog Error Analysis**: Time-domain, frequency-domain, and statistical error characterization (PDF, autocorrelation, envelope spectrum)
-- **Digital Calibration**: Bit-weighted ADC calibration and redundancy analysis
-- **Production-Ready**: Modern Python package with comprehensive documentation and examples
+- **Comprehensive Spectrum Analysis**
+  - **Full Metric Suite**: Extraction of ENOB, SNDR, SNR, SFDR, THD, NSD, and Noise Floor.
+  - **Smart labeling**: Automated labeling for harmonics, noise floor, and OSR bandwidth.
+  - **Polar Spectrum**: Visualizes phase errors to distinguish static from dynamic nonlinearities.
+  - **Validated Signal Processing**: Eight window functions; two averaging modes (power spectrum averaging & complex/coherent spectrum averaging)
+
+- **Advanced Error Visualization**
+  - goes beyond standard plots with **Polar Spectrum Analysis** to visualize 
+  - phase/magnitude relationships and **Error Envelope** plots to identify dynamic nonlinearities.
+  - decomposes ADC errors into time-domain (INL/DNL), frequency-domain (Harmonics/Spurs), and statistical components (PDF/Histograms) for root-cause analysis.
+
+- **Realistic Signal Modeling**: generates high-fidelity ADC waveforms simulating real-world impairments, including clock jitter, thermal noise, quantization effects, and settling errors.
+
+- **Calibration Algorithms**: built-in reference implementations for digital calibration, including bit-weight extraction and redundancy management for SAR and Pipeline architectures.
+
+<div align="center">
+  <img src="docs/images/exp_t02_dashboard_10_RA_Dynamic_Gain.png" alt="ADCToolbox Dashboard" width="100%">
+</div>
+
 
 ## Installation
 
@@ -66,8 +72,8 @@ python exp_s01_analyze_spectrum_simplest.py
 from adctoolbox import analyze_spectrum
 
 # Analyze signal spectrum
-result = analyze_spectrum(signal, fs=800e6, show_plot=True)
-print(f"ENOB: {result['enob']:.2f} bits, SNDR: {result['sndr_db']:.2f} dB")
+result = analyze_spectrum(signal, fs=800e6, create_plot=True)
+print(f"ENOB: {result['enob']:.2f} bits, SNDR: {result['sndr_dbc']:.2f} dB")
 ```
 
 See [Usage Examples](#usage-examples) section below for detailed code examples.
@@ -83,7 +89,7 @@ Environment verification and coherent sampling basics.
 | `exp_b02_coherent_vs_non_coherent.py` | Demonstrate coherent vs non-coherent sampling impact on ENOB |
 
 ### 02_spectrum - FFT-Based Analysis (14 examples)
-Spectrum analysis with windowing, averaging, polar plots, and two-tone testing.
+Spectrum analysis with windowing, averaging, and polar plots.
 
 | Example | Description |
 |---------|-------------|
@@ -98,9 +104,6 @@ Spectrum analysis with windowing, averaging, polar plots, and two-tone testing.
 | `exp_s10_polar_noise_and_harmonics.py` | Polar phase spectrum: noise vs harmonics |
 | `exp_s11_polar_memory_effect.py` | Memory effect analysis via polar spectrum |
 | `exp_s12_polar_coherent_averaging.py` | Coherent averaging with polar plots |
-| `exp_s21_analyze_two_tone_spectrum.py` | Two-tone spectrum analysis (IMD2/IMD3) |
-| `exp_s22_two_tone_imd_comparison.py` | IMD product comparison across frequencies |
-| `exp_s23_two_tone_spectrum_averaging.py` | Power vs coherent averaging for two-tone |
 
 ### 03_generate_signals - Non-Ideality Modeling (6 examples)
 Generate ADC signals with various impairments for testing and validation.
@@ -161,15 +164,11 @@ Helper functions for unit conversions and metric calculations.
 <summary><b>Spectrum Analysis</b></summary>
 
 ```python
-from adctoolbox import analyze_spectrum, analyze_two_tone_spectrum
+from adctoolbox import analyze_spectrum
 
 # Single-tone analysis
-result = analyze_spectrum(signal, fs=800e6, harmonic=5, show_plot=True)
-print(f"ENOB: {result['enob']:.2f} bits, SNDR: {result['sndr_db']:.2f} dB")
-
-# Two-tone analysis (IMD)
-result = analyze_two_tone_spectrum(signal, fs=1000e6, show_plot=True)
-print(f"IMD2: {result['imd2_db']:.2f} dB, IMD3: {result['imd3_db']:.2f} dB")
+result = analyze_spectrum(signal, fs=800e6, max_harmonic=5, create_plot=True)
+print(f"ENOB: {result['enob']:.2f} bits, SNDR: {result['sndr_dbc']:.2f} dB")
 ```
 </details>
 
@@ -185,17 +184,17 @@ from adctoolbox import (
 )
 
 # Error PDF
-result = analyze_error_pdf(signal, resolution=12, show_plot=True)
+result = analyze_error_pdf(signal, resolution=12, create_plot=True)
 print(f"Std: {result['sigma']:.2f} LSB, KL div: {result['kl_divergence']:.4f}")
 
 # Error autocorrelation
-result = analyze_error_autocorr(signal, max_lag=100, show_plot=True)
+result = analyze_error_autocorr(signal, max_lag=100, create_plot=True)
 
 # Error spectrum
-result = analyze_error_spectrum(signal, fs=800e6, show_plot=True)
+result = analyze_error_spectrum(signal, fs=800e6, create_plot=True)
 
 # Error envelope spectrum (AM detection)
-result = analyze_error_envelope_spectrum(signal, fs=800e6, show_plot=True)
+result = analyze_error_envelope_spectrum(signal, fs=800e6, create_plot=True)
 ```
 </details>
 
@@ -209,8 +208,8 @@ from adctoolbox import fit_sine_4param, analyze_decomposition_time
 result = fit_sine_4param(signal, frequency_estimate=0.1)
 print(f"Freq: {result['frequency']:.6f}, Amp: {result['amplitude']:.4f}")
 
-# Harmonic decomposition
-result = analyze_decomposition_time(signal, fs=800e6, harmonic=5, show_plot=True)
+# Harmonic decomposition (does not take fs)
+result = analyze_decomposition_time(signal, harmonic=5, create_plot=True)
 ```
 </details>
 
@@ -220,7 +219,7 @@ result = analyze_decomposition_time(signal, fs=800e6, harmonic=5, show_plot=True
 ```python
 from adctoolbox import analyze_inl_from_sine
 
-result = analyze_inl_from_sine(signal, resolution=12, show_plot=True)
+result = analyze_inl_from_sine(signal, num_bits=12, create_plot=True)
 print(f"INL: [{result['inl'].min():.2f}, {result['inl'].max():.2f}] LSB")
 print(f"DNL: [{result['dnl'].min():.2f}, {result['dnl'].max():.2f}] LSB")
 ```
@@ -230,14 +229,15 @@ print(f"DNL: [{result['dnl'].min():.2f}, {result['dnl'].max():.2f}] LSB")
 <summary><b>Digital Calibration</b></summary>
 
 ```python
-from adctoolbox import calibrate_weight_sine, calibrate_weight_two_tone
+from adctoolbox import calibrate_weight_sine, analyze_spectrum
 
-# Weight calibration
-result = calibrate_weight_sine(digital_codes, order=5)
-print(f"SNR: {result['snr_db']:.2f} dB, THD: {result['thd_db']:.2f} dB")
+# bits: (N_samples, N_bits) of {0, 1}; freq is normalized (Fin / Fs)
+cal = calibrate_weight_sine(bits, freq=Fin / Fs, harmonic_order=5)
+calibrated_signal = cal["calibrated_signal"]   # also: cal["weight"], cal["offset"]
 
-# Two-tone calibration
-result = calibrate_weight_two_tone(digital_codes, order=5)
+# Verify the calibration by analyzing the corrected waveform
+metrics = analyze_spectrum(calibrated_signal, fs=Fs, create_plot=False)
+print(f"SNR: {metrics['snr_dbc']:.2f} dBc, THD: {metrics['thd_dbc']:.2f} dBc")
 ```
 </details>
 
@@ -258,20 +258,20 @@ A, DC, noise_rms = 0.49, 0.5, 100e-6
 signal = A * np.sin(2*np.pi*Fin*t) + DC + np.random.randn(N) * noise_rms
 
 # Analyze
-result = analyze_spectrum(signal, fs=Fs, harmonic=5, show_plot=True)
+result = analyze_spectrum(signal, fs=Fs, max_harmonic=5, create_plot=True)
 snr_theory = amplitudes_to_snr(sig_amplitude=A, noise_amplitude=noise_rms)
 
-print(f"Measured SNR: {result['snr_db']:.2f} dB")
+print(f"Measured SNR: {result['snr_dbc']:.2f} dBc")
 print(f"Theoretical SNR: {snr_theory:.2f} dB")
 ```
 </details>
 
 ## Requirements
 
-- Python >= 3.8
-- NumPy >= 1.20.0
-- Matplotlib >= 3.3.0
-- SciPy >= 1.6.0
+- Python >= 3.10
+- NumPy >= 1.23.0
+- Matplotlib >= 3.6.0
+- SciPy >= 1.9.0
 
 ## Citation
 
@@ -297,3 +297,13 @@ MIT License
 
 
 
+
+## Documentation
+
+📚 **[Full Documentation](https://arcadia-1.github.io/ADCToolbox/)** - Complete API reference, algorithm guides, and tutorials
+
+- **[Installation Guide](https://arcadia-1.github.io/ADCToolbox/installation.html)** - Getting started
+- **[Quick Start](https://arcadia-1.github.io/ADCToolbox/quickstart.html)** - First steps with examples
+- **[Algorithm Reference](https://arcadia-1.github.io/ADCToolbox/algorithms/index.html)** - 15 detailed algorithm guides
+- **[API Documentation](https://arcadia-1.github.io/ADCToolbox/api/index.html)** - Function signatures and parameters
+- **[Changelog](https://arcadia-1.github.io/ADCToolbox/changelog.html)** - Version history

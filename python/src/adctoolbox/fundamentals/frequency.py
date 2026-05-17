@@ -9,7 +9,6 @@ import math
 import numpy as np
 from adctoolbox.fundamentals.fit_sine_4param import fit_sine_4param
 
-
 def find_coherent_frequency(fs, fin_target, n_fft, force_odd=True, search_radius=200):
     """
     Calculate the precise coherent input frequency and bin index.
@@ -43,6 +42,7 @@ def find_coherent_frequency(fs, fin_target, n_fft, force_odd=True, search_radius
     --------
     >>> fin, bin_idx = find_coherent_frequency(800e6, 100e6, 8192)
     >>> print(f"Coherent frequency: {fin/1e6:.6f} MHz at bin {bin_idx}")
+    Coherent frequency: 99.902344 MHz at bin 1023
     """
     # 1. Calculate the ideal (fractional) total cycles
     target_bin_float = fin_target / fs * n_fft
@@ -87,7 +87,6 @@ def find_coherent_frequency(fs, fin_target, n_fft, force_odd=True, search_radius
 
     return fin_actual, best_bin
 
-
 def fold_frequency_to_nyquist(fin, fs):
     """
     Calculate the aliased (folded) frequency in the first Nyquist zone.
@@ -129,8 +128,7 @@ def fold_frequency_to_nyquist(fin, fs):
 
     return f_alias
 
-
-def fold_bin_to_nyquist(bin_idx: int, n_fft: int) -> int:
+def fold_bin_to_nyquist(bin_idx: float, n_fft: int) -> float:
     """
     Calculate the aliased bin index in the first Nyquist zone [0, n_fft/2].
 
@@ -139,24 +137,26 @@ def fold_bin_to_nyquist(bin_idx: int, n_fft: int) -> int:
 
     Parameters
     ----------
-    bin_idx : int
-        Bin index (can be negative or > n_fft)
+    bin_idx : float
+        Bin index (can be fractional, negative, or > n_fft)
     n_fft : int
         Total number of FFT bins
 
     Returns
     -------
-    int
+    float
         Aliased bin index in range [0, n_fft/2]
 
     Examples
     --------
     >>> fold_bin_to_nyquist(100, 8192)
-    100
+    100.0
+    >>> fold_bin_to_nyquist(100.5, 8192)  # Fractional bins supported
+    100.5
     >>> fold_bin_to_nyquist(5000, 8192)  # Above Nyquist, mirrors back
-    3192
+    3192.0
     >>> fold_bin_to_nyquist(-100, 8192)  # Negative wraps around
-    92
+    100.0
     """
     # First wrap to [0, n_fft) range
     bin_idx = bin_idx % n_fft
@@ -166,7 +166,6 @@ def fold_bin_to_nyquist(bin_idx: int, n_fft: int) -> int:
         bin_idx = n_fft - bin_idx
 
     return bin_idx
-
 
 def estimate_frequency(data, frequency_estimate=None, fs=1.0):
     """

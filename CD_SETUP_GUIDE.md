@@ -31,8 +31,8 @@ Your CD workflow will automatically publish ADCToolbox to PyPI whenever you crea
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  Developer Action: Create and Push Version Tag         │
-│  $ git tag v0.3.0                                       │
-│  $ git push origin v0.3.0                               │
+│  $ git tag v0.5.0                                       │
+│  $ git push origin v0.5.0                               │
 └─────────────────────────────────────────────────────────┘
                          ↓
 ┌─────────────────────────────────────────────────────────┐
@@ -92,20 +92,17 @@ Create/update `CHANGELOG.md`:
 ## [0.3.0] - 2025-12-10
 
 ### Added
-- Modular spectrum architecture with `compute_spectrum()` and `compute_two_tone_spectrum()`
-- Coherent averaging support for single-tone and two-tone spectrum analysis
+- Modular spectrum architecture with `compute_spectrum()`
+- Coherent averaging support for spectrum analysis
 - Auto-generated titles in `plot_spectrum()` for better usability
 - Theoretical SNR/NSD calculations in analog examples (exp_a01, exp_a02)
 
 ### Changed
 - Renamed `calculate_spectrum_data()` → `compute_spectrum()`
-- Renamed `calculate_two_tone_spectrum_data()` → `compute_two_tone_spectrum()`
 - Removed `analyze_spectrum_coherent_averaging()` (functionality integrated into `compute_spectrum()`)
-- Improved two-tone IMD2/IMD3 calculations with better spur collision detection
 - Standardized print format across all examples ([Setting]/[Theory]/[Measured])
 
 ### Fixed
-- Two-tone amplitude normalization and signal power calculations
 - Spectrum averaging behavior for power vs coherent modes
 ```
 
@@ -121,13 +118,13 @@ git push origin main
 
 ```bash
 # Create annotated tag (recommended)
-git tag -a v0.3.0 -m "Release v0.3.0 - Updated spectrum tools"
+git tag -a v0.5.0 -m "Release v0.5.0 - Updated spectrum tools"
 
 # Or simple tag
-git tag v0.3.0
+git tag v0.5.0
 
 # Push the tag (this triggers CD!)
-git push origin v0.3.0
+git push origin v0.5.0
 ```
 
 ### Step 5: Monitor Deployment
@@ -182,8 +179,8 @@ Use semantic versioning: `MAJOR.MINOR.PATCH`
 
 Examples:
 - `v0.2.5` → `v0.2.6`: Bug fix (spec_plot return values)
-- `v0.2.6` → `v0.3.0`: New features (updated spectrum tools)
-- `v0.3.0` → `v1.0.0`: Major release (API redesign)
+- `v0.2.6` → `v0.5.0`: New features (updated spectrum tools)
+- `v0.5.0` → `v1.0.0`: Major release (API redesign)
 
 ## Troubleshooting
 
@@ -212,10 +209,10 @@ Examples:
 ### Delete a Tag (if you made a mistake)
 ```bash
 # Delete local tag
-git tag -d v0.3.0
+git tag -d v0.5.0
 
 # Delete remote tag
-git push origin :refs/tags/v0.3.0
+git push origin :refs/tags/v0.5.0
 ```
 
 **Note**: Can't delete from PyPI once published! Only option is to "yank" the release.
@@ -231,7 +228,7 @@ Then on PyPI website → Manage → Options → "Yank this release"
 
 ## First-Time Checklist
 
-Before publishing v0.3.0 for the first time:
+Before publishing v0.5.0 for the first time:
 
 - [ ] PyPI account created and verified
 - [ ] PyPI API token created
@@ -244,8 +241,8 @@ Before publishing v0.3.0 for the first time:
 - [ ] Version number updated in `pyproject.toml`
 - [ ] CHANGELOG.md updated (optional)
 - [ ] All changes committed to main branch
-- [ ] Tag created: `git tag v0.3.0`
-- [ ] Tag pushed: `git push origin v0.3.0`
+- [ ] Tag created: `git tag v0.5.0`
+- [ ] Tag pushed: `git push origin v0.5.0`
 
 ## After Publishing
 
@@ -278,8 +275,8 @@ version = "0.3.0b1"  # Beta 1
 version = "0.3.0rc1" # Release candidate 1
 
 # Tag and publish
-git tag v0.3.0b1
-git push origin v0.3.0b1
+git tag v0.5.0b1
+git push origin v0.5.0b1
 
 # Users install with
 pip install --pre adctoolbox

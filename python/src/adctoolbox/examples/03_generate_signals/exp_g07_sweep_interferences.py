@@ -1,7 +1,6 @@
-"""
-Experiment G07: Interference Sweep
-Shows the effects of different types of interferences on ADC spectrum.
-Each subplot demonstrates one interference type applied to coherent sampled signal.
+"""Sweep different interference types to show effects on ADC spectrum.
+
+Demonstrates harmonic, IMD, spur, and DC offset interference.
 """
 
 import numpy as np
@@ -31,7 +30,6 @@ t = np.arange(N) / Fs
 clean_signal = A * np.sin(2 * np.pi * Fin * t)
 
 # Define 8 Interference Cases using lambdas
-# Each interference is applied to the clean coherent signal
 INTERFERENCES = [
     {
         'title': 'Clean Signal (reference)',
@@ -46,8 +44,8 @@ INTERFERENCES = [
         'method': lambda sig: gen.apply_am_tone(input_signal=sig, am_tone_freq=500e3, am_tone_depth=0.0005),
     },
     {
-        'title': 'AM Noise (1 MHz, 0.1%)',
-        'method': lambda sig: gen.apply_am_noise(input_signal=sig, am_noise_freq=1e6, am_noise_depth=0.001),
+        'title': 'AM Noise (strength=0.1%)',
+        'method': lambda sig: gen.apply_am_noise(input_signal=sig, strength=0.001),
     },
     {
         'title': 'Clipping (level=1%)',
@@ -62,8 +60,8 @@ INTERFERENCES = [
         'method': lambda sig: gen.apply_drift(input_signal=sig, drift_scale=2e-5),
     },
     {
-        'title': 'Reference Error (50 MHz, 0.1%)',
-        'method': lambda sig: gen.apply_reference_error(input_signal=sig, ref_error_amplitude=0.001, ref_error_freq=50e6),
+        'title': 'Reference Error (tau=2.0, droop=0.01)',
+        'method': lambda sig: gen.apply_reference_error(input_signal=sig, settling_tau=2.0, droop_strength=0.01),
     },
 ]
 
@@ -85,10 +83,11 @@ for idx, config in enumerate(INTERFERENCES):
     # Spectrum analysis
     plt.sca(axes[idx])
     result = analyze_spectrum(signal, fs=Fs)
+    
     axes[idx].set_title(config['title'], fontsize=11, fontweight='bold')
     axes[idx].set_ylim([-140, 0])
     
-    print(f"{idx+1:<3} | {config['title']:<35} | {result['sfdr_db']:<10.2f} | {result['thd_db']:<10.2f} | {result['snr_db']:<10.2f}")
+    print(f"{idx+1:<3} | {config['title']:<35} | {result['sfdr_dbc']:<10.2f} | {result['thd_dbc']:<10.2f} | {result['snr_dbc']:<10.2f}")
 
 # Finalize
 plt.suptitle('Interference Effects on Coherent Sampled Signal\n(Each type applied independently to Fin=80MHz)',

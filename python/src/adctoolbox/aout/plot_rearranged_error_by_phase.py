@@ -10,7 +10,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpecFromSubplotSpec
 
-
 def _format_value_with_unit(value_v: float) -> str:
     """Format voltage value with appropriate SI unit prefix."""
     abs_val = abs(value_v)
@@ -27,16 +26,13 @@ def _format_value_with_unit(value_v: float) -> str:
     else:
         return f"{value_v * 1e12:.2f} pV"
 
-
-def plot_rearranged_error_by_phase(results: dict, disp=1, axes=None, ax=None, title: str = None):
+def plot_rearranged_error_by_phase(results: dict, axes=None, ax=None, title: str | None = None):
     """Plot phase error analysis results.
 
     Parameters
     ----------
     results : dict
         Dictionary from rearrange_error_by_phase().
-    disp : int, optional
-        Display plots (1=yes, 0=no).
     axes : tuple, optional
         Tuple of (ax1, ax2) for top and bottom panels.
     ax : matplotlib.axes.Axes, optional
@@ -44,9 +40,6 @@ def plot_rearranged_error_by_phase(results: dict, disp=1, axes=None, ax=None, ti
     title : str, optional
         Test setup description for title.
     """
-    if not disp:
-        return
-
     # Extract data
     error = results.get('error', np.array([]))
     phase = results.get('phase', np.array([]))
@@ -132,7 +125,7 @@ def plot_rearranged_error_by_phase(results: dict, disp=1, axes=None, ax=None, ti
 
     ax1.set_xlabel('Phase (deg)')
     if title:
-        ax1.set_title(f'{title}\nSignal and Error vs Phase')
+        ax1.set_title(title)
     else:
         ax1.set_title('Signal and Error vs Phase')
     ax1.grid(True, alpha=0.3)
@@ -176,8 +169,14 @@ def plot_rearranged_error_by_phase(results: dict, disp=1, axes=None, ax=None, ti
         max_rms = np.nanmax(bin_error_rms_v)
         ax2.set_ylim([0, max_rms * 1.5])
         ax2.set_ylabel('RMS Error')
-        ax2.set_title(f'RMS Error vs Phase\nModel Confidence: R²={r_squared_binned:.3f}')
+        ax2.set_title('RMS Error vs Phase')
         ax2.legend(loc='upper left', fontsize=9)
+
+        # Add confidence text box in right upper corner
+        text_str = f'R²={r_squared_binned:.3f}'
+        ax2.text(0.98, 0.98, text_str, transform=ax2.transAxes,
+                fontsize=10, verticalalignment='top', horizontalalignment='right',
+                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
 
     ax2.set_xlabel('Phase (deg)')
     ax2.grid(True, alpha=0.3)

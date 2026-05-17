@@ -16,8 +16,8 @@ project = 'ADCToolbox'
 copyright = '2025, ADCToolbox Contributors'
 author = 'ADCToolbox Contributors'
 
-version = '0.4.0'
-release = '0.4.0'
+version = '0.5.0'
+release = '0.5.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -37,6 +37,9 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 language = 'en'
+
+locale_dirs = ['locale']      # where .po files live (relative to source/)
+gettext_compact = False        # one .po file per source file (easier to manage)
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

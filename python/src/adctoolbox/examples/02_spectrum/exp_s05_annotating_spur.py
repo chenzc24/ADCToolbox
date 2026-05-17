@@ -15,13 +15,13 @@ output_dir.mkdir(exist_ok=True)
 N_fft = 2**19
 Fs = 100e6
 A = 0.5
-noise_rms = 50e-6
+noise_rms = 20e-6
 hd2_dB = -100
 hd3_dB = -80
 
 snr_ref = amplitudes_to_snr(sig_amplitude=A, noise_amplitude=noise_rms)
 nsd_ref = snr_to_nsd(snr_ref, fs=Fs, osr=1)
-print(f"[Parameters] Fs=[{Fs/1e6:.2f} MHz], A=[{A:.3f} Vpeak]")
+print(f"[Sinewave] Fs=[{Fs/1e6:.2f} MHz], A=[{A:.3f} Vpeak]")
 print(f"[Nonideal] HD2=[{hd2_dB} dB], HD3=[{hd3_dB} dB], Noise RMS=[{noise_rms*1e6:.2f} uVrms], Theoretical SNR=[{snr_ref:.2f} dB], Theoretical NSD=[{nsd_ref:.2f} dBFS/Hz]\n")
 
 # Compute nonlinearity coefficients to achieve target HD levels
@@ -39,7 +39,7 @@ freq_configs = [
 ]
 
 # Create 1x2 grid: left and right
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
 n_harm = 11
 
@@ -54,10 +54,10 @@ for idx, freq_config in enumerate(freq_configs):
 
     ax = axes[idx]
     plt.sca(ax)
-    metrics = analyze_spectrum(signal, fs=Fs, n_thd=n_harm, show_title=False, plot_harmonics_up_to=n_harm)
-    ax.set_ylim(bottom=-140)
+    metrics = analyze_spectrum(signal, fs=Fs, max_harmonic=n_harm, show_title=False, plot_harmonics_up_to=n_harm)
+
     ax.set_title(f'{freq_config["name"]}, Harmonics up to {n_harm}', fontsize=12, fontweight='bold')
-    print(f"  [n_thd={n_harm:2d}] ENoB=[{metrics['enob']:5.2f} b], SNDR=[{metrics['sndr_db']:6.2f} dB], THD=[{metrics['thd_db']:7.2f} dB]")
+    print(f"  [max_harmonic={n_harm:2d}] ENoB=[{metrics['enob']:5.2f} b], SNDR=[{metrics['sndr_dbc']:6.2f} dB], THD=[{metrics['thd_dbc']:7.2f} dB]")
     print()
 
 plt.tight_layout()

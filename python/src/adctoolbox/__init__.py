@@ -5,29 +5,51 @@ This package provides tools for analyzing both analog and digital aspects of
 Analog-to-Digital Converters, including spectrum analysis, error characterization,
 calibration algorithms, and more.
 
+Quick Start — Spectrum Analysis:
+---------------------------------
+The most commonly used entry point is ``analyze_spectrum``, which performs a
+full single-tone FFT analysis and returns SNR, SNDR, SFDR, ENoB, NSD, and more:
+
+    >>> import numpy as np
+    >>> from adctoolbox import analyze_spectrum, find_coherent_frequency
+    >>>
+    >>> Fs, N = 100e6, 2**13
+    >>> Fin, _ = find_coherent_frequency(fs=Fs, fin_target=12e6, n_fft=N)
+    >>> t = np.arange(N) / Fs
+    >>> signal = 0.5 * np.sin(2 * np.pi * Fin * t) + np.random.randn(N) * 200e-6
+    >>> result = analyze_spectrum(signal, fs=Fs, max_scale_range=[-0.5, 0.5])
+    >>> print(result['snr_dbc'], result['enob'], result['nsd_dbfs_hz'])
+
+``analyze_spectrum`` returns a dict with keys:
+    snr_dbc, sndr_dbc, sfdr_dbc, enob, thd_dbc,
+    nsd_dbfs_hz, sig_pwr_dbfs, noise_floor_dbfs, ...
+
+Runnable example scripts are located in the ``examples/`` folder of this
+package (e.g. ``examples/02_spectrum/exp_s03_analyze_spectrum_savefig.py``).
+Use them as ready-made templates to get started quickly.
+
 Modules:
 --------
 - fundamentals: Core utilities (sine fitting, frequency utils, unit conversions, FOM metrics)
-- spectrum: FFT-based analysis (single-tone, two-tone, polar visualization)
+- spectrum: FFT-based analysis (single-tone, polar visualization)
 - aout: Analog output error analysis (decomposition, PDF, autocorrelation, etc.)
 - dout: Digital output calibration (foreground calibration, weight estimation)
 - siggen: Signal generation with non-idealities
 - oversampling: Noise transfer function analysis
 
-Usage:
-------
->>> from adctoolbox import analyze_spectrum, fit_sine_4param, calibrate_weight_sine
->>> from adctoolbox import find_coherent_frequency, analyze_error_by_phase
+Other Common Functions:
+-----------------------
+>>> from adctoolbox import fit_sine_4param, calibrate_weight_sine
+>>> from adctoolbox import analyze_error_by_phase, compute_spectrum
 """
 
-__version__ = '0.4.0'
+__version__ = '0.7.0'
 
 # ======================================================================
 # Public API Registry
 # ======================================================================
 
 __all__ = []
-
 
 def _export(name, obj):
     """
@@ -39,7 +61,6 @@ def _export(name, obj):
     """
     globals()[name] = obj
     __all__.append(name)
-
 
 # ======================================================================
 # Core Fundamental Functions (Essential Utilities)
@@ -61,9 +82,18 @@ from .fundamentals import (
     enob_to_snr,
     snr_to_nsd,
     nsd_to_snr,
+    lsb_to_volts,
+    volts_to_lsb,
+    dbm_to_vrms,
+    vrms_to_dbm,
+    dbm_to_mw,
+    mw_to_dbm,
+    sine_amplitude_to_power,
     fit_sine_4param,
     calculate_walden_fom,
     calculate_schreier_fom,
+    calculate_thermal_noise_limit,
+    calculate_jitter_limit,
 )
 
 _export('find_coherent_frequency', find_coherent_frequency)
@@ -82,8 +112,17 @@ _export('enob_to_snr', enob_to_snr)
 _export('snr_to_nsd', snr_to_nsd)
 _export('nsd_to_snr', nsd_to_snr)
 _export('fit_sine_4param', fit_sine_4param)
+_export('lsb_to_volts', lsb_to_volts)
+_export('volts_to_lsb', volts_to_lsb)
+_export('dbm_to_vrms', dbm_to_vrms)
+_export('vrms_to_dbm', vrms_to_dbm)
+_export('dbm_to_mw', dbm_to_mw)
+_export('mw_to_dbm', mw_to_dbm)
+_export('sine_amplitude_to_power', sine_amplitude_to_power)
 _export('calculate_walden_fom', calculate_walden_fom)
 _export('calculate_schreier_fom', calculate_schreier_fom)
+_export('calculate_thermal_noise_limit', calculate_thermal_noise_limit)
+_export('calculate_jitter_limit', calculate_jitter_limit)
 
 # ======================================================================
 # Spectrum Analysis Functions
@@ -91,14 +130,17 @@ _export('calculate_schreier_fom', calculate_schreier_fom)
 
 from .spectrum import (
     analyze_spectrum,
-    analyze_two_tone_spectrum,
     analyze_spectrum_polar,
+    analyze_spectrum_virtuoso,
+    quick_sndr,
+    sweep_performance_vs_osr,
 )
 
 _export('analyze_spectrum', analyze_spectrum)
-_export('analyze_two_tone_spectrum', analyze_two_tone_spectrum)
 _export('analyze_spectrum_polar', analyze_spectrum_polar)
-
+_export('analyze_spectrum_virtuoso', analyze_spectrum_virtuoso)
+_export('quick_sndr', quick_sndr)
+_export('sweep_performance_vs_osr', sweep_performance_vs_osr)
 
 # ======================================================================
 # Analog Output (AOUT) Analysis Functions
@@ -128,7 +170,6 @@ _export('analyze_error_autocorr', analyze_error_autocorr)
 _export('analyze_error_envelope_spectrum', analyze_error_envelope_spectrum)
 _export('fit_static_nonlin', fit_static_nonlin)
 
-
 # ======================================================================
 # Calibration Functions
 # ======================================================================
@@ -139,23 +180,23 @@ from .calibration import (
 
 _export('calibrate_weight_sine', calibrate_weight_sine)
 
-
 # ======================================================================
 # Digital Output (DOUT) Analysis Functions
 # ======================================================================
 
 from .dout import (
-    check_bit_activity,
-    check_overflow,
-    plot_weight_radix,
+    analyze_bit_activity,
+    analyze_overflow,
+    analyze_weight_radix,
     analyze_enob_sweep,
+    plot_residual_scatter,
 )
 
-_export('check_bit_activity', check_bit_activity)
-_export('check_overflow', check_overflow)
-_export('plot_weight_radix', plot_weight_radix)
+_export('analyze_bit_activity', analyze_bit_activity)
+_export('analyze_overflow', analyze_overflow)
+_export('analyze_weight_radix', analyze_weight_radix)
 _export('analyze_enob_sweep', analyze_enob_sweep)
-
+_export('plot_residual_scatter', plot_residual_scatter)
 
 # ======================================================================
 # Oversampling Analysis Functions
@@ -167,6 +208,43 @@ from .oversampling import (
 
 _export('ntf_analyzer', ntf_analyzer)
 
+# ======================================================================
+# Time-Interleave (TI-ADC) Analysis Functions
+# ======================================================================
+
+from .timeinterleave import (
+    deinterleave,
+    interleave,
+    extract_mismatch_sine,
+    predict_spurs,
+    fractional_delay_fft,
+    fractional_delay_farrow,
+    calibrate_foreground,
+)
+
+_export('deinterleave', deinterleave)
+_export('interleave', interleave)
+_export('extract_mismatch_sine', extract_mismatch_sine)
+_export('predict_spurs', predict_spurs)
+_export('fractional_delay_fft', fractional_delay_fft)
+_export('fractional_delay_farrow', fractional_delay_farrow)
+_export('calibrate_foreground', calibrate_foreground)
+
+# ======================================================================
+# ADC Behavioral Models (vin -> codes forward operators)
+# ======================================================================
+
+from .models import (
+    sar_encode,
+    sar_reconstruct,
+    sar_ideal_weights,
+    sar_apply_mismatch,
+)
+
+_export('sar_encode', sar_encode)
+_export('sar_reconstruct', sar_reconstruct)
+_export('sar_ideal_weights', sar_ideal_weights)
+_export('sar_apply_mismatch', sar_apply_mismatch)
 
 # ======================================================================
 # Submodules (for explicit imports like: from adctoolbox.aout import ...)
@@ -176,13 +254,17 @@ from . import fundamentals
 from . import aout
 from . import calibration
 from . import dout
+from . import models
 from . import oversampling
 from . import spectrum
+from . import timeinterleave
 
 _export('fundamentals', fundamentals)
 _export('aout', aout)
 _export('calibration', calibration)
 _export('dout', dout)
+_export('models', models)
 _export('oversampling', oversampling)
 _export('spectrum', spectrum)
+_export('timeinterleave', timeinterleave)
 

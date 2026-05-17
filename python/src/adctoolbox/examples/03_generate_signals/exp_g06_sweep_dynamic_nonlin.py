@@ -1,7 +1,6 @@
-"""
-Experiment G06: Isolated Nonlinearity Comparison
-Each experiment enables exactly ONE non-ideality.
-All metrics are extracted from analyze_spectrum (NO placeholders).
+"""Compare isolated nonlinearity effects on ADC spectrum.
+
+Each subplot demonstrates one specific non-ideality type.
 """
 
 import matplotlib.pyplot as plt
@@ -29,9 +28,7 @@ k3 = hd3_amp / (A**2 / 4)
 print(f"[Setup] Fs={Fs/1e6:.0f} MHz | N={N} | Fin={Fin/1e6:.2f} MHz")
 print(f"[Setup] Target HD3 = {hd3_dB:.1f} dBc -> k3 = {k3:.4e}")
 
-# -----------------------------------------------------------------------------
-# 5. Define Isolated Experiments
-# -----------------------------------------------------------------------------
+# Define Isolated Experiments
 EXPERIMENTS = [
     {
         'title': f"Static HD3 Only ({hd3_dB} dBc)",
@@ -75,9 +72,7 @@ EXPERIMENTS = [
     },
 ]
 
-# -----------------------------------------------------------------------------
-# 6. Prepare Figure
-# -----------------------------------------------------------------------------
+# Prepare Figure
 fig, axes = plt.subplots(2, 4, figsize=(24, 10))
 axes = axes.flatten()
 
@@ -85,12 +80,10 @@ print("=" * 95)
 print(f"{'Exp':<4} | {'Non-Ideality':<35} | {'SFDR (dB)':<10} | {'THD (dB)':<10}")
 print("-" * 95)
 
-# -----------------------------------------------------------------------------
-# 7. Run Experiments
-# -----------------------------------------------------------------------------
+# Run Experiments
 for idx, exp in enumerate(EXPERIMENTS):
 
-    # 7.1 Apply single non-ideality
+    # Apply single non-ideality
     if exp['func'] == 'apply_static_nonlinearity':
         signal = gen.apply_static_nonlinearity(input_signal=None, **exp['param'])
 
@@ -112,10 +105,10 @@ for idx, exp in enumerate(EXPERIMENTS):
     else:
         signal = getattr(gen, exp['func'])(input_signal=None, **exp['param'])
 
-    # 7.2 Add thermal noise
+    # Add thermal noise
     signal = gen.apply_thermal_noise(signal, noise_rms=base_noise)
 
-    # 7.4 Spectrum analysis
+    # Spectrum analysis
     plt.sca(axes[idx])
     result = analyze_spectrum(signal, fs=Fs)
 
@@ -123,11 +116,9 @@ for idx, exp in enumerate(EXPERIMENTS):
     axes[idx].set_ylim([-140, 0])
 
     print(f"{idx+1:<4} | {exp['title']:<35} | "
-          f"{result['sfdr_db']:<10.2f} | {result['thd_db']:<10.2f}")
+          f"{result['sfdr_dbc']:<10.2f} | {result['thd_dbc']:<10.2f}")
 
-# -----------------------------------------------------------------------------
-# 8. Finalize
-# -----------------------------------------------------------------------------
+# Finalize
 plt.suptitle(
     f'Impact of Different Nonlinearities',
     fontsize=14,

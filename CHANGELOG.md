@@ -7,9 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **ADC behavioral models submodule** (`adctoolbox.models`):
+  - `sar_encode`, `sar_reconstruct`, `sar_ideal_weights`, `sar_apply_mismatch`:
+    binary / sub-radix-2 SAR forward model with optional cap mismatch and
+    comparator noise. Function-based, vectorized over samples.
+  - Convention: normalized unipolar (`vin ∈ [0, 1]`), with SAR weights
+    normalized by `sum(bit_weights) + 1 LSB`. A non-redundant 4-bit ADC uses
+    `[8, 4, 2, 1] / 16`; a redundant `[8, 4, 4, 2, 1]` array uses `/20`.
+  - 14 pytest cases including ENoB=N validation at 4, 8, 12, 16, 20 bit
+    (passes to within FFT-noise-floor tolerance, ±0.05 b for N ≥ 12).
+- **Codex skill installer status / editable modes**:
+  - `adctoolbox-install-skill --status --dest <skills-dir>` reports whether
+    bundled skills are missing, copied, symlinked, and in sync.
+  - `adctoolbox-install-skill --editable --dest <skills-dir>` installs
+    symlinks for local skill development.
+
+### Changed
+- `adctoolbox-install-skill` now requires an explicit `--dest`; it no longer
+  writes to `~/.codex/skills` or `$CODEX_HOME/skills` implicitly.
+
 ### Work in Progress
 - Additional examples and tutorials
 - Performance optimizations
+
+## [0.7.0] - 2026-04-29
+
+**Time-Interleave + Skill Overhaul Release** — new TI-ADC submodule and a fully revamped `adctoolbox-user-guide` skill.
+
+### Added
+- **Time-Interleave (TI-ADC) submodule** (`adctoolbox.timeinterleave`):
+  - `deinterleave` / `interleave`: stream <-> per-channel sub-streams
+  - `extract_mismatch_sine`: extract gain/offset/timing mismatch from sine input
+  - `predict_spurs`: predict TI mismatch spur locations and amplitudes
+  - `fractional_delay_fft` / `fractional_delay_farrow`: fractional-delay primitives
+  - `calibrate_foreground`: foreground timing-skew calibration built on the FD primitives
+  - 3 examples (`08_timeinterleave/`) covering deinterleave/interleave, foreground calibration, and autocorrelation-based background skew calibration (aligned with MATLAB + reference paper)
+- **`exp_s00_fft_fundamentals.py`** example: pedagogical N=15 vs N=16 FFT comparison
+
+### Changed
+- **`adctoolbox-user-guide` skill rewritten** with progressive disclosure:
+  - SKILL.md slimmed; advanced debug content moved to `references/`
+  - `api-quickref` partitioned into Basic / Advanced sections
+  - `example-map` extended with an advanced examples section
+  - Added executable smoke tests; aligned skill + README to the real public API
+  - Eval prompt suite locked with baseline + post-revamp run
+
+### Fixed
+- Stale docstring examples corrected
+- Skill / README API drift: docs now match the current public API surface
+
+### Removed
+- **Two-tone spectrum analysis** (carried over from Unreleased): removed `analyze_two_tone_spectrum`, `compute_two_tone_spectrum`, `plot_two_tone_spectrum` and the 3 two-tone example scripts (`exp_s21`–`exp_s23`); no MATLAB counterpart existed
 
 ## [0.4.0] - 2025-12-18
 

@@ -26,7 +26,6 @@ t_start = time.time()
 import matplotlib
 matplotlib.use('Agg')
 
-import matplotlib.pyplot as plt
 from adctoolbox.toolset import generate_aout_dashboard
 from nonideality_cases import get_batch_test_setup  # type: ignore
 
@@ -79,17 +78,3 @@ print("=" * 100)
 print(f"\n[Timing] Batch Dashboard Generation: {time.time() - t_batch:.4f}s")
 
 print(f"\n--- Total Runtime: {time.time() - t_start:.4f}s ---\n")
-
-print("\n" + "=" * 100)
-print("Dashboard Generation Complete!")
-print("-" * 100)
-print(f"Generated {len(CASES)} comprehensive 12-tool dashboards")
-print(f"Each dashboard includes:")
-print("  1. Spectrum                    7. Error PDF")
-print("  2. Spectrum Polar              8. Error Autocorrelation")
-print("  3. Error by Value              9. Error Spectrum")
-print("  4. Error by Phase             10. Error Envelope Spectrum")
-print("  5. Decomposition Time         11. Phase Plane")
-print("  6. Decomposition Polar        12. Error Phase Plane")
-print(f"\nOutput directory: {output_dir}")
-print("=" * 100)
