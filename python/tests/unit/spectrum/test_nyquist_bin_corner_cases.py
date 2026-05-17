@@ -64,12 +64,22 @@ def _compute(signal, max_harmonic=5):
     )
 
 
-def _tone_with_nyquist_harmonic(n_fft, fundamental_bin, harmonic_order, hd_amp_dbc):
-    """Build a coherent tone whose selected harmonic lands on Nyquist."""
+def _tone_with_nyquist_harmonic(
+    n_fft,
+    fundamental_bin,
+    harmonic_order,
+    harmonic_peak_amp_db,
+):
+    """Build a coherent tone whose selected harmonic lands on Nyquist.
+
+    ``harmonic_peak_amp_db`` is a peak-amplitude ratio relative to the
+    fundamental. When the harmonic lands on Nyquist, its power dBc is 3.0103 dB
+    higher than that peak-amplitude ratio.
+    """
     assert harmonic_order * fundamental_bin == n_fft // 2
     n = np.arange(n_fft)
     a_fund = _TONE_AMPLITUDE
-    a_harm = a_fund * 10 ** (hd_amp_dbc / 20)
+    a_harm = a_fund * 10 ** (harmonic_peak_amp_db / 20)
     signal = (
         a_fund * np.sin(2 * np.pi * fundamental_bin * n / n_fft)
         + a_harm * np.cos(np.pi * n)
@@ -77,9 +87,9 @@ def _tone_with_nyquist_harmonic(n_fft, fundamental_bin, harmonic_order, hd_amp_d
     return signal
 
 
-def _expected_nyquist_harmonic_dbc(hd_amp_dbc):
-    """Nyquist cosine has 3.0103 dB more power than an equal-peak sine."""
-    return hd_amp_dbc + 10 * np.log10(2.0)
+def _expected_nyquist_harmonic_dbc(harmonic_peak_amp_db):
+    """Convert a peak-amplitude ratio to power dBc for a Nyquist harmonic."""
+    return harmonic_peak_amp_db + 10 * np.log10(2.0)
 
 
 @pytest.mark.parametrize("n_fft,fundamental_bin", _ordinary_bin_cases())
@@ -156,12 +166,12 @@ def test_n4_to_n32_harmonics_landing_on_nyquist_have_boundary_power(
     fundamental_bin,
     harmonic_order,
 ):
-    hd_amp_dbc = -60.0
+    harmonic_peak_amp_db = -60.0
     signal = _tone_with_nyquist_harmonic(
         n_fft,
         fundamental_bin,
         harmonic_order,
-        hd_amp_dbc,
+        harmonic_peak_amp_db,
     )
 
     result = _compute(signal)
@@ -169,7 +179,7 @@ def test_n4_to_n32_harmonics_landing_on_nyquist_have_boundary_power(
     assert result["plot_data"]["fundamental_bin"] == fundamental_bin
     assert result["plot_data"]["harmonic_bins"][harmonic_order - 2] == n_fft // 2
     assert result["metrics"]["harmonics_dbc"][harmonic_order - 2] == pytest.approx(
-        _expected_nyquist_harmonic_dbc(hd_amp_dbc),
+        _expected_nyquist_harmonic_dbc(harmonic_peak_amp_db),
         abs=1e-9,
     )
 
@@ -187,12 +197,12 @@ def test_nyquist_harmonic_bin_and_power_are_theoretical(
     fundamental_bin,
     harmonic_order,
 ):
-    hd_amp_dbc = -60.0
+    harmonic_peak_amp_db = -60.0
     signal = _tone_with_nyquist_harmonic(
         n_fft,
         fundamental_bin,
         harmonic_order,
-        hd_amp_dbc,
+        harmonic_peak_amp_db,
     )
 
     result = _compute(signal)
@@ -200,7 +210,7 @@ def test_nyquist_harmonic_bin_and_power_are_theoretical(
     assert result["plot_data"]["fundamental_bin"] == fundamental_bin
     assert result["plot_data"]["harmonic_bins"][harmonic_order - 2] == n_fft // 2
     assert result["metrics"]["harmonics_dbc"][harmonic_order - 2] == pytest.approx(
-        _expected_nyquist_harmonic_dbc(hd_amp_dbc),
+        _expected_nyquist_harmonic_dbc(harmonic_peak_amp_db),
         abs=1e-9,
     )
 
@@ -210,9 +220,9 @@ def test_interior_harmonic_does_not_have_nyquist_boundary_gain():
     n = np.arange(n_fft)
     fundamental_bin = 128
     harmonic_bin = 3 * fundamental_bin
-    hd_amp_dbc = -60.0
+    harmonic_peak_amp_db = -60.0
     a_fund = _TONE_AMPLITUDE
-    a_harm = a_fund * 10 ** (hd_amp_dbc / 20)
+    a_harm = a_fund * 10 ** (harmonic_peak_amp_db / 20)
     signal = (
         a_fund * np.sin(2 * np.pi * fundamental_bin * n / n_fft)
         + a_harm * np.sin(2 * np.pi * harmonic_bin * n / n_fft)
@@ -222,7 +232,7 @@ def test_interior_harmonic_does_not_have_nyquist_boundary_gain():
 
     assert result["plot_data"]["harmonic_bins"][1] == harmonic_bin
     assert result["metrics"]["harmonics_dbc"][1] == pytest.approx(
-        hd_amp_dbc,
+        harmonic_peak_amp_db,
         abs=1e-9,
     )
 
@@ -235,17 +245,17 @@ def test_interior_harmonic_does_not_have_nyquist_boundary_gain():
     ),
 )
 def test_sndr_includes_nyquist_bin_distortion_when_harmonic_is_included():
-    hd_amp_dbc = -60.0
+    harmonic_peak_amp_db = -60.0
     signal = _tone_with_nyquist_harmonic(
         n_fft=1024,
         fundamental_bin=256,
         harmonic_order=2,
-        hd_amp_dbc=hd_amp_dbc,
+        harmonic_peak_amp_db=harmonic_peak_amp_db,
     )
 
     result = _compute(signal)
 
-    expected_distortion_dbc = _expected_nyquist_harmonic_dbc(hd_amp_dbc)
+    expected_distortion_dbc = _expected_nyquist_harmonic_dbc(harmonic_peak_amp_db)
     assert result["metrics"]["sndr_dbc"] == pytest.approx(
         -expected_distortion_dbc,
         abs=1e-9,
