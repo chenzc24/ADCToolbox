@@ -272,6 +272,10 @@ Nd2 = floor(N_fft/2)+1;
 % Generate frequency axis
 freq = (0:(Nd2-1))/N_fft*Fs;
 
+% Signal-band upper index in the one-sided, 1-based spectrum.
+% Includes DC at index 1 and the bandwidth boundary bin.
+inbandEnd = min(floor(N_fft/2/OSR)+1, Nd2);
+
 % Generate window function
 if ischar(windowFunc)
     % Use embedded window functions (no toolbox required)
@@ -316,7 +320,7 @@ for iter = 1:N_run
         tspec = fft(tdata);
         tspec(1) = 0;  % Remove DC component
         % Find fundamental signal bin in signal band
-        [~, bin] = max(abs(tspec(1:floor(N_fft/2/OSR))));
+        [~, bin] = max(abs(tspec(1:inbandEnd)));
         % Guard against bin = 1 (DC bin) which would cause division by zero
         if bin == 1
             warning('Signal detected at DC bin, skipping coherent averaging for this run');
@@ -376,7 +380,10 @@ else
     spec = spec/(N_fft^2)*16/ME;
 end
 spec = spec(1:Nd2);  % Keep only positive frequencies
-spec_inband = spec(1:floor(N_fft/2/OSR));  % Extract signal band
+if mod(N_fft, 2) == 0
+    spec(end) = spec(end) / 2;  % Nyquist is a one-sided boundary bin
+end
+spec_inband = spec(1:inbandEnd);  % Extract signal band
 
 
 % Remove flicker noise (1/f noise) if requested
@@ -416,15 +423,24 @@ if ischar(sideBin) && strcmp(sideBin, 'auto')
     % Compute FFT to get ideal spectrum shape
     ideal_spec = abs(fft(ideal_signal)).^2 / (N_fft^2) * 16;
     ideal_spec = ideal_spec(1:Nd2);  % Keep positive frequencies only
+    if mod(N_fft, 2) == 0
+        ideal_spec(end) = ideal_spec(end) / 2;
+    end
 
     % Scale ideal spectrum to match actual signal magnitude at peak
     % This ensures we compare spectral leakage at the same signal strength
     scale_factor = spec(bin) / ideal_spec(bin);
     ideal_spec = ideal_spec * scale_factor;
 
-    % Step 2: Estimate noise floor using median (robust to signal peak outliers)
-    n_inband = floor(N_fft/2/OSR);
-    noise_floor_per_bin = median(spec(1:n_inband));
+    % Step 2: Estimate noise floor using median (filter out near-zero bins first)
+    n_inband = inbandEnd;
+    temp_spec = spec(1:n_inband);
+    temp_spec = temp_spec(temp_spec > 10^(-20));
+    if length(temp_spec) >= 3
+        noise_floor_per_bin = median(temp_spec);
+    else
+        noise_floor_per_bin = median(spec(1:n_inband));
+    end
 
     % Step 3: Find crossing points where ideal spectrum meets noise floor
     max_sidebin = min(bin-1, n_inband-bin);
@@ -448,7 +464,7 @@ if ischar(sideBin) && strcmp(sideBin, 'auto')
 end
 
 % Calculate signal power including side bins
-sig = sum(spec(max(bin-sideBin,1):min(bin+sideBin,floor(N_fft/2/OSR))));
+sig = sum(spec(max(bin-sideBin,1):min(bin+sideBin,inbandEnd)));
 pwr = 10*log10(sig);
 % Override with assumed signal power if provided
 if(~isnan(assumedSignal))
@@ -503,7 +519,7 @@ end
 % Remove signal and DC from spectrum for noise/distortion calculation
 spec(max(bin-sideBin,1):min(bin+sideBin,Nd2)) = 0;
 spec(1:sideBin) = 0;
-spec_inband = spec(1:floor(N_fft/2/OSR));
+spec_inband = spec(1:inbandEnd);
 noi = sum(spec_inband);  % Total noise + distortion power
 
 % Find largest spur for SFDR
@@ -519,7 +535,7 @@ if(dispPlot && label && show_p)
 end
 
 % Calculate noise floor using all methods and select per NFMethod
-n_inband = floor(N_fft/2/OSR);
+n_inband = inbandEnd;
 spec_inband = spec(1:n_inband);
 % Method 1: Median-based estimation (robust to spurs)
 if(N_run == 1)
