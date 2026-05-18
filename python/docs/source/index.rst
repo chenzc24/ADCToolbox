@@ -23,9 +23,12 @@ ADCToolbox
      </div>
    </section>
 
+Complete Documentation
+----------------------
+
 .. toctree::
    :maxdepth: 2
-   :hidden:
+   :caption: Browse the Sphinx docs
 
    installation
    quickstart
@@ -35,8 +38,8 @@ ADCToolbox
    python_matlab_parity
    changelog
 
-Start Here
-----------
+Common Starting Points
+----------------------
 
 .. grid:: 1 1 2 4
    :gutter: 2

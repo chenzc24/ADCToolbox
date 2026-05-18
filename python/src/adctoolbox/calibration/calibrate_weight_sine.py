@@ -55,9 +55,9 @@ def calibrate_weight_sine(
         Can also be a list of arrays for multi-dataset calibration.
     freq : float, array-like, or None, optional
         Normalized frequency Fin/Fs. Default is None (triggers auto frequency search).
-        - None: Automatic frequency search
-        - float: Single frequency for all datasets
-        - array-like: Per-dataset frequencies for multi-dataset mode
+        Use None for automatic frequency search, a float for one frequency
+        shared by all datasets, or an array-like value for per-dataset
+        frequencies in multi-dataset mode.
     force_search : bool, optional
         Force fine frequency search even when frequency is provided.
         Default is False. Set to True to refine provided frequencies.
@@ -80,23 +80,11 @@ def calibrate_weight_sine(
     Returns
     -------
     dict
-        Dictionary with keys:
-        - weight : ndarray
-            The calibrated weights, normalized by the magnitude of sinewave.
-        - offset : float
-            The calibrated DC offset, normalized by the magnitude of sinewave.
-        - calibrated_signal : ndarray or list of ndarrays
-            The signal after calibration (single array for single dataset,
-            list of arrays for multi-dataset).
-        - ideal : ndarray or list of ndarrays
-            The best fitted sinewave (single array for single dataset,
-            list of arrays for multi-dataset).
-        - error : ndarray or list of ndarrays
-            The residue errors after calibration, excluding distortion
-            (single array for single dataset, list of arrays for multi-dataset).
-        - refined_frequency : float or ndarray
-            The refined frequency from calibration (float for single dataset,
-            array for multi-dataset).
+        Calibration result containing ``weight``, ``offset``,
+        ``calibrated_signal``, ``ideal``, ``error``, and
+        ``refined_frequency``. Array-valued entries are returned as a single
+        array for single-dataset input or as a list of arrays for
+        multi-dataset input.
     """
 
     # 1. Normalize input to unified format

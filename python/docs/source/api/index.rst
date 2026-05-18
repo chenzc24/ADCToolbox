@@ -12,6 +12,7 @@ This section provides detailed documentation for all ADCToolbox modules and func
    dout
    siggen
    oversampling
+   toolset
 
 Module Overview
 ---------------
@@ -33,3 +34,6 @@ Module Overview
 
 :doc:`oversampling`
     Oversampling and Delta-Sigma modulator analysis tools
+
+:doc:`toolset`
+    Dashboard generation utilities for complete analog and digital analysis workflows
