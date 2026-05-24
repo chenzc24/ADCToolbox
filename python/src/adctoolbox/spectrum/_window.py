@@ -52,6 +52,18 @@ _SIDE_BIN_DEFAULTS = {
 }
 
 
+_SIDE_BIN_AUTO_FALLBACKS = {
+    'rectangular': 1,
+    'hann': 3,
+    'hamming': 3,
+    'blackman': 4,
+    'blackmanharris': 5,
+    'flattop': 6,
+    'kaiser': 10,
+    'chebwin': 6,
+}
+
+
 def _create_window(win_type: str, N: int) -> tuple[np.ndarray, float, float]:
     """Create window function and calculate its parameters.
 
@@ -125,6 +137,18 @@ def _get_default_side_bin(win_type: str, is_coherent: bool | None = None) -> int
         win_key = 'hann'
 
     return _SIDE_BIN_DEFAULTS[win_key]['coherent']
+
+
+def _get_auto_side_bin_fallback(win_type: str) -> int:
+    """Small conservative fallback when side_bin auto cannot find a crossing."""
+    win_key = win_type.lower()
+    if win_key == 'boxcar':
+        win_key = 'rectangular'
+
+    if win_key not in _SIDE_BIN_AUTO_FALLBACKS:
+        win_key = 'hann'
+
+    return _SIDE_BIN_AUTO_FALLBACKS[win_key]
 
 
 def _calculate_power_correction(window_gain: float, equiv_noise_bw_factor: float) -> float:

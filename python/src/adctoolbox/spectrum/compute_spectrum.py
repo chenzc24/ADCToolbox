@@ -9,7 +9,12 @@ from adctoolbox.spectrum._harmonics import _locate_harmonic_bins
 from adctoolbox.spectrum._harmonics import _calculate_harmonic_power_plotspec
 from adctoolbox.spectrum._harmonics import _extract_highest_spur
 from adctoolbox.spectrum._spectrum_averaging import _power_average, _coherent_average
-from adctoolbox.spectrum._window import _create_window, _calculate_power_correction
+from adctoolbox.spectrum._window import (
+    _calculate_power_correction,
+    _create_window,
+    _get_auto_side_bin_fallback,
+    _get_default_side_bin,
+)
 from adctoolbox.spectrum._side_bin_auto import _detect_side_bin_auto
 from adctoolbox.spectrum._estimate_noise_power import _estimate_noise_power
 
@@ -102,6 +107,8 @@ def compute_spectrum(
             N,
             window_vector,
             power_correction,
+            fallback_side_bin=_get_auto_side_bin_fallback(win_type),
+            minimum_side_bin=_get_default_side_bin(win_type),
         )
 
     sig_bin_start = max(fundamental_bin - side_bin, 0)
