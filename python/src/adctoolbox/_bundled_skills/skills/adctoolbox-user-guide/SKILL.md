@@ -30,8 +30,8 @@ Use for:
 - Generating synthetic ADC stimulus for a testbench
 - **Forward-modeling an ADC architecture in Python** — for SAR, use
   `adctoolbox.models.sar_convert` / `sar_reconstruct` / `sar_ideal_weights`
-  / `sar_apply_mismatch` (binary or sub-radix-2, with optional cap mismatch
-  + sampling noise + comparator noise; vectorized). Convention: `vin` is
+  / `sar_apply_cap_mismatch` (binary or sub-radix-2, with optional unit-cap
+  mismatch + sampling noise + comparator noise; vectorized). Convention: `vin` is
   interpreted relative to `quant_range=(v_min, v_max)`, default `(0, 1)`.
   SAR weights are still explicit and normalized by `sum(bit_weights) + 1 LSB`
   (for example `[8, 4, 2, 1] / 16`, or redundant `[8, 4, 4, 2, 1] / 20`).

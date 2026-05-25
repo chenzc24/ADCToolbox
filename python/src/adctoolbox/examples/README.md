@@ -84,7 +84,7 @@ Analysis on analog output (vector of recovered signal, e.g., reconstructed sinew
 | `a12_err_spectrum` | Error spectrum |
 | `a13_tom_decomp` | TOM decomposition |
 
-### **Digital Output (d01-d05)** - Processing ADC Digital Codes
+### **Digital Output (d01-d18)** - Processing ADC Digital Codes
 Analysis on digital output codes from ADC architectures (pipeline, SAR, etc.).
 
 | Example | Description |
@@ -94,6 +94,10 @@ Analysis on digital output codes from ADC architectures (pipeline, SAR, etc.).
 | `d03_redundancy_comparison` | Pipeline architecture comparison |
 | `d04_weight_scaling` | Digital weight scaling |
 | `d05_enob_bit_sweep` | ENOB vs bit sweep |
+| `05_debug_digital/exp_d15_sar_unit_cap_mismatch_uncal_spectra.py` | SAR unit-cap mismatch spectra with nominal-weight reconstruction and no calibration |
+| `05_debug_digital/exp_d16_sar_unit_cap_mismatch_mc.py` | SAR redundancy and foreground calibration under Pelgrom/unit-cap mismatch |
+| `05_debug_digital/exp_d17_sar_msb_error_binary_vs_repeat_calibration.py` | SAR MSB +1% error: strict binary vs third-weight repeat calibration |
+| `05_debug_digital/exp_d18_sar_redundant_mismatch_training_length_sweep.py` | Redundant SAR unit-cap mismatch calibration ENOB versus training sample count |
 
 ### **Toolset** - Complete Analysis Workflows
 Comprehensive analysis suites that run multiple tools automatically.

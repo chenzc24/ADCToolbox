@@ -18,6 +18,7 @@ from adctoolbox.models.sar import (
     sar_convert,
     sar_reconstruct,
     sar_ideal_weights,
+    sar_apply_cap_mismatch,
     sar_apply_mismatch,
 )
 
@@ -25,5 +26,6 @@ __all__ = [
     "sar_convert",
     "sar_reconstruct",
     "sar_ideal_weights",
+    "sar_apply_cap_mismatch",
     "sar_apply_mismatch",
 ]

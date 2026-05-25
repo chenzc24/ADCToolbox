@@ -146,14 +146,10 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
             color=_C_FUND, fontsize=10, ha='center')
 
     # ---- Text-block positioning (mirrors plot_spectrum.py) -----------
-    if osr > 1:
-        TX = 10 ** (np.log10(fs) * 0.01 + np.log10(fs / N) * 0.99)
-    else:
-        TX = fs * 0.3 if fundamental_bin / N < 0.2 else fs * 0.01
-    if x_max > x_min:
-        tx_margin = 0.02 * (x_max - x_min)
-        TX = np.clip(TX, x_min + tx_margin, x_max - tx_margin)
-    TYD = minx * 0.06
+    # Axes-relative metric text stays fixed if callers change y-limits.
+    metric_x = 0.02 if osr > 1 or fundamental_bin / N >= 0.2 else 0.60
+    metric_y_start = 0.94
+    metric_y_step = 0.06
 
     def _fmt_freq(f):
         if f >= 1e9: return f'{f/1e9:.1f}G'
@@ -163,9 +159,10 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
 
     Fin = fundamental_bin / N * fs
 
-    ax.text(freq[fundamental_bin], spec_db[fundamental_bin] - 4,
+    ax.text(freq[fundamental_bin], 0.98,
             f'Sig = {metrics["sig_pwr_dbfs"]:.2f} dB',
-            color=_C_FUND, fontsize=10)
+            transform=ax.get_xaxis_transform(),
+            color=_C_FUND, fontsize=10, va='top')
 
     snr_text = f'{metrics["snr_dbc"]:.2f} dB' if np.isfinite(metrics["snr_dbc"]) else 'N/A'
     noise_floor_text = (
@@ -189,9 +186,6 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
         f'Noise Floor = {noise_floor_text}',
         f'NSD = {nsd_text}',
     ]
-    for i, line in enumerate(metric_lines, start=1):
-        ax.text(TX, TYD * i, line, color=_C_METRIC, fontsize=10)
-
     # ---- NSD baseline line -------------------------------------------
     if not np.isfinite(nf_line_level):
         pass
@@ -199,7 +193,7 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
         ax.semilogx([fs / N, fs / 2 / osr],
                     [nf_line_level, nf_line_level],
                     '--', color=_C_NSD, linewidth=1)
-        ax.text(TX, TYD * 9, f'OSR = {osr:.2f}', color=_C_METRIC, fontsize=10)
+        metric_lines.append(f'OSR = {osr:.2f}')
         ax.plot([fs / 2 / osr, fs / 2 / osr], [0, -1000],
                 '--', color=_C_OSR, linewidth=1)
     else:
@@ -207,13 +201,23 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
                 '--', color=_C_NSD, linewidth=1)
 
     # ---- Optional gain / collision notes -----------------------------
-    next_row = 10 if osr > 1 else 9
+    warning_lines = []
     if is_coherent and M > 1:
         coh_gain_db = 10 * np.log10(M)
-        ax.text(TX, TYD * next_row, f'*Coherent Gain = {coh_gain_db:.2f} dB',
-                color=_C_COH, fontsize=10)
-        next_row += 1
+        warning_lines.append((f'*Coherent Gain = {coh_gain_db:.2f} dB', _C_COH))
     if collided_harmonics:
         collision_str = ', '.join(f'HD{h}' for h in sorted(collided_harmonics))
-        ax.text(TX, TYD * next_row, f'*Collided with fundamental: {collision_str}',
-                color=_C_WARN, fontsize=10)
+        warning_lines.append((f'*Collided with fundamental: {collision_str}', _C_WARN))
+
+    metric_rows = [(line, _C_METRIC) for line in metric_lines] + warning_lines
+    for row, (line, color) in enumerate(metric_rows):
+        ax.text(
+            metric_x,
+            metric_y_start - metric_y_step * row,
+            line,
+            transform=ax.transAxes,
+            color=color,
+            fontsize=10,
+            ha='left',
+            va='top',
+        )

@@ -83,40 +83,94 @@ def sar_ideal_weights(num_bits: int, redundant_bit: Optional[int] = None) -> np.
     return w / (w.sum() + w[-1])
 
 
+def sar_apply_cap_mismatch(
+    weights: np.ndarray,
+    sigma: float,
+    rng: Optional[np.random.Generator] = None,
+    cap_units: Optional[np.ndarray] = None,
+) -> np.ndarray:
+    """Realize unit-cap/Pelgrom-style CDAC mismatch.
+
+    ``sigma`` is the RMS relative mismatch of a single unit capacitor. A bit
+    made from ``n`` unit capacitors gets relative RMS mismatch
+    ``sigma / sqrt(n)``. This captures the usual ``sigma(C) / C ∝ 1/sqrt(C)``
+    trend: MSB capacitors are larger and therefore have smaller relative
+    mismatch than LSB capacitors.
+
+    By default, unit counts are inferred from the normalized weights by
+    dividing by the smallest positive weight. For ideal binary weights this
+    gives ``[8, 4, 2, 1]`` for a 4-bit ADC and ``[8, 4, 4, 2, 1]`` for a
+    redundant array. Pass ``cap_units`` explicitly for custom capacitor
+    arrays.
+
+    Parameters
+    ----------
+    weights : ndarray of shape (B,)
+        Nominal analog CDAC weights, typically from
+        :func:`sar_ideal_weights`.
+    sigma : float
+        RMS relative mismatch of one unit capacitor. For example, ``0.01`` is
+        1% RMS for a 1-Cu element; an 8-Cu MSB then has ``0.01/sqrt(8)``
+        relative RMS.
+    rng : np.random.Generator, optional
+        Numpy random generator. Use a deterministic seed to lock one chip.
+    cap_units : ndarray of shape (B,), optional
+        Unit capacitor counts or relative capacitor sizes for each weight.
+        Values must be positive. If omitted, they are inferred from
+        ``weights / min(weights)``.
+
+    Returns
+    -------
+    perturbed_weights : ndarray of shape (B,)
+        Cap weights with unit-cap-scaled gaussian mismatch applied. The
+        result is NOT re-normalized.
+    """
+    weights = np.asarray(weights, dtype=float)
+    if weights.ndim != 1:
+        raise ValueError(f"weights must be 1D, got shape {weights.shape}")
+    if len(weights) == 0:
+        raise ValueError("weights must not be empty")
+    if not np.all(np.isfinite(weights)):
+        raise ValueError("weights must be finite")
+    if np.any(weights <= 0):
+        raise ValueError("weights must be positive to infer capacitor sizes")
+    if not np.isfinite(sigma) or sigma < 0:
+        raise ValueError(f"sigma must be finite and non-negative, got {sigma}")
+
+    if cap_units is None:
+        cap_units = weights / np.min(weights)
+    else:
+        cap_units = np.asarray(cap_units, dtype=float)
+        if cap_units.shape != weights.shape:
+            raise ValueError(
+                f"cap_units shape must match weights shape {weights.shape}, got {cap_units.shape}"
+            )
+        if not np.all(np.isfinite(cap_units)):
+            raise ValueError("cap_units must be finite")
+        if np.any(cap_units <= 0):
+            raise ValueError("cap_units must be positive")
+
+    if rng is None:
+        rng = np.random.default_rng()
+
+    relative_sigma = sigma / np.sqrt(cap_units)
+    return weights * (1.0 + relative_sigma * rng.standard_normal(len(weights)))
+
+
 def sar_apply_mismatch(
     weights: np.ndarray,
     sigma: float,
     rng: Optional[np.random.Generator] = None,
 ) -> np.ndarray:
-    """Realize one chip's per-cap mismatch as gaussian perturbation.
+    """Legacy per-weight gaussian mismatch helper.
 
-    Each cap is perturbed independently by ``N(1, sigma)``. Result is NOT
-    re-normalized. Use the perturbed array as the analog CDAC weights passed
-    to ``sar_convert``. For reconstruction, pass the digital weights actually
-    used by the backend: nominal weights for an uncalibrated path, calibrated
-    weights after estimation, or the same actual weights for an ideal
-    observer.
-
-    Parameters
-    ----------
-    weights : ndarray of shape (B,)
-        Nominal analog CDAC weights (typically from
-        :func:`sar_ideal_weights`).
-    sigma : float
-        RMS relative mismatch per cap. e.g. ``0.01`` = 1% σ. Typical values
-        in 28 nm small-cap matrix: 0.01-0.08 depending on cap area.
-    rng : np.random.Generator, optional
-        Numpy random generator. Use a deterministic seed to lock the
-        mismatch realization (same chip across train/test).
-
-    Returns
-    -------
-    perturbed_weights : ndarray of shape (B,)
-        Cap weights with per-element gaussian mismatch applied.
+    This preserves the pre-0.8.2 behavior where each supplied weight receives
+    the same relative RMS perturbation. For Pelgrom/unit-cap-scaled mismatch,
+    use :func:`sar_apply_cap_mismatch`.
     """
     if rng is None:
         rng = np.random.default_rng()
-    return weights * (1.0 + sigma * rng.standard_normal(len(weights)))
+    return np.asarray(weights, dtype=float) * (1.0 + sigma * rng.standard_normal(len(weights)))
 
 
 def sar_convert(
@@ -148,8 +202,8 @@ def sar_convert(
     weights : array-like of shape (B,)
         Actual analog CDAC weights (MSB first). Resolution and redundancy are
         inferred from this vector. Use :func:`sar_ideal_weights` for an ideal
-        binary or redundant array, and :func:`sar_apply_mismatch` for cap
-        mismatch.
+        binary or redundant array, :func:`sar_apply_cap_mismatch` for
+        unit-cap/Pelgrom-style capacitor mismatch.
     quant_range : tuple(float, float), default (0.0, 1.0)
         ADC input and output range ``(v_min, v_max)``. This mirrors
         ``ADC_Signal_Generator.apply_quantization_noise(..., quant_range=...)``.

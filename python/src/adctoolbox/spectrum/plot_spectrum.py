@@ -154,18 +154,11 @@ def plot_spectrum(compute_results, show_title=True, show_label=True, plot_harmon
         # OSR line
         ax.plot([fs/2/osr, fs/2/osr], [0, -1000], '--', color='gray', linewidth=1)
 
-        # Text positioning
-        if osr > 1:
-            TX = 10**(np.log10(fs)*0.01 + np.log10(fs/N)*0.99)
-        else:
-            if fundamental_bin/N < 0.2:
-                TX = fs * 0.3
-            else:
-                TX = fs * 0.01
-        if x_max > x_min:
-            tx_margin = 0.02 * (x_max - x_min)
-            TX = np.clip(TX, x_min + tx_margin, x_max - tx_margin)
-        TYD = minx * 0.06
+        # Keep the metric block fixed inside the axes even if callers
+        # adjust y-limits after plotting.
+        metric_x = 0.02 if osr > 1 or fundamental_bin / N >= 0.2 else 0.60
+        metric_y_start = 0.94
+        metric_y_step = 0.06
 
         # Format helpers
         def format_freq(f):
@@ -187,48 +180,73 @@ def plot_spectrum(compute_results, show_title=True, show_label=True, plot_harmon
         noise_floor_text = f'{noise_floor_dbfs:.2f} dB' if np.isfinite(noise_floor_dbfs) else 'N/A'
         nsd_text = f'{nsd_dbfs_hz:.2f} dBFS/Hz' if np.isfinite(nsd_dbfs_hz) else 'N/A'
 
-        # Annotation block
-        ax.text(TX, TYD, f'Fin/fs = {txt_fin} / {txt_fs} Hz', fontsize=10)
-        ax.text(TX, TYD*2, f'ENoB = {enob:.2f}', fontsize=10)
-        ax.text(TX, TYD*3, f'SNDR = {sndr_dbc:.2f} dB', fontsize=10)
-        ax.text(TX, TYD*4, f'SFDR = {sfdr_dbc:.2f} dB', fontsize=10)
-        ax.text(TX, TYD*5, f'THD = {thd_dbc:.2f} dB', fontsize=10)
-        ax.text(TX, TYD*6, f'SNR = {snr_text}', fontsize=10)
-        ax.text(TX, TYD*7, f'Noise Floor = {noise_floor_text}', fontsize=10)
-        ax.text(TX, TYD*8, f'NSD = {nsd_text}', fontsize=10)
+        metric_lines = [
+            (f'Fin/fs = {txt_fin} / {txt_fs} Hz', None),
+            (f'ENoB = {enob:.2f}', None),
+            (f'SNDR = {sndr_dbc:.2f} dB', None),
+            (f'SFDR = {sfdr_dbc:.2f} dB', None),
+            (f'THD = {thd_dbc:.2f} dB', None),
+            (f'SNR = {snr_text}', None),
+            (f'Noise Floor = {noise_floor_text}', None),
+            (f'NSD = {nsd_text}', None),
+        ]
 
         # Noise floor baseline
         if not np.isfinite(nf_line_level):
             pass
         elif osr > 1:
             ax.semilogx([fs/N, fs/2/osr], [nf_line_level, nf_line_level], 'r--', linewidth=1)
-            ax.text(TX, TYD*9, f'OSR = {osr:.2f}', fontsize=10)
+            metric_lines.append((f'OSR = {osr:.2f}', None))
         else:
             ax.plot([0, fs/2], [nf_line_level, nf_line_level], 'r--', linewidth=1)
 
         # Add coherent integration gain note
         if is_coherent and M > 1:
             coh_gain_db = 10 * np.log10(M)
-            if osr > 1:
-                ax.text(TX, TYD*10, f'*Coherent Gain = {coh_gain_db:.2f} dB', fontsize=10)
-            else:
-                ax.text(TX, TYD*9, f'*Coherent Gain = {coh_gain_db:.2f} dB', fontsize=10)
+            metric_lines.append((f'*Coherent Gain = {coh_gain_db:.2f} dB', None))
 
         # Add collision warning if harmonics collided with fundamental
         if collided_harmonics:
             collision_str = ', '.join([f'HD{h}' for h in sorted(collided_harmonics)])
-            text_y_offset = TYD*11 if (is_coherent and M > 1 and osr > 1) else (TYD*10 if (is_coherent and M > 1) or osr > 1 else TYD*9)
-            ax.text(TX, text_y_offset, f'*Collided with fundamental: {collision_str}', fontsize=10, color='orange')
+            metric_lines.append((f'*Collided with fundamental: {collision_str}', 'orange'))
 
-        # Signal annotation (MATLAB: text height uses metric pwr, not shifted spectrum)
-        sig_y_pos = min(spec_db[fundamental_bin], TYD / 2)
+        for row, (line, color) in enumerate(metric_lines):
+            ax.text(
+                metric_x,
+                metric_y_start - metric_y_step * row,
+                line,
+                transform=ax.transAxes,
+                fontsize=10,
+                color=color,
+                ha='left',
+                va='top',
+            )
+
+        # Signal annotation: keep y fixed relative to the axes while x tracks
+        # the fundamental frequency.
+        sig_y_pos = 0.98
+        sig_transform = ax.get_xaxis_transform()
         if osr > 1:
-            ax.text(freq[fundamental_bin], sig_y_pos, f'Sig = {sig_pwr_dbfs:.2f} dB', fontsize=10)
+            ax.text(
+                freq[fundamental_bin],
+                sig_y_pos,
+                f'Sig = {sig_pwr_dbfs:.2f} dB',
+                transform=sig_transform,
+                fontsize=10,
+                va='top',
+            )
         else:
             offset = -0.01 if fundamental_bin/N > 0.4 else 0.01
             ha_align = 'right' if fundamental_bin/N > 0.4 else 'left'
-            ax.text((fundamental_bin/N + offset) * fs, sig_y_pos, f'Sig = {sig_pwr_dbfs:.2f} dB',
-                    ha=ha_align, fontsize=10)
+            ax.text(
+                (fundamental_bin/N + offset) * fs,
+                sig_y_pos,
+                f'Sig = {sig_pwr_dbfs:.2f} dB',
+                transform=sig_transform,
+                ha=ha_align,
+                va='top',
+                fontsize=10,
+            )
 
         ax.set_xlabel('Freq (Hz)', fontsize=10)
         ax.set_ylabel('dBFS', fontsize=10)

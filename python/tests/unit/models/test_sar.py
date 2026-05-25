@@ -14,6 +14,7 @@ from adctoolbox import (
     sar_convert,
     sar_reconstruct,
     sar_ideal_weights,
+    sar_apply_cap_mismatch,
     sar_apply_mismatch,
 )
 
@@ -47,12 +48,67 @@ def test_ideal_weights_with_redundancy():
     assert np.isclose(w.sum(), 19.0 / 20.0)
 
 
-def test_apply_mismatch_preserves_shape_and_changes_values():
-    w = sar_ideal_weights(10)
-    rng = np.random.default_rng(42)
-    w_mis = sar_apply_mismatch(w, sigma=0.05, rng=rng)
-    assert w_mis.shape == w.shape
-    assert not np.allclose(w, w_mis)
+def test_apply_cap_mismatch_uses_unit_cap_scaling():
+    w = sar_ideal_weights(4)
+    sigma = 0.10
+    seed = 123
+    cap_units = np.array([8.0, 4.0, 2.0, 1.0])
+    noise = np.random.default_rng(seed).standard_normal(len(w))
+    expected = w * (1.0 + sigma / np.sqrt(cap_units) * noise)
+
+    w_mis = sar_apply_cap_mismatch(w, sigma=sigma, rng=np.random.default_rng(seed))
+
+    assert np.allclose(w_mis, expected)
+
+
+def test_apply_mismatch_preserves_legacy_per_weight_scaling():
+    w = sar_ideal_weights(4)
+    sigma = 0.03
+    seed = 789
+    noise = np.random.default_rng(seed).standard_normal(len(w))
+    expected = w * (1.0 + sigma * noise)
+
+    w_mis = sar_apply_mismatch(w, sigma=sigma, rng=np.random.default_rng(seed))
+
+    assert np.allclose(w_mis, expected)
+
+
+def test_apply_cap_mismatch_accepts_custom_cap_units():
+    w = np.array([0.3, 0.2, 0.1])
+    cap_units = np.array([9.0, 4.0, 1.0])
+    sigma = 0.05
+    seed = 456
+    noise = np.random.default_rng(seed).standard_normal(len(w))
+    expected = w * (1.0 + sigma / np.sqrt(cap_units) * noise)
+
+    w_mis = sar_apply_cap_mismatch(
+        w,
+        sigma=sigma,
+        cap_units=cap_units,
+        rng=np.random.default_rng(seed),
+    )
+
+    assert np.allclose(w_mis, expected)
+
+
+@pytest.mark.parametrize(
+    "kwargs, match",
+    [
+        ({"weights": [0.5, 0.0], "sigma": 0.1}, "weights must be positive"),
+        ({"weights": [0.5, 0.25], "sigma": -0.1}, "sigma must be finite"),
+        (
+            {"weights": [0.5, 0.25], "sigma": 0.1, "cap_units": [1.0]},
+            "cap_units shape",
+        ),
+        (
+            {"weights": [0.5, 0.25], "sigma": 0.1, "cap_units": [1.0, 0.0]},
+            "cap_units must be positive",
+        ),
+    ],
+)
+def test_apply_cap_mismatch_validates_inputs(kwargs, match):
+    with pytest.raises(ValueError, match=match):
+        sar_apply_cap_mismatch(**kwargs)
 
 
 # ────────────────────────── encode + reconstruct ─────────────────────────
@@ -214,14 +270,17 @@ def test_higher_sampling_noise_degrades_enob():
 # ─────────────────────── cap mismatch sensitivity ────────────────────────
 
 def test_cap_mismatch_degrades_enob_without_cal():
-    """5% σ_cap should drop ENoB substantially below architectural N."""
+    """10% unit-cap Pelgrom mismatch should degrade uncalibrated ENoB."""
     fs = 1.0e9
     n_samples = 16384
     cycles = 131
     num_bits = 12
     w_nom = sar_ideal_weights(num_bits)
-    w_actual = sar_apply_mismatch(w_nom, sigma=0.05,
-                                  rng=np.random.default_rng(20260514))
+    w_actual = sar_apply_cap_mismatch(
+        w_nom,
+        sigma=0.10,
+        rng=np.random.default_rng(20260514),
+    )
 
     n = np.arange(n_samples)
     vin = 0.5 + 0.5 * np.sin(2 * np.pi * cycles * n / n_samples)
@@ -229,8 +288,8 @@ def test_cap_mismatch_degrades_enob_without_cal():
     # Naive reconstruction with NOMINAL weights (no cal), matching sar_convert.
     aout = sar_reconstruct(codes, w_nom) - 0.5
     enob = analyze_spectrum(aout, fs=fs, create_plot=False)["enob"]
-    # 5% mismatch typically drops ENoB by 4-6 b — exact value depends on
-    # mismatch realization, but it must be well below the architectural N
+    # Pelgrom mismatch scales down on large caps, but this seed still creates
+    # enough transition error to put the uncalibrated path well below N.
     assert enob < num_bits - 3, (
-        f"5%% mismatch should drop ENoB substantially; got {enob:.2f} for N={num_bits}"
+        f"10%% unit-cap mismatch should degrade ENoB; got {enob:.2f} for N={num_bits}"
     )

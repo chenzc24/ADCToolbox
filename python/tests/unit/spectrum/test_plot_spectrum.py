@@ -64,6 +64,33 @@ def test_plot_spectrum_uses_sndr_fallback_ylim_when_noise_metrics_are_nan():
     assert ymax == 0
 
 
+def test_plot_spectrum_labels_stay_fixed_when_ylim_changes():
+    n_fft = 2**12
+    fs = 100e6
+    n = np.arange(n_fft)
+    signal = 0.5 * np.sin(2 * np.pi * 123 * n / n_fft)
+    result = compute_spectrum(signal, fs=fs, win_type="rectangular", side_bin=0)
+
+    fig, ax = plt.subplots()
+    plot_spectrum(result, show_title=False, show_label=True, ax=ax)
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+
+    prefixes = ("Fin/fs =", "SNDR =", "Sig =")
+    labels = [
+        next(text for text in ax.texts if text.get_text().startswith(prefix))
+        for prefix in prefixes
+    ]
+    before = np.array([label.get_window_extent(renderer).bounds for label in labels])
+
+    ax.set_ylim(-80, 0)
+    fig.canvas.draw()
+    after = np.array([label.get_window_extent(renderer).bounds for label in labels])
+    plt.close(fig)
+
+    np.testing.assert_allclose(after, before, atol=0.5)
+
+
 @pytest.mark.parametrize(
     "harmonic_power_db,nf_line_level,expected",
     [

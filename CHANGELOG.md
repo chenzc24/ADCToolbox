@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-05-25
+
+**SAR Calibration Examples Release** — adds focused SAR mismatch and
+foreground-calibration examples, and refines SAR mismatch modeling.
+
+### Added
+- New SAR digital-debug examples:
+  - `exp_d15_sar_unit_cap_mismatch_uncal_spectra.py`
+  - `exp_d16_sar_unit_cap_mismatch_mc.py`
+  - `exp_d17_sar_msb_error_binary_vs_repeat_calibration.py`
+  - `exp_d18_sar_redundant_mismatch_training_length_sweep.py`
+- `sar_apply_cap_mismatch`, a Pelgrom/unit-cap-scaled SAR CDAC mismatch helper
+  with optional explicit capacitor unit counts.
+- Spectrum plot regression coverage for stable annotation placement after
+  caller-side axis-limit changes.
+
+### Changed
+- SAR examples and bundled skill docs now use the explicit
+  `sar_apply_cap_mismatch` name.
+- Standard and Virtuoso spectrum plots keep metric annotations fixed in axes
+  coordinates, making subplot and post-plot y-limit changes more robust.
+
+### Fixed
+- `sar_apply_mismatch` remains available with its legacy per-weight gaussian
+  perturbation semantics for backward compatibility.
+
 ## [0.8.1] - 2026-05-24
 
 **Spectrum Plot Calibration Patch** — aligns Python windowed spectrum bin
