@@ -13,7 +13,6 @@ foreground sine calibration.
 from __future__ import annotations
 
 import contextlib
-import csv
 import io
 from pathlib import Path
 
@@ -106,13 +105,6 @@ def summarize(values: list[float]) -> dict[str, float]:
     }
 
 
-def write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
-    with path.open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def main() -> None:
     n = np.arange(N_SAMPLES)
     vin_train = 0.5 + AMPLITUDE * np.sin(2 * np.pi * TRAIN_BIN * n / N_SAMPLES)
@@ -129,7 +121,6 @@ def main() -> None:
         info = analyze_weight_radix(weights, create_plot=False)
         print(f"[{name:13s}] effective span = {info['effres']:.2f} bits")
 
-    raw_rows = []
     grouped: dict[tuple[str, str, float], list[float]] = {}
 
     for sigma_idx, sigma_pct in enumerate(SIGMA_PCT):
@@ -154,15 +145,6 @@ def main() -> None:
                     ("before cal", before_enob),
                     ("after cal", after_enob),
                 ]:
-                    raw_rows.append(
-                        {
-                            "sigma_pct": float(sigma_pct),
-                            "trial": trial,
-                            "architecture": arch_name,
-                            "calibration": cal_state,
-                            "enob": float(enob),
-                        }
-                    )
                     grouped.setdefault((arch_name, cal_state, float(sigma_pct)), []).append(
                         float(enob)
                     )
@@ -183,33 +165,6 @@ def main() -> None:
         }
         row.update(summarize(values))
         stat_rows.append(row)
-
-    raw_csv = output_dir / "exp_d16_sar_unit_cap_mismatch_mc_raw.csv"
-    stats_csv = output_dir / "exp_d16_sar_unit_cap_mismatch_mc_stats.csv"
-    write_csv(
-        raw_csv,
-        raw_rows,
-        ["sigma_pct", "trial", "architecture", "calibration", "enob"],
-    )
-    write_csv(
-        stats_csv,
-        stat_rows,
-        [
-            "sigma_pct",
-            "architecture",
-            "calibration",
-            "n_mc",
-            "min",
-            "p10",
-            "q25",
-            "median",
-            "q75",
-            "p90",
-            "max",
-            "mean",
-            "std",
-        ],
-    )
 
     fig, ax = plt.subplots(figsize=(8.2, 4.9), constrained_layout=True)
     styles = [
@@ -285,8 +240,6 @@ def main() -> None:
     plt.close(fig)
 
     print(f"[Save fig] -> [{fig_path}]")
-    print(f"[Save raw CSV] -> [{raw_csv}]")
-    print(f"[Save stats CSV] -> [{stats_csv}]")
 
 
 if __name__ == "__main__":

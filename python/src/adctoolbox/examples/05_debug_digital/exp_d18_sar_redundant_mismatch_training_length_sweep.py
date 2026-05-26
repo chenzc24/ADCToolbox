@@ -21,7 +21,6 @@ to generalize.
 from __future__ import annotations
 
 import contextlib
-import csv
 import io
 from pathlib import Path
 
@@ -180,13 +179,6 @@ def prefixed_summary(prefix: str, row: dict[str, float | int]) -> dict[str, floa
     return {f"{prefix}_{key}": row[key] for key in SUMMARY_KEYS}
 
 
-def write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
-    with path.open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def plot_distribution_envelope(
     ax,
     x: np.ndarray,
@@ -281,12 +273,9 @@ def main() -> None:
     nominal_weights = radix18_integer_weights_16bit()
     sigma = MISMATCH_SIGMA_PCT / 100.0
 
-    raw_rows = []
     stat_rows = []
     grouped_test_enob: dict[int, list[float]] = {int(n): [] for n in TRAIN_LENGTHS}
     grouped_train_enob: dict[int, list[float]] = {int(n): [] for n in TRAIN_LENGTHS}
-    grouped_test_sndr: dict[int, list[float]] = {int(n): [] for n in TRAIN_LENGTHS}
-    grouped_train_sndr: dict[int, list[float]] = {int(n): [] for n in TRAIN_LENGTHS}
 
     for trial in range(N_MC):
         chip_rng = np.random.default_rng(BASE_SEED + trial)
@@ -320,36 +309,12 @@ def main() -> None:
                 test_metrics = spectrum_metrics(calibrated_test_trace)
                 train_enob = float(train_metrics["enob"])
                 test_enob = float(test_metrics["enob"])
-                train_sndr = float(train_metrics["sndr_dbc"])
-                test_sndr = float(test_metrics["sndr_dbc"])
-                status = "ok"
-            except (ValueError, np.linalg.LinAlgError, FloatingPointError) as exc:
+            except (ValueError, np.linalg.LinAlgError, FloatingPointError):
                 train_enob = np.nan
                 test_enob = np.nan
-                train_sndr = np.nan
-                test_sndr = np.nan
-                status = type(exc).__name__
 
             grouped_test_enob[n_train].append(test_enob)
             grouped_train_enob[n_train].append(train_enob)
-            grouped_test_sndr[n_train].append(test_sndr)
-            grouped_train_sndr[n_train].append(train_sndr)
-            raw_rows.append(
-                {
-                    "n_train": n_train,
-                    "train_bin": train_bin,
-                    "trial": trial,
-                    "mismatch_sigma_pct": MISMATCH_SIGMA_PCT,
-                    "train_phase_rad": train_phase,
-                    "test_phase_rad": test_phase,
-                    "train_enob": train_enob,
-                    "test_enob": test_enob,
-                    "train_sndr_db": train_sndr,
-                    "test_sndr_db": test_sndr,
-                    "calibrated_enob": test_enob,
-                    "status": status,
-                }
-            )
 
         print(f"[Progress] trial {trial + 1}/{N_MC}")
 
@@ -365,55 +330,7 @@ def main() -> None:
         row.update(test_enob_summary)
         row.update(prefixed_summary("test_enob", test_enob_summary))
         row.update(prefixed_summary("train_enob", summarize(grouped_train_enob[n_train])))
-        row.update(prefixed_summary("test_sndr", summarize(grouped_test_sndr[n_train])))
-        row.update(prefixed_summary("train_sndr", summarize(grouped_train_sndr[n_train])))
         stat_rows.append(row)
-
-    raw_csv = output_dir / "exp_d18_sar_redundant_mismatch_training_length_sweep_raw.csv"
-    stats_csv = output_dir / "exp_d18_sar_redundant_mismatch_training_length_sweep_stats.csv"
-    write_csv(
-        raw_csv,
-        raw_rows,
-        [
-            "n_train",
-            "train_bin",
-            "trial",
-            "mismatch_sigma_pct",
-            "train_phase_rad",
-            "test_phase_rad",
-            "train_enob",
-            "test_enob",
-            "train_sndr_db",
-            "test_sndr_db",
-            "calibrated_enob",
-            "status",
-        ],
-    )
-    write_csv(
-        stats_csv,
-        stat_rows,
-        [
-            "n_train",
-            "train_bin",
-            "mismatch_sigma_pct",
-            "n_mc",
-            "n_valid",
-            "n_fail",
-            "min",
-            "p10",
-            "q25",
-            "median",
-            "q75",
-            "p90",
-            "max",
-            "mean",
-            "std",
-            *[f"test_enob_{key}" for key in SUMMARY_KEYS],
-            *[f"train_enob_{key}" for key in SUMMARY_KEYS],
-            *[f"test_sndr_{key}" for key in SUMMARY_KEYS],
-            *[f"train_sndr_{key}" for key in SUMMARY_KEYS],
-        ],
-    )
 
     x = np.array([row["n_train"] for row in stat_rows], dtype=float)
     y_max = np.array([row["max"] for row in stat_rows], dtype=float)
@@ -463,8 +380,6 @@ def main() -> None:
 
     print(f"[Save fig] -> [{fig_path}]")
     print(f"[Save overfit fig] -> [{fit_fig_path}]")
-    print(f"[Save raw CSV] -> [{raw_csv}]")
-    print(f"[Save stats CSV] -> [{stats_csv}]")
 
 
 if __name__ == "__main__":

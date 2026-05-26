@@ -43,7 +43,7 @@ Other Common Functions:
 >>> from adctoolbox import analyze_error_by_phase, compute_spectrum
 """
 
-__version__ = '0.8.2'
+__version__ = '0.8.3'
 
 # ======================================================================
 # Public API Registry

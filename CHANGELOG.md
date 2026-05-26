@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-05-26
+
+**Example Output Cleanup Release** — keeps SAR calibration examples focused on
+figures and avoids writing CSV side artifacts.
+
+### Changed
+- SAR digital-debug examples now save PNG figures only; intermediate Monte
+  Carlo and sweep statistics remain in memory for plotting instead of being
+  written to CSV files.
+- Example console messages no longer advertise CSV side outputs.
+
 ## [0.8.2] - 2026-05-25
 
 **SAR Calibration Examples Release** — adds focused SAR mismatch and
