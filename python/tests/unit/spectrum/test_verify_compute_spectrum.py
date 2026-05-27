@@ -375,7 +375,11 @@ def test_verify_compute_spectrum_noise_floor_methods():
     print(f'\n[Verify Noise Floor Methods]')
 
     for method in methods:
-        result = compute_spectrum(sig, nf_method=method, verbose=0)
+        if method == 0:
+            with pytest.warns(RuntimeWarning, match="Noise floor estimation methods differ"):
+                result = compute_spectrum(sig, nf_method=method, verbose=0)
+        else:
+            result = compute_spectrum(sig, nf_method=method, verbose=0)
         print(f'  [Method {method}] NF={result["metrics"]["noise_floor_dbfs"]:.2f} dB')
 
         assert 'noise_floor_dbfs' in result['metrics'], f"Missing noise floor for method {method}"
