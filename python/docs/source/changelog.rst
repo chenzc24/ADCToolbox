@@ -3,8 +3,53 @@ Changelog
 
 For the complete changelog with detailed version history, see the `CHANGELOG.md <https://github.com/Arcadia-1/ADCToolbox/blob/main/CHANGELOG.md>`_ file in the repository.
 
-Version 0.8.1 (Latest)
+Version 0.8.3 (Latest)
 ----------------------
+
+**Release Date**: 2026-05-26
+
+**Example Output Cleanup Release** - keeps SAR calibration examples focused on
+figures and avoids writing CSV side artifacts.
+
+Changed
+~~~~~~~
+
+* SAR digital-debug examples now save PNG figures only; intermediate Monte
+  Carlo and sweep statistics remain in memory for plotting instead of being
+  written to CSV files.
+* Example console messages no longer advertise CSV side outputs.
+
+Version 0.8.2
+-------------
+
+**Release Date**: 2026-05-25
+
+**SAR Calibration Examples Release** - adds focused SAR mismatch and
+foreground-calibration examples, and refines SAR mismatch modeling.
+
+Added
+~~~~~
+
+* New SAR digital-debug examples: ``exp_d15`` through ``exp_d18``.
+* ``sar_apply_cap_mismatch``, a Pelgrom/unit-cap-scaled SAR CDAC mismatch
+  helper with optional explicit capacitor unit counts.
+
+Changed
+~~~~~~~
+
+* SAR examples and bundled skill docs now use the explicit
+  ``sar_apply_cap_mismatch`` name.
+* Spectrum plot annotations stay fixed in axes coordinates after subplot and
+  post-plot y-limit changes.
+
+Fixed
+~~~~~
+
+* ``sar_apply_mismatch`` remains available with its legacy per-weight gaussian
+  perturbation semantics for backward compatibility.
+
+Version 0.8.1
+-------------
 
 **Release Date**: 2026-05-24
 
