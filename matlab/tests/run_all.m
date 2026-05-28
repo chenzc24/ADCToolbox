@@ -1,10 +1,15 @@
 %% Run all unit tests
 
-run_unit_tests_common
+thisDir = fileparts(mfilename('fullpath'));
+matlabRoot = fileparts(thisDir);
+addpath(genpath(fullfile(matlabRoot, 'src')));
+addpath(genpath(thisDir));
+cd(matlabRoot);
 
-run_unit_tests_aout
+run_common
 
-run_unit_tests_dout
+run_aout
 
+run_dout
 
-test_jitter_load
+run_jitter_load

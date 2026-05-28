@@ -1151,6 +1151,7 @@ plotspec(sig_filtered, 100e6, 2^12);
 | `findBin.m` | `findbin.m` | 相干 bin 查找 |
 | `findFin.m` | `findfreq.m` | 频率查找 |
 | `FGCalSine.m` | `wcalsin.m` | 权重校准 |
+| `wcalsine.m` | `wcalsin.m` | 权重校准（旧拼写） |
 | `cap2weight.m` | `cdacwgt.m` | CDAC 权重计算 |
 | `weightScaling.m` | `plotwgt.m` | 权重可视化 |
 | `INLsine.m` | `inlsin.m` | INL/DNL 分析 |
@@ -1159,6 +1160,7 @@ plotspec(sig_filtered, 100e6, 2^12);
 | `tomDecomp.m` | `tomdec.m` | Thompson 分解 |
 | `NTFAnalyzer.m` | `ntfperf.m` | NTF 性能分析 |
 | `overflowChk.m` | `bitchk.m` | 溢出检查 |
+| `ovfchk.m` | `bitchk.m` | 溢出检查（短旧名） |
 | `bitInBand.m` | N/A | 逐位滤波器（已弃用） |
 
 **注意：** 建议在新代码中使用新函数名。旧版函数仅为兼容性保留。
@@ -1209,6 +1211,7 @@ matlab/
 │   │   ├── findBin.m
 │   │   ├── findFin.m
 │   │   ├── FGCalSine.m
+│   │   ├── wcalsine.m
 │   │   ├── cap2weight.m
 │   │   ├── weightScaling.m
 │   │   ├── INLsine.m
@@ -1217,6 +1220,7 @@ matlab/
 │   │   ├── tomDecomp.m
 │   │   ├── NTFAnalyzer.m
 │   │   ├── overflowChk.m
+│   │   ├── ovfchk.m
 │   │   └── bitInBand.m
 │   └── toolbox.ignore
 ├── toolbox/                 # 工具箱打包文件
@@ -1372,7 +1376,7 @@ plot(test_frequencies, enob);
   - 新增基于 LMS 的相位绘图算法
 
 - **v0.12**（2025-11-26）
-  - 函数重命名：`cap2weight`→`cdacwgt`、`findBin`→`findbin`、`sineFit`→`sinefit`、`findFin`→`findfreq`、`tomDecomp`→`tomdec`、`NTFAnalyzer`→`ntfperf`、`overflowChk`→`ovfchk`、`FGCalSine`→`wcalsine`、`bitInBand`→`ifilter`、`INLsine`→`inlsine`
+  - 函数重命名：`cap2weight`→`cdacwgt`、`findBin`→`findbin`、`sineFit`→`sinefit`、`findFin`→`findfreq`、`tomDecomp`→`tomdec`、`NTFAnalyzer`→`ntfperf`、`overflowChk`→`ovfchk`、`FGCalSine`→`wcalsin`、`bitInBand`→`ifilter`、`INLsine`→`inlsine`
   - 为所有重命名函数添加完整文档
   - 为所有重命名函数添加 legacy 兼容包装
   - 新增 `bitActivity` 工具和 `ENoB_bitsweep` 工具

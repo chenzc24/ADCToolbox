@@ -22,12 +22,12 @@ gen_sinewave_nyquist_zones
 gen_sinewave_multirun
 
 fprintf("\n=== Generating OTHER datasets ===\n");
-% generate_jitter_sweep_data
+% gen_jitter_sweep_data
 
 fprintf("\n=== Generating DOUT datasets ===\n");
-generate_pipeline2s_dout
-generate_pipeline3s_dout
-generate_pipeline8s_dout
-generate_sar_dout
+gen_pipeline2s_dout
+gen_pipeline3s_dout
+gen_pipeline8s_dout
+gen_sar_dout
 
 fprintf("\n=== Batch generation complete ===\n");

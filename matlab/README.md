@@ -1151,6 +1151,7 @@ The `legacy/` directory contains older function names for backward compatibility
 | `findBin.m` | `findbin.m` | Coherent bin finder |
 | `findFin.m` | `findfreq.m` | Frequency finder |
 | `FGCalSine.m` | `wcalsin.m` | Weight calibration |
+| `wcalsine.m` | `wcalsin.m` | Weight calibration (old spelling) |
 | `cap2weight.m` | `cdacwgt.m` | CDAC weight calculator |
 | `weightScaling.m` | `plotwgt.m` | Weight visualization |
 | `INLsine.m` | `inlsin.m` | INL/DNL analysis |
@@ -1159,6 +1160,7 @@ The `legacy/` directory contains older function names for backward compatibility
 | `tomDecomp.m` | `tomdec.m` | Thompson decomposition |
 | `NTFAnalyzer.m` | `ntfperf.m` | NTF performance |
 | `overflowChk.m` | `bitchk.m` | Overflow checker |
+| `ovfchk.m` | `bitchk.m` | Overflow checker (short legacy name) |
 | `bitInBand.m` | N/A | Bits-wise filter (deprecated) |
 
 **Note:** It's recommended to use the new function names in new code. Legacy functions are provided for compatibility only.
@@ -1208,6 +1210,7 @@ matlab/
 │   │   ├── findBin.m
 │   │   ├── findFin.m
 │   │   ├── FGCalSine.m
+│   │   ├── wcalsine.m
 │   │   ├── cap2weight.m
 │   │   ├── weightScaling.m
 │   │   ├── INLsine.m
@@ -1216,6 +1219,7 @@ matlab/
 │   │   ├── tomDecomp.m
 │   │   ├── NTFAnalyzer.m
 │   │   ├── overflowChk.m
+│   │   ├── ovfchk.m
 │   │   └── bitInBand.m
 │   └── toolbox.ignore
 ├── toolbox/                 # Packaged toolbox files
@@ -1371,7 +1375,7 @@ Contributions are welcome! Please follow these guidelines:
   - Added LMS-based phase plot algorithm
 
 - **v0.12** (2025-11-26)
-  - Function renaming: `cap2weight`→`cdacwgt`, `findBin`→`findbin`, `sineFit`→`sinefit`, `findFin`→`findfreq`, `tomDecomp`→`tomdec`, `NTFAnalyzer`→`ntfperf`, `overflowChk`→`ovfchk`, `FGCalSine`→`wcalsine`, `bitInBand`→`ifilter`, `INLsine`→`inlsine`
+  - Function renaming: `cap2weight`→`cdacwgt`, `findBin`→`findbin`, `sineFit`→`sinefit`, `findFin`→`findfreq`, `tomDecomp`→`tomdec`, `NTFAnalyzer`→`ntfperf`, `overflowChk`→`ovfchk`, `FGCalSine`→`wcalsin`, `bitInBand`→`ifilter`, `INLsine`→`inlsine`
   - Added comprehensive documentation for renamed functions
   - Added legacy wrappers for all renamed functions
   - Added `bitActivity` tool and `ENoB_bitsweep` tool
