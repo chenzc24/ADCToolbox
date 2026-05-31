@@ -90,6 +90,16 @@ def calibrate_weight_sine(
         multi-dataset input.
     """
 
+    # 0. Frequency-unit guard: freq must be NORMALIZED Fin/Fs in [0, 0.5].
+    # Silent-fail (all-zero weights) used to happen when callers passed Fin in Hz.
+    if freq is not None:
+        _freq_check = np.atleast_1d(np.asarray(freq, dtype=float))
+        if np.any(_freq_check > 0.5):
+            raise ValueError(
+                f"freq must be normalized Fin/Fs (Nyquist range [0, 0.5]); got {freq}. "
+                f"If you have Fin in Hz, pass freq=Fin/Fs instead."
+            )
+
     # 1. Normalize input to unified format
     clean_input = _prepare_input(bits, nominal_weights, verbose)
     bits_stacked = clean_input["bits_stacked"]
