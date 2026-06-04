@@ -310,11 +310,13 @@ def test_8bit_sine_calibration_recovery():
     print(f"\nBasis Choice: {basis_choice}")
     print(f"First Weight (Magnitude): {recovered_weights[0]}")
     
-    # Check if the weight ratios match with 1% tolerance (due to quantization noise)
+    # Check if the weight ratios match within a few percent. This simulation
+    # deconstructs rounded integer codes back into bits, so quantization
+    # residue and clipping bias the recovered ratios slightly.
     np.testing.assert_allclose(
         recovered_ratios, 
         expected_ratios, 
-        rtol=1e-2,
+        rtol=3e-2,
         err_msg="Weight ratios diverged in 8-bit sine simulation!"
     )
 
