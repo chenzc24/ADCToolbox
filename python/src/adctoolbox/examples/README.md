@@ -1,6 +1,6 @@
 # ADCToolbox Examples
 
-This directory contains 59 runnable ADCToolbox examples. They are copied to a
+This directory contains 64 runnable ADCToolbox examples. They are copied to a
 user workspace by:
 
 ```bash
@@ -45,6 +45,7 @@ python 05_debug_digital/exp_d02_cal_weight_sine.py
 | `exp_s10_cartesian_and_polar_plot.py` | Cartesian and polar spectrum views |
 | `exp_s11_polar_memory_effect.py` | Memory-effect visualization in polar spectrum |
 | `exp_s12_polar_coherent_averaging.py` | Coherent averaging with polar plots |
+| `exp_s13_fft_length_mc_sfdr_sndr.py` | FFT-length Monte Carlo sweep for SFDR/SNDR |
 
 ### `03_generate_signals/` - synthetic ADC stimulus
 
@@ -74,6 +75,7 @@ python 05_debug_digital/exp_d02_cal_weight_sine.py
 | `exp_a25_spectra.py` | Multi-case spectrum comparison |
 | `exp_a31_fit_static_nonlin.py` | Static nonlinearity fitting |
 | `exp_a32_inl_from_sine_sweep_length.py` | INL/DNL versus record length |
+| `exp_a33_inl_from_ramp.py` | Ramp-histogram INL/DNL from output codes |
 | `exp_a41_analyze_phase_plane.py` | Phase-plane analysis |
 | `exp_a42_analyze_error_phase_plane.py` | Error phase-plane analysis |
 
@@ -124,3 +126,11 @@ python 05_debug_digital/exp_d02_cal_weight_sine.py
 | File | Topic |
 |---|---|
 | `exp_d00_subsample_aliasing.py` | Subsample-only debug output and aliasing behavior |
+
+### `10_oversampling/` - oversampling and noise shaping
+
+| File | Topic |
+|---|---|
+| `exp_o01_noise_shaping_spectrum.py` | Noise-shaped quantization spectra |
+| `exp_o02_ifilter_band_analysis.py` | In-band extraction with MATLAB-compatible `ifilter` |
+| `exp_o03_ntfperf_perfosr.py` | NTF theory and performance-vs-OSR sweep |

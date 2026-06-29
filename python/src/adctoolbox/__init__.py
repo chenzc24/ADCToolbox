@@ -43,7 +43,7 @@ Other Common Functions:
 >>> from adctoolbox import analyze_error_by_phase, compute_spectrum
 """
 
-__version__ = '0.8.3'
+__version__ = '0.9.0'
 
 # ======================================================================
 # Public API Registry
@@ -132,6 +132,7 @@ from .spectrum import (
     analyze_spectrum,
     analyze_spectrum_polar,
     analyze_spectrum_virtuoso,
+    extract_freq_components,
     quick_sndr,
     sweep_performance_vs_osr,
 )
@@ -139,6 +140,7 @@ from .spectrum import (
 _export('analyze_spectrum', analyze_spectrum)
 _export('analyze_spectrum_polar', analyze_spectrum_polar)
 _export('analyze_spectrum_virtuoso', analyze_spectrum_virtuoso)
+_export('extract_freq_components', extract_freq_components)
 _export('quick_sndr', quick_sndr)
 _export('sweep_performance_vs_osr', sweep_performance_vs_osr)
 
@@ -148,6 +150,7 @@ _export('sweep_performance_vs_osr', sweep_performance_vs_osr)
 
 from .aout import (
     analyze_inl_from_sine,
+    analyze_inl_from_ramp,
     analyze_decomposition_time,
     analyze_decomposition_polar,
     analyze_error_by_value,
@@ -160,6 +163,7 @@ from .aout import (
 )
 
 _export('analyze_inl_from_sine', analyze_inl_from_sine)
+_export('analyze_inl_from_ramp', analyze_inl_from_ramp)
 _export('analyze_decomposition_time', analyze_decomposition_time)
 _export('analyze_decomposition_polar', analyze_decomposition_polar)
 _export('analyze_error_by_value', analyze_error_by_value)
@@ -203,10 +207,16 @@ _export('plot_residual_scatter', plot_residual_scatter)
 # ======================================================================
 
 from .oversampling import (
+    ifilter,
     ntf_analyzer,
+    ntfperf,
+    perfosr,
 )
 
+_export('ifilter', ifilter)
 _export('ntf_analyzer', ntf_analyzer)
+_export('ntfperf', ntfperf)
+_export('perfosr', perfosr)
 
 # ======================================================================
 # Time-Interleave (TI-ADC) Analysis Functions

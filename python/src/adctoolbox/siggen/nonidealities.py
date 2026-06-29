@@ -168,8 +168,22 @@ class ADC_Signal_Generator:
 
         return vout + self.DC
     
-    def apply_ra_gain_error(self, input_signal=None, relative_gain=0.99, msb_bits=4, lsb_bits=12):
-        """Apply interstage gain error (2-stage pipeline ADC). Params: input_signal, relative_gain (default 0.99 = 1% error)."""
+    def apply_ra_gain_error(
+        self,
+        input_signal=None,
+        relative_gain=0.99,
+        msb_bits=4,
+        lsb_bits=12,
+        mode="coarse_path",
+    ):
+        """
+        Apply a two-stage pipeline gain-mismatch model.
+
+        ``mode='coarse_path'`` preserves the legacy behavior: ``relative_gain``
+        scales the reconstructed coarse/MSB path before adding the LSB residue.
+        Use ``mode='residue_path'`` when modeling a residue-amplifier gain error
+        that scales the second-stage reconstructed residue contribution.
+        """
         signal = self._resolve_signal(input_signal)
         signal_ac = signal - self.DC
 
@@ -177,18 +191,39 @@ class ADC_Signal_Generator:
         msb = np.floor(signal_ac * 2**msb_bits) / 2**msb_bits
         lsb = np.floor((signal_ac - msb) * 2**lsb_bits) / 2**lsb_bits
 
-        # Apply gain error to MSB stage, combine with LSB
-        return msb * relative_gain + lsb + self.DC
+        if mode == "coarse_path":
+            return msb * relative_gain + lsb + self.DC
+        if mode == "residue_path":
+            return msb + lsb * relative_gain + self.DC
+        raise ValueError("mode must be 'coarse_path' or 'residue_path'")
     
-    def apply_ra_gain_error_dynamic(self, input_signal=None, relative_gain=1, coeff_3=0.15, msb_bits=4, lsb_bits=12):
-        """Applies dynamic gain error to the interstage residue amplifier in a pipeline ADC. G[n] is non-linearly dependent on the previous residue output magnitude (V_prev_ac^3), modeling HD3 memory effects."""
+    def apply_ra_gain_error_dynamic(
+        self,
+        input_signal=None,
+        relative_gain=1,
+        coeff_3=0.15,
+        msb_bits=4,
+        lsb_bits=12,
+        mode="coarse_path",
+    ):
+        """
+        Apply dynamic two-stage pipeline gain mismatch.
+
+        ``mode='coarse_path'`` preserves the legacy behavior and applies the
+        dynamic gain to the coarse/MSB path. ``mode='residue_path'`` applies the
+        dynamic gain to the reconstructed LSB/residue path, which better matches
+        a residue-amplifier gain-error interpretation.
+        """
+        if mode not in {"coarse_path", "residue_path"}:
+            raise ValueError("mode must be 'coarse_path' or 'residue_path'")
 
         signal = self._resolve_signal(input_signal)
         signal_ac = signal - self.DC
 
         v_output_ac = np.zeros(self.N)  
-        # Memory term initialization: AC component of the previous residue amp output        
-        v_residue_out_prev_ac = 0.0
+        # Preserve the legacy coarse-path state while using residue-path state
+        # for the explicit residue-amplifier mode.
+        v_dynamic_state_prev_ac = 0.0
         
         for n in range(self.N):
             v_in_ac = signal_ac[n]
@@ -197,12 +232,16 @@ class ADC_Signal_Generator:
             v_msb_code = np.floor(v_in_ac * 2**msb_bits) / 2**msb_bits            
             v_lsb_code = np.floor((v_in_ac - v_msb_code) * 2**lsb_bits) / 2**lsb_bits
 
-            G_dynamic = relative_gain + coeff_3 * (v_residue_out_prev_ac ** 2)
-            v_output_ac[n] = v_msb_code * G_dynamic + v_lsb_code
+            G_dynamic = relative_gain + coeff_3 * (v_dynamic_state_prev_ac ** 2)
+            if mode == "coarse_path":
+                gain_path = v_msb_code * G_dynamic
+                v_output_ac[n] = gain_path + v_lsb_code
+                v_dynamic_state_prev_ac = v_output_ac[n]
+            else:
+                gain_path = v_lsb_code * G_dynamic
+                v_output_ac[n] = v_msb_code + gain_path
+                v_dynamic_state_prev_ac = gain_path
             
-            # Update Memory Term
-            v_residue_out_prev_ac = v_output_ac[n]
-
         return v_output_ac + self.DC
     
     def apply_reference_error(self, input_signal=None, settling_tau=2.0, droop_strength=0.01):
@@ -225,7 +264,7 @@ class ADC_Signal_Generator:
         decay = np.exp(-1.0 / settling_tau)
         from scipy.signal import lfilter
         vref_droop = lfilter([1], [1, -decay], current_kick)
-        signal_settled = signal * (1.0 - vref_droop)
+        signal_settled = signal_ac * (1.0 - vref_droop)
 
         return signal_settled + self.DC
 
@@ -285,11 +324,11 @@ class ADC_Signal_Generator:
         glitch = glitch_mask * glitch_amplitude
         return signal + glitch
 
-    def apply_noise_shaping(self, input_signal=None, n_bits=10, quant_range=(0.0, 1.0), order=1):
+    def apply_noise_shaping(self, input_signal=None, n_bits=10, quant_range=(0.0, 1.0), order=1, ntf=None):
         """
-        Apply noise-shaped quantization (1st to 5th order delta-sigma).
+        Apply noise-shaped quantization.
 
-        Noise Transfer Function: NTF(z) = (1 - z^-1)^order
+        Default Noise Transfer Function: NTF(z) = (1 - z^-1)^order
 
         Order characteristics:
         - 1st order: 20 dB/decade roll-off (common in basic delta-sigma)
@@ -302,19 +341,32 @@ class ADC_Signal_Generator:
         then shapes the quantization error spectrum using the NTF filter.
         Pushes quantization noise to higher frequencies, improving in-band SNR.
 
-        Params:
-            input_signal: Input signal (None -> clean sine wave)
-            n_bits: Quantizer resolution (default 10)
-            quant_range: Quantization range (v_min, v_max), e.g., (0, 1) or (-0.5, 0.5)
-            order: Noise shaping order (1, 2, 3, 4, or 5, default 1)
+        Parameters
+        ----------
+        input_signal : array_like, optional
+            Input signal. If omitted, the generator's clean sine wave is used.
+        n_bits : int, default=10
+            Quantizer resolution.
+        quant_range : tuple[float, float], default=(0.0, 1.0)
+            Quantization range ``(v_min, v_max)``.
+        order : int, default=1
+            Noise-shaping order for the default NTF. Must be 1 through 5.
+        ntf : array_like or tuple[array_like, array_like], optional
+            Custom NTF coefficients. Use a numerator sequence for FIR shaping
+            or a ``(num, den)`` tuple for IIR shaping. When provided, ``order``
+            is ignored.
 
-        Returns:
-            Signal with noise-shaped quantization noise added
+        Returns
+        -------
+        ndarray
+            Signal with noise-shaped quantization noise added.
 
-        Raises:
-            ValueError: If order is not in [1, 2, 3, 4, 5]
+        Raises
+        ------
+        ValueError
+            If ``order`` is not in ``[1, 2, 3, 4, 5]``.
         """
-        if order not in [1, 2, 3, 4, 5]:
+        if ntf is None and order not in [1, 2, 3, 4, 5]:
             raise ValueError(f"Noise shaping order must be 1, 2, 3, 4, or 5. Got: {order}")
 
         signal = self._resolve_signal(input_signal)
@@ -323,39 +375,25 @@ class ADC_Signal_Generator:
         signal_quantized = self.apply_quantization_noise(signal, n_bits=n_bits, quant_range=quant_range)
         quant_error_white = signal_quantized - signal
 
-        # Binomial coefficients for (1 - z^-1)^order using Pascal's triangle
-        # Order 1: [1, -1]
-        # Order 2: [1, -2, 1]
-        # Order 3: [1, -3, 3, -1]
-        # Order 4: [1, -4, 6, -4, 1]
-        # Order 5: [1, -5, 10, -10, 5, -1]
-        coeffs = {
-            1: [1, -1],
-            2: [1, -2, 1],
-            3: [1, -3, 3, -1],
-            4: [1, -4, 6, -4, 1],
-            5: [1, -5, 10, -10, 5, -1]
-        }
+        if ntf is None:
+            # Binomial coefficients for (1 - z^-1)^order using Pascal's triangle
+            coeffs = {
+                1: [1, -1],
+                2: [1, -2, 1],
+                3: [1, -3, 3, -1],
+                4: [1, -4, 6, -4, 1],
+                5: [1, -5, 10, -10, 5, -1]
+            }
+            num = coeffs[order]
+            den = [1]
+        elif isinstance(ntf, tuple):
+            num, den = ntf
+        else:
+            num = ntf
+            den = [1]
 
-        coeff = coeffs[order]
-
-        # Apply NTF to shape the quantization error
-        quant_error_shaped = np.zeros(self.N)
-
-        # Initialize first 'order' samples
-        for n in range(min(order, self.N)):
-            quant_error_shaped[n] = sum(
-                coeff[k] * quant_error_white[n - k]
-                for k in range(n + 1)
-            )
-
-        # Apply full filter for remaining samples
-        for n in range(order, self.N):
-            quant_error_shaped[n] = sum(
-                coeff[k] * quant_error_white[n - k]
-                for k in range(len(coeff))
-            )
+        # Zero initial conditions match MATLAB filter(num, den, x) and the
+        # previous FIR implementation.
+        quant_error_shaped = scipy_signal.lfilter(num, den, quant_error_white)
 
         return signal + quant_error_shaped
-
-

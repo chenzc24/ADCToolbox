@@ -7,6 +7,7 @@ A comprehensive MATLAB toolbox for ADC (Analog-to-Digital Converter) testing, ch
 ## Table of Contents
 
 - [Installation](#installation)
+- [Testing](#testing)
 - [Quick Start](#quick-start)
 - [Function Categories](#function-categories)
   - [Spectral Analysis](#spectral-analysis)
@@ -45,6 +46,20 @@ savepath  % Optional: save path for future sessions
 % Run the setup script (from the matlab/ directory)
 run('setupLib.m')
 ```
+
+## Testing
+
+MATLAB tests are optional external validation and require a local MATLAB
+installation. From the repository root:
+
+```bash
+python matlab/tests/run_matlab_tests.py all
+```
+
+Use `--matlab-executable`, `ADCTOOLBOX_MATLAB`, or `MATLAB_EXECUTABLE` when
+MATLAB is not on `PATH`. Missing MATLAB returns exit code `77` unless
+`--missing-ok` is passed. See [MATLAB_TESTS_OVERVIEW.md](MATLAB_TESTS_OVERVIEW.md)
+for suite names and CI guidance.
 
 ## Quick Start
 
@@ -117,6 +132,7 @@ Functions for analyzing ADC linearity performance.
 Functions for analyzing noise-shaping ADCs (Delta-Sigma modulators).
 
 - **[`ntfperf`](#ntfperf)** - Analyze noise transfer function performance and SNR improvement
+- **`noiseshape`** - Generate noise-shaped quantized ADC-like output for oversampling examples and testbenches
 
 ### Shortcut Functions
 
@@ -1360,6 +1376,14 @@ Contributions are welcome! Please follow these guidelines:
 5. Update this README when adding new functions
 
 ## Version History
+
+- **Source update** (2026-06-11)
+  - Added `noiseshape` — a lightweight helper for generated or input-driven
+    noise-shaped quantization signals with default `(1 - z^-1)^order` NTFs or
+    custom NTF coefficients.
+  - Added `tests/common/test_noiseshape.m` and wired it into `run_common.m`.
+  - The latest packaged `.mltbx` remains `ADCToolbox_1v32.mltbx`; install
+    from source to use this new helper until the next packaged toolbox release.
 
 - **v1.32** (Current, 2026-05-29)
   - Updated packaged toolbox file to `ADCToolbox_1v32.mltbx`
