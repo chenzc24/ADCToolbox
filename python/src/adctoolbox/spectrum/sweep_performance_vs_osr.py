@@ -11,6 +11,20 @@ from adctoolbox.fundamentals import fit_sine_4param, fold_frequency_to_nyquist
 from adctoolbox.spectrum._bin_ranges import rfft_inband_bin_count
 
 
+def _one_sided_rms_power_spectrum(data: np.ndarray) -> np.ndarray:
+    """Return a one-sided spectrum whose sum equals time-domain RMS power."""
+    n = len(data)
+    spectrum = np.abs(np.fft.rfft(data)) ** 2 / n**2
+    if n <= 1:
+        return spectrum
+
+    if n % 2 == 0:
+        spectrum[1:-1] *= 2.0
+    else:
+        spectrum[1:] *= 2.0
+    return spectrum
+
+
 def sweep_performance_vs_osr(
     data: np.ndarray,
     osr: np.ndarray | None = None,
@@ -47,7 +61,7 @@ def sweep_performance_vs_osr(
     dict
         'osr': OSR values
         'sndr': SNDR in dB at each OSR
-        'sfdr': SFDR in dB at each OSR
+        'sfdr': Fast residual-spectrum single-bin SFDR estimate in dB at each OSR
         'enob': ENOB in bits at each OSR
     """
     data = np.asarray(data, dtype=float).ravel()
@@ -66,12 +80,12 @@ def sweep_performance_vs_osr(
     freq = fit_result['frequency']
     amplitude = fit_result['amplitude']
 
-    # Step 2: Error spectrum with Hann window
+    # Step 2: Error spectrum with Hann window. Use one-sided RMS-power
+    # scaling so sum(err_spec) matches the residual RMS power.
     err = data - sig_fit
     win = 0.5 * (1 - np.cos(2 * np.pi * np.arange(n) / n))
     err_windowed = err * win / np.sqrt(np.mean(win ** 2))
-    err_spec = np.abs(np.fft.fft(err_windowed)) ** 2 / n ** 2 * 4  # one-sided scaling
-    err_spec = err_spec[:n // 2 + 1]
+    err_spec = _one_sided_rms_power_spectrum(err_windowed)
 
     # Signal power (constant)
     sig_power = amplitude ** 2 / 2
