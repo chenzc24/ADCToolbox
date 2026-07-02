@@ -24,6 +24,11 @@ Workflow Notes
 ``perfosr``
     MATLAB-style four-output wrapper around the Python OSR sweep engine:
     ``osr, sndr, sfdr, enob = perfosr(x, osr=[2, 4, 8, 16])``.
+    The sweep uses a sine-fit residual path for speed: SNDR is fitted-sine
+    RMS power divided by in-band residual RMS power, while SFDR is a fast
+    single-bin residual spur estimate. Use ``analyze_spectrum`` or
+    ``compute_spectrum`` when you need the full integrated-lobe SFDR used by
+    the main spectrum analyzer.
 
 ``ntfperf`` / ``ntf_analyzer``
     Analyze theoretical NTF in-band noise suppression. These functions do not

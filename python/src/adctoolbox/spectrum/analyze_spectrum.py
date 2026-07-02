@@ -45,9 +45,9 @@ def analyze_spectrum(data, fs=1.0, osr=1, max_scale_range=None, win_type='hann',
         max_scale_range: Full scale range for normalization.
             Can be: scalar (direct range), tuple/list [min, max], or None (auto-detect)
         win_type: Window function type ('hann', 'hamming', 'boxcar')
-        side_bin: Number of side bins around fundamental. None uses the
-                  coherent main-lobe width for the selected window; pass a
-                  larger value explicitly for non-coherent captures.
+        side_bin: Number of side bins around fundamental. None triggers
+                  waveform-based auto detection in compute_spectrum; pass an
+                  explicit integer to force a fixed signal-lobe width.
         osr: Oversampling ratio
         max_harmonic: Number of harmonics for THD calculation
         nf_method: Noise floor method (0=auto default, 1=median, 2=trimmed mean, 3=exclude, 4=legacy wide exclude)

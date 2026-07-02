@@ -22,6 +22,10 @@ def perfosr(
 
     This is the Python counterpart of MATLAB ``perfosr``. It returns the same
     four outputs in the same order: ``osr, sndr, sfdr, enob``.
+    ``sndr`` is the fitted-sine RMS power divided by in-band residual RMS
+    power. ``sfdr`` is a fast single-bin estimate from the residual spectrum;
+    use ``compute_spectrum``/``analyze_spectrum`` for full integrated-lobe
+    SFDR.
 
     Parameters mirror the MATLAB name-value arguments where practical.
     ``disp`` controls plotting; when omitted it defaults to ``False`` because
