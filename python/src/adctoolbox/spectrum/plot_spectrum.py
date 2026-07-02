@@ -38,6 +38,13 @@ def _should_label_harmonic(harmonic_power_db, nf_line_level, margin_db=20):
     return harmonic_power_db >= nf_line_level - margin_db
 
 
+def _lobe_bounds(center_bin, side_bin, n_inband):
+    """Return [start, end) bin bounds for a clipped center +/- side_bin lobe."""
+    center_bin = int(center_bin)
+    side_bin = int(max(side_bin, 0))
+    return max(center_bin - side_bin, 0), min(center_bin + side_bin + 1, n_inband)
+
+
 def _refresh_max_spur_annotation(
     ax,
     marker_artist,
@@ -127,6 +134,7 @@ def plot_spectrum(compute_results, show_title=True, show_label=True, plot_harmon
     fundamental_bin = plot_data['fundamental_bin']
     sig_bin_start = plot_data['sig_bin_start']
     sig_bin_end = plot_data['sig_bin_end']
+    side_bin = int(plot_data.get('side_bin', 0))
     spur_bin_idx = plot_data['spur_bin_idx']
     spur_db = spec_db[spur_bin_idx]  # Calculate from power_spectrum_db_plot
     is_coherent = plot_data.get('is_coherent', False)
@@ -137,6 +145,7 @@ def plot_spectrum(compute_results, show_title=True, show_label=True, plot_harmon
     fs = compute_results['fs']
     osr = compute_results['osr']
     n_inband = rfft_inband_bin_count(N, osr)
+    spur_bin_start, spur_bin_end = _lobe_bounds(spur_bin_idx, side_bin, n_inband)
     # Per-bin noise floor on plot (plotspec.m: noise_floor_dbfs - 10*log10(N_fft/2/OSR))
     nf_line_level = metrics['noise_floor_dbfs'] - 10 * np.log10(N / (2 * osr))
 
@@ -201,6 +210,13 @@ def plot_spectrum(compute_results, show_title=True, show_label=True, plot_harmon
                             fontname='Arial', fontsize=12, ha='center', clip_on=True)
 
         # Plot max spurious
+        ax.plot(
+            freq[spur_bin_start:spur_bin_end],
+            spec_db[spur_bin_start:spur_bin_end],
+            'r--',
+            linewidth=0.8,
+            label='_max_spur_lobe',
+        )
         max_spur_marker, = ax.plot(spur_bin_idx / N * fs, spur_db, 'rd', markersize=5)
         max_spur_label = ax.text(
             spur_bin_idx / N * fs,

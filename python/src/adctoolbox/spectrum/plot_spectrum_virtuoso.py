@@ -21,8 +21,10 @@ when the underlying metrics / plot_data layout evolves.
 import numpy as np
 import matplotlib.pyplot as plt
 
+from adctoolbox.spectrum._bin_ranges import rfft_inband_bin_count
 from adctoolbox.spectrum.plot_spectrum import (
     _attach_max_spur_annotation,
+    _lobe_bounds,
     _noise_floor_axis_min,
     _should_label_harmonic,
 )
@@ -66,6 +68,7 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
     spec_db    = plot_data['power_spectrum_db_plot']
     freq       = plot_data['freq']
     fundamental_bin = plot_data['fundamental_bin']
+    side_bin       = int(plot_data.get('side_bin', 0))
     spur_bin_idx    = plot_data['spur_bin_idx']
     spur_db         = spec_db[spur_bin_idx]
     is_coherent     = plot_data.get('is_coherent', False)
@@ -77,6 +80,8 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
     M    = compute_results['M']
     fs   = compute_results['fs']
     osr  = compute_results['osr']
+    n_inband = rfft_inband_bin_count(N, osr)
+    spur_bin_start, spur_bin_end = _lobe_bounds(spur_bin_idx, side_bin, n_inband)
     nf_line_level = metrics['noise_floor_dbfs'] - 10 * np.log10(N / (2 * osr))
 
     if ax is None:
@@ -141,6 +146,14 @@ def plot_spectrum_virtuoso(compute_results, show_title=True, show_label=True,
                     color=_C_HARM, fontsize=11, ha='center', clip_on=True)
 
     # ---- Max-spur diamond + "MaxSpur" text ---------------------------
+    ax.plot(
+        freq[spur_bin_start:spur_bin_end],
+        spec_db[spur_bin_start:spur_bin_end],
+        color=_C_FUND,
+        linestyle='--',
+        linewidth=1.0,
+        label='_max_spur_lobe',
+    )
     max_spur_marker, = ax.plot(spur_bin_idx / N * fs, spur_db,
                                'd', color=_C_FUND, markersize=5)
     max_spur_label = ax.text(spur_bin_idx / N * fs, spur_db + 10, 'MaxSpur',
