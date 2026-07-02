@@ -117,9 +117,13 @@ for ax, trace in zip(axes, traces):
     metrics = analyze_spectrum(trace, fs=fs, create_plot=True, ax=ax)
 ```
 
-When `side_bin=None`, spectrum tools use the selected window's coherent
-main-lobe width. If the capture is intentionally non-coherent, pass a larger
-`side_bin` explicitly; the analyzer does not infer that from the waveform.
+Side-bin defaults differ by entry point. `analyze_spectrum` and
+`compute_spectrum` use waveform-based auto detection when `side_bin=None`.
+`quick_sndr` keeps `side_bin=None` as the coherent-main-lobe fast path; pass
+`side_bin="auto"` when you want its SNDR/ENOB-only path to match the analyzer's
+auto side-bin selection for a dominant non-coherent single tone. Auto detection
+adds an ideal-tone FFT pass, so keep explicit/coherent side bins in hot
+optimization loops when the capture setup allows it.
 
 To set up a coherent capture *upstream* (where you control the stimulus
 frequency), snap `Fin` to an FFT bin first:
@@ -138,7 +142,9 @@ Pick the variant by output:
 - `analyze_spectrum_polar` — phase-aware (I/Q or mixer contexts); same keys
 - `quick_sndr` — **lean** SNDR + ENOB only. Use in optimization loops,
   parameter sweeps, spec gates. No plot, no SFDR/THD/HD/NSD breakdown.
-  Returns just `{sndr_dbc, enob}`.
+  Returns just `{sndr_dbc, enob}`. Its default `side_bin=None` is the
+  coherent fast path; `side_bin="auto"` is available when non-coherent
+  single-tone accuracy matters more than speed.
 - `compute_spectrum` (from `adctoolbox.spectrum`) — both metrics and plot-ready
   data (access via `result["plot_data"]["freq"]` etc.)
 - `find_coherent_frequency` — pre-step at *signal generation* time, not analysis
@@ -151,6 +157,9 @@ For the lean path:
 from adctoolbox import quick_sndr
 m = quick_sndr(aout, fs=fs)
 print(m["sndr_dbc"], m["enob"])
+# For a dominant non-coherent single tone, opt into analyzer-style side-bin
+# detection. This is slower than the coherent default.
+m_auto = quick_sndr(aout, fs=fs, side_bin="auto")
 # Override the window when the upstream stimulus is coherent and
 # you want a clean rectangular FFT instead of Hann:
 m = quick_sndr(aout, fs=fs, win_type='rectangular')

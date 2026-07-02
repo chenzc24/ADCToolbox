@@ -119,6 +119,9 @@ def test_skill_md_section_3_spectrum_workflow(synth_capture):
     m = quick_sndr(aout, fs=fs)
     assert set(m.keys()) == {"sndr_dbc", "enob"}
     assert m["enob"] > 0
+    m_auto = quick_sndr(aout, fs=fs, side_bin="auto")
+    assert set(m_auto.keys()) == {"sndr_dbc", "enob"}
+    assert m_auto["enob"] > 0
     m_rect = quick_sndr(aout, fs=fs, win_type='rectangular')
     assert set(m_rect.keys()) == {"sndr_dbc", "enob"}
 
