@@ -50,8 +50,9 @@ function [osr, sndr, sfdr, enob] = perfosr(sig, varargin)
 %     perfosr(sig, 'logscale', false);
 %
 %   Notes:
-%     - Signal power is determined by ideal sine fit (constant across OSR)
-%     - Noise/spur power only includes bins within the current OSR bandwidth
+%     - Signal power is determined by ideal sine fit RMS power (constant across OSR)
+%     - Noise power is in-band residual RMS power
+%     - SFDR uses a fast single-bin residual spur estimate
 %     - SNDR slope is estimated and zones are indicated by different slopes
 %     - Signal frequency and harmonics are marked on the plot
 %
@@ -97,11 +98,18 @@ function [osr, sndr, sfdr, enob] = perfosr(sig, varargin)
     % Step 2: Calculate error (residual)
     err = sig - sig_fit;
 
-    % Step 3: Apply Hann window and compute FFT of error
+    % Step 3: Apply Hann window and compute one-sided RMS-power FFT of error
     win = hannwin(N);
     err_windowed = err .* win' / sqrt(mean(win.^2));
-    err_spec = abs(fft(err_windowed)).^2 / N^2 * 4;  % Power spectrum (one-sided scaling)
+    err_spec = abs(fft(err_windowed)).^2 / N^2;
     err_spec = err_spec(1:floor(N/2)+1);  % Keep positive frequencies
+    if N > 1
+        if mod(N, 2) == 0
+            err_spec(2:end-1) = 2 * err_spec(2:end-1);
+        else
+            err_spec(2:end) = 2 * err_spec(2:end);
+        end
+    end
 
     % Signal power (constant, determined by ideal sine fit)
     sig_power = mag^2 / 2;  % RMS power of sine wave
@@ -122,7 +130,7 @@ function [osr, sndr, sfdr, enob] = perfosr(sig, varargin)
 
     for ii = 1:n_osr
         % Number of bins in band for this OSR
-        n_inband = floor(N / 2 / osr_sorted(ii));
+        n_inband = floor(N / (2 * osr_sorted(ii))) + 1;
         n_inband = max(1, min(n_inband, length(err_spec)));
 
         % Incremental calculation: only process new bins since last OSR

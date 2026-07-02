@@ -528,8 +528,10 @@ ENoB = (SNDR-1.76)/6.02;
 
 % Mark maximum spur on plot
 if(dispPlot && label && show_p)
-    plot((sbin-1)/N_fft*Fs,10*log10(spur+10^(-20)),'rd');
-    text((sbin-1)/N_fft*Fs,10*log10(spur+10^(-20))+5,'MaxSpur','fontname','Arial','fontsize',10,'horizontalalignment','center');
+    plot(freq(spur_start:spur_end),10*log10(spec_inband(spur_start:spur_end)+10^(-20)),'r--','linewidth',0.5);
+    spur_marker_db = 10*log10(spec_inband(sbin)+10^(-20));
+    plot((sbin-1)/N_fft*Fs,spur_marker_db,'rd');
+    text((sbin-1)/N_fft*Fs,spur_marker_db+5,'MaxSpur','fontname','Arial','fontsize',10,'horizontalalignment','center');
 end
 
 % Calculate noise floor using all methods and select per NFMethod
@@ -556,7 +558,9 @@ noi_mean = mean(spec_sort(max(1,floor(n_inband*0.05)):max(1,floor(n_inband*0.95)
 spec_noise = spec;
 for i = 2:nTHD
     b = alias(round((bin_r-1)*i),N_fft) +1;
-    spec_noise(b) = 0;
+    h_start = max(b-sideBin,1);
+    h_end = min(b+sideBin,inbandEnd);
+    spec_noise(h_start:h_end) = 0;
 end
 noi_exclude = sum(spec_noise(1:inbandEnd));
 

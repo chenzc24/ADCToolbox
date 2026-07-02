@@ -13,9 +13,9 @@ import numpy as np
 from scipy.signal import windows
 
 
-# Default side_bin values for each window's coherent main lobe.
-# Non-coherent captures must pass a larger side_bin explicitly; inferring
-# coherence from a distorted or quantized spectrum is too brittle.
+# Coherent-main-lobe side_bin values. The lean quick_sndr default uses these
+# directly; compute_spectrum side_bin=None uses auto detection with these as
+# minimum widths.
 _SIDE_BIN_DEFAULTS = {
     'rectangular': {
         'enbw': 1.00,
@@ -120,7 +120,7 @@ def _get_default_side_bin(win_type: str, is_coherent: bool | None = None) -> int
         Window type name
     is_coherent : bool, optional
         Ignored. Kept only for internal backward compatibility with older
-        callers. Non-coherent captures must pass ``side_bin`` explicitly.
+        callers.
 
     Returns
     -------

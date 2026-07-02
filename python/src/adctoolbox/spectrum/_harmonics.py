@@ -56,7 +56,8 @@ def _calculate_harmonic_power(
     fundamental_bin: int,
     harmonic_bins: np.ndarray,
     side_bin: int,
-    max_harmonic: int
+    max_harmonic: int,
+    n_inband: int | None = None,
 ) -> tuple[float, np.ndarray, list]:
     """Calculate harmonic power (THD and individual harmonics) from spectrum.
 
@@ -77,6 +78,9 @@ def _calculate_harmonic_power(
         Side bins to include around each harmonic
     max_harmonic : int
         Maximum harmonic number for THD calculation (e.g., 5 means THD includes harmonics 2-5)
+    n_inband : int, optional
+        Exclusive upper bin for harmonic power integration. When provided, harmonic lobes
+        are clipped to the analysis band used for SNR/SNDR.
 
     Returns
     -------
@@ -96,9 +100,10 @@ def _calculate_harmonic_power(
     2. Unified summation: sum power from the deduplicated bin list
 
     Collision detection:
-    - Fundamental collision: abs(h_bin - fundamental_bin) <= 2*side_bin
+    - Fundamental overlap: bins already covered by the fundamental lobe are excluded;
+      any remaining harmonic-lobe annulus is still counted.
     - DC collision: h_bin <= side_bin
-    - These harmonics are excluded from THD calculation
+    - Harmonics fully hidden by DC/fundamental exclusion are skipped
 
     Power extraction:
     - Individual harmonic powers are extracted before deduplication
@@ -109,37 +114,46 @@ def _calculate_harmonic_power(
     thd_bins_to_sum = set()  # Bin indices for THD calculation (auto-deduplicates)
     collided_harmonics = []
     harmonic_powers = np.full(max_harmonic - 1, 1e-15)  # Powers for harmonics 2 to max_harmonic
+    max_bin = len(power_spectrum) if n_inband is None else min(int(n_inband), len(power_spectrum))
 
     for harmonic_index in range(max_harmonic - 1):
         harmonic_order = harmonic_index + 2  # Harmonic number (HD2 = 2, HD3 = 3, etc.)
-        harmonic_bin_center = harmonic_bins[harmonic_index]  # Already int from _locate_harmonic_bins
+        harmonic_bin_center = int(harmonic_bins[harmonic_index])  # Already int from _locate_harmonic_bins
 
-        # Collision detection: fundamental or DC
-        collision_threshold = 2 * side_bin
-        is_fundamental_collision = abs(harmonic_bin_center - fundamental_bin) <= collision_threshold
+        # Collision detection: DC or fully hidden by the fundamental lobe
         is_dc_collision = harmonic_bin_center <= side_bin
 
-        if is_fundamental_collision:
-            collided_harmonics.append(harmonic_order)
-            continue
         if is_dc_collision:
             continue
 
         # Determine bin range for this harmonic
         harmonic_start_index = max(harmonic_bin_center - side_bin, 0)
-        harmonic_end_index = min(harmonic_bin_center + side_bin + 1, len(power_spectrum))
+        harmonic_end_index = min(harmonic_bin_center + side_bin + 1, max_bin)
+        if harmonic_start_index >= harmonic_end_index:
+            continue
+
+        harmonic_lobe_bins = set(range(harmonic_start_index, harmonic_end_index))
+        dc_end = min(side_bin + 1, max_bin)
+        harmonic_lobe_bins.difference_update(range(0, dc_end))
+        fundamental_start = max(fundamental_bin - side_bin, 0)
+        fundamental_end = min(fundamental_bin + side_bin + 1, max_bin)
+        harmonic_lobe_bins.difference_update(range(fundamental_start, fundamental_end))
+        if not harmonic_lobe_bins:
+            if abs(harmonic_bin_center - fundamental_bin) <= 2 * side_bin:
+                collided_harmonics.append(harmonic_order)
+            continue
 
         # Extract individual harmonic power (independent of deduplication)
-        current_harmonic_power = np.sum(power_spectrum[harmonic_start_index:harmonic_end_index])
+        current_harmonic_power = np.sum(power_spectrum[list(harmonic_lobe_bins)])
         harmonic_powers[harmonic_index] = max(current_harmonic_power, 1e-15)
 
         # Add bin indices to THD set (automatic deduplication for overlapping ranges)
-        thd_bins_to_sum.update(range(harmonic_start_index, harmonic_end_index))
+        thd_bins_to_sum.update(harmonic_lobe_bins)
 
     # --- Stage 2: Unified summation ---
     if thd_bins_to_sum:
         # Use fancy indexing to sum power from deduplicated bins
-        thd_power = np.sum(power_spectrum[list(thd_bins_to_sum)])
+        thd_power = float(np.sum(power_spectrum[list(thd_bins_to_sum)]))
     else:
         thd_power = 1e-15
 
