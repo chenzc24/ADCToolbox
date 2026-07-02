@@ -10,6 +10,8 @@ run_common
 
 run_aout
 
+run_oversampling
+
 run_dout
 
 jitterConfig = fullfile('test_dataset', 'jitter_sweep', 'config.csv');

@@ -18,6 +18,7 @@ SUITES = {
     "common": "run_common",
     "aout": "run_aout",
     "dout": "run_dout",
+    "oversampling": "run_oversampling",
     "jitter": "run_jitter_load",
 }
 
