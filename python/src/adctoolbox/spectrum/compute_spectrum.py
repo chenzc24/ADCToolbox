@@ -208,6 +208,7 @@ def compute_spectrum(
             "fundamental_bin_fractional": fundamental_bin_fractional,
             "sig_bin_start": sig_bin_start,
             "sig_bin_end": sig_bin_end,
+            "side_bin": side_bin,
             "spur_bin_idx": spur_bin_idx,
             "is_coherent": coherent_averaging,
             "harmonic_bins": harmonic_bins,

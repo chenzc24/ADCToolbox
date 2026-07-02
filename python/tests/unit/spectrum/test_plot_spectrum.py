@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from adctoolbox.spectrum.compute_spectrum import compute_spectrum
 from adctoolbox.spectrum.plot_spectrum import (
+    _lobe_bounds,
     _noise_floor_axis_min,
     _should_label_harmonic,
     plot_spectrum,
@@ -30,6 +31,10 @@ def _max_spur_marker(ax):
     return next(line for line in ax.lines if line.get_marker() == 'd')
 
 
+def _max_spur_lobe_line(ax):
+    return next(line for line in ax.lines if line.get_label() == '_max_spur_lobe')
+
+
 def _thermal_noise_demo_result(noise_rms=0.0):
     n_fft = 2**13
     fs = 100e6
@@ -51,6 +56,17 @@ def _strong_spur_result():
         + 0.42 * np.sin(2 * np.pi * 2501 * n / n_fft)
     )
     return compute_spectrum(signal, fs=fs, win_type='rectangular', side_bin=0)
+
+
+def _hann_spur_result(side_bin=1):
+    n_fft = 2**13
+    fs = 1.0
+    n = np.arange(n_fft)
+    signal = (
+        0.49 * np.sin(2 * np.pi * 997 * n / n_fft)
+        + 0.49 * 10 ** (-60 / 20) * np.sin(2 * np.pi * 2501 * n / n_fft)
+    )
+    return compute_spectrum(signal, fs=fs, win_type='hann', side_bin=side_bin)
 
 
 def _assert_spectrum_axes(ax, result, *, show_label=True, expected_title='Power Spectrum'):
@@ -131,6 +147,20 @@ def test_plot_spectrum_uses_sndr_fallback_ylim_when_noise_metrics_are_nan():
     assert ymax == 0
 
 
+def test_compute_spectrum_plot_data_preserves_true_side_bin_near_dc():
+    n_fft = 1024
+    n = np.arange(n_fft)
+    signal = np.sin(2 * np.pi * n / n_fft)
+
+    result = compute_spectrum(signal, fs=1.0, win_type='hann', side_bin=3)
+    plot_data = result['plot_data']
+    clipped_side_bin = (plot_data['sig_bin_end'] - plot_data['sig_bin_start'] - 1) // 2
+
+    assert plot_data['fundamental_bin'] == 1
+    assert plot_data['side_bin'] == 3
+    assert clipped_side_bin < plot_data['side_bin']
+
+
 def test_plot_spectrum_labels_stay_fixed_when_ylim_changes():
     n_fft = 2**12
     fs = 100e6
@@ -156,6 +186,30 @@ def test_plot_spectrum_labels_stay_fixed_when_ylim_changes():
     plt.close(fig)
 
     np.testing.assert_allclose(after, before, atol=0.5)
+
+
+@pytest.mark.parametrize("plotter", [plot_spectrum, plot_spectrum_virtuoso])
+def test_max_spur_marker_is_center_bin_and_lobe_line_shows_integrated_bins(plotter):
+    result = _hann_spur_result(side_bin=1)
+    plot_data = result['plot_data']
+    spec_db = plot_data['power_spectrum_db_plot']
+    freq = plot_data['freq']
+    spur_bin_idx = plot_data['spur_bin_idx']
+    start, end = _lobe_bounds(spur_bin_idx, plot_data['side_bin'], len(spec_db))
+
+    fig, ax = plt.subplots()
+    plotter(result, show_title=False, show_label=True, ax=ax)
+
+    marker_y = float(np.ravel(_max_spur_marker(ax).get_ydata())[0])
+    lobe_line = _max_spur_lobe_line(ax)
+    integrated_spur_db = result['metrics']['sig_pwr_dbfs'] - result['metrics']['sfdr_dbc']
+
+    assert marker_y == pytest.approx(spec_db[spur_bin_idx])
+    assert abs(marker_y - integrated_spur_db) > 1.0
+    np.testing.assert_allclose(lobe_line.get_xdata(), freq[start:end])
+    np.testing.assert_allclose(lobe_line.get_ydata(), spec_db[start:end])
+    assert start <= spur_bin_idx < end
+    plt.close(fig)
 
 
 @pytest.mark.parametrize("plotter", [plot_spectrum, plot_spectrum_virtuoso])
