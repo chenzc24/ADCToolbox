@@ -95,6 +95,7 @@ def _post_process(
         'refined_frequency': freq_array[0] if is_single else freq_array,
         'snr_db': snr_list[0] if is_single else snr_list,
         'enob': enob_list[0] if is_single else enob_list,
+        'scale_convention': 'solver_unit_sine',
     }
 
 def _reconstruct_sine_k(

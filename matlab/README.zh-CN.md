@@ -101,6 +101,7 @@ plotphase(sig);
 用于 ADC 比特权重校准和误差校正的函数。
 
 - **[`wcalsin`](#wcalsin)** - 使用正弦波输入进行权重校准（支持单组或多组数据）
+- **`wcalrescale`** - 将 `wcalsin` 的 solver-unit-sine 输出映射到 ADC/code 参考尺度，用于 dBFS 或 NSD 解释
 - **[`cdacwgt`](#cdacwgt)** - 计算多段电容 DAC 的比特权重
 - **[`plotwgt`](#plotwgt)** - 可视化比特权重并标注 radix，计算最优缩放因子和有效分辨率
 - **[`plotres`](#plotres)** - 绘制 ADC 比特矩阵的部分和残差散点图
@@ -450,6 +451,7 @@ fin_actual = b * fs / n;  % = 1006.8 Hz
 - 可指定阶数的谐波排除
 - 自动极性校正
 - SNR 检查，校准质量差（< 20 dB）时发出警告
+- 输出波形默认是 solver-unit-sine 尺度；解释物理 dBFS、noise floor 或 NSD 前应使用 `wcalrescale`
 
 **算法：**
 1. 若频率未知：使用多种比特组合进行粗搜索，然后精细迭代搜索
@@ -476,6 +478,12 @@ fin_actual = b * fs / n;  % = 1006.8 Hz
 
 % 已知频率并排除 3 次谐波
 [wgt, off, cal, ideal, err, freq] = wcalsin(bits, 'freq', 0.123, 'order', 3);
+
+% 接 plotspec 解释 dBFS/NSD 前，先映射到标称 ADC/code 尺度
+% nominalWeights 必须与 maxSignal 使用同一套 ADC/code 单位约定。
+[wgt_adc, off_adc, cal_adc, ideal_adc, err_adc] = ...
+    wcalrescale(wgt, off, cal, ideal, err, 'TargetWeights', nominalWeights);
+plotspec(cal_adc, 'maxSignal', 1);
 
 % 多组数据联合校准
 [wgt, off] = wcalsin({bits1, bits2}, 'freq', [0.1, 0.2], 'order', 5);

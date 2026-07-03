@@ -116,6 +116,7 @@ Functions for extracting signal parameters and frequency information.
 Functions for calibrating ADC bit weights and correcting errors.
 
 - **[`wcalsin`](#wcalsin)** - Weight calibration using sine wave input (single or multi-dataset)
+- **`wcalrescale`** - Rescale `wcalsin` solver-unit-sine outputs to an ADC/code reference before dBFS or NSD interpretation
 - **[`cdacwgt`](#cdacwgt)** - Calculate bit weights for multi-segment capacitive DAC
 - **[`plotwgt`](#plotwgt)** - Visualize bit weights with radix annotations, compute optimal scaling and effective resolution
 - **[`plotres`](#plotres)** - Plot partial-sum residuals of an ADC bit matrix as scatter plots
@@ -466,6 +467,8 @@ fin_actual = b * fs / n;  % = 1006.8 Hz
 - Harmonic exclusion up to specified order
 - Automatic polarity enforcement
 - SNR check with warning when calibration quality is poor (< 20 dB)
+- Output waveforms are solver-unit-sine scaled; use `wcalrescale` before
+  physical dBFS, noise-floor, or NSD interpretation
 
 **Algorithm:**
 1. If frequency unknown: coarse search using multiple bit combinations, then fine iterative search
@@ -492,6 +495,12 @@ fin_actual = b * fs / n;  % = 1006.8 Hz
 
 % Known frequency with 3rd harmonic exclusion
 [wgt, off, cal, ideal, err, freq] = wcalsin(bits, 'freq', 0.123, 'order', 3);
+
+% Map calibration output to a nominal ADC/code convention before plotspec.
+% nominalWeights must use the same ADC/code convention as maxSignal.
+[wgt_adc, off_adc, cal_adc, ideal_adc, err_adc] = ...
+    wcalrescale(wgt, off, cal, ideal, err, 'TargetWeights', nominalWeights);
+plotspec(cal_adc, 'maxSignal', 1);
 
 % Multi-dataset joint calibration
 [wgt, off] = wcalsin({bits1, bits2}, 'freq', [0.1, 0.2], 'order', 5);

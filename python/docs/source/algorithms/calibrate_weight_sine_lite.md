@@ -39,7 +39,14 @@ weights = calibrate_weight_sine_lite(bits, freq=0.001587)
   - Normalized by sinewave magnitude
   - Largest weight = 1.0
 
-To get actual ADC weights:
+The returned weights are in solver-unit-sine scale: the fitted fundamental
+sine magnitude is fixed to one for identifiability. To compare physical dBFS,
+noise floor, or NSD after reconstructing a waveform, apply an explicit scale
+that matches the ADC code or voltage convention and pass the same full-scale
+reference to the spectrum analyzer.
+
+For this toy integer-code example, one explicit scale is the largest ideal
+weight:
 ```python
 true_weights = 2.0 ** np.arange(bit_width - 1, -1, -1)
 recovered_weights_scaled = weights * np.max(true_weights)

@@ -1,7 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
-from adctoolbox import freq_to_bin, calibrate_weight_sine, analyze_spectrum
+from adctoolbox import (
+    analyze_spectrum,
+    calibrate_weight_sine,
+    freq_to_bin,
+    scale_calibration_output,
+)
 
 output_dir = Path(__file__).parent / "output"
 output_dir.mkdir(exist_ok=True)
@@ -49,16 +54,33 @@ for idx, (caps_nominal, mismatch_factor, title) in enumerate(test_cases):
 
     # Calibration
     cal_results = calibrate_weight_sine(digital_output, freq=bin / n_samples)
-    analog_after = cal_results["calibrated_signal"][0]
-    weights_calibrated = cal_results["weight"]
+    cal_results_adc_scale = scale_calibration_output(
+        cal_results,
+        target_weights=weights_nominal,
+    )
+    analog_after = cal_results_adc_scale["calibrated_signal"][0]
+    weights_calibrated = cal_results_adc_scale["weight"]
+    max_scale_range = (0, np.sum(weights_nominal))
 
     # Spectrum comparison
     plt.sca(axes[0, idx])
-    result_before = analyze_spectrum(analog_before, max_harmonic=5, show_label=True, ax=axes[0, idx])
+    result_before = analyze_spectrum(
+        analog_before,
+        max_harmonic=5,
+        max_scale_range=max_scale_range,
+        show_label=True,
+        ax=axes[0, idx],
+    )
     axes[0, idx].set_title(f'{title}\nBefore Calibration', fontsize=11, fontweight='bold')
 
     plt.sca(axes[1, idx])
-    result_after = analyze_spectrum(analog_after, max_harmonic=5, show_label=True, ax=axes[1, idx])
+    result_after = analyze_spectrum(
+        analog_after,
+        max_harmonic=5,
+        max_scale_range=max_scale_range,
+        show_label=True,
+        ax=axes[1, idx],
+    )
     axes[1, idx].set_title(f'After Calibration', fontsize=11, fontweight='bold')
 
     # Normalize weights for error analysis

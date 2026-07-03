@@ -47,11 +47,13 @@ function [weight,offset,postcal,ideal,err,freqcal] = wcalsin(bits,varargin)
 %       Vector [1×M]
 %     offset - Calibrated DC offset, normalized by sinewave magnitude
 %       Scalar
-%     postcal - Signal after weight calibration
+%     postcal - Signal after weight calibration, in solver-unit-sine scale
 %       Vector [1×N] or Cell array {[1×N1], [1×N2], ...}
-%     ideal - Best-fit sinewave with specified orders of harmonics
+%     ideal - Best-fit sinewave with specified orders of harmonics, in
+%       solver-unit-sine scale
 %       Vector [1×N] or Cell array {[1×N1], [1×N2], ...}
-%     err - Residual error after calibration (excluding harmonics)
+%     err - Residual error after calibration (excluding harmonics), in
+%       solver-unit-sine scale
 %       Vector [1×N] or Cell array {[1×N1], [1×N2], ...}
 %     freqcal - Fine-tuned normalized frequency
 %       Scalar or Vector (for cell array input)
@@ -77,8 +79,11 @@ function [weight,offset,postcal,ideal,err,freqcal] = wcalsin(bits,varargin)
 %     - Rank-deficient bit matrices are handled by merging correlated columns
 %       using nomWeight to determine appropriate scaling
 %     - Polarity is automatically enforced to be positive (sum(weight) > 0)
+%     - The least-squares solve fixes the fitted fundamental sine magnitude
+%       to one for identifiability. Use wcalrescale before interpreting
+%       postcal dBFS, noise floor, or NSD against a physical ADC full-scale.
 %
-%   See also: inlsin, findfreq, alias
+%   See also: wcalrescale, inlsin, findfreq, alias
     % ==========================
     % Multi-dataset (cell) path
     % ==========================
