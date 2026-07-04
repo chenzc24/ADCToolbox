@@ -136,15 +136,20 @@ def test_skill_md_section_3_spectrum_workflow(synth_capture):
 # ----------------------------------------------------------------------
 
 def test_skill_md_section_4_calibration(synth_capture):
-    from adctoolbox import calibrate_weight_sine
+    from adctoolbox import calibrate_weight_sine, scale_calibration_output
     from adctoolbox.calibration import calibrate_weight_sine_lite
 
     bits = synth_capture["bits"]
     freq_norm = synth_capture["freq_norm"]
+    nominal_weights = 2.0 ** np.arange(bits.shape[1] - 1, -1, -1)
 
     full = calibrate_weight_sine(bits, freq=freq_norm)
     assert "weight" in full
+    assert full["scale_convention"] == "solver_unit_sine"
     assert isinstance(full["weight"], np.ndarray)
+    full_adc = scale_calibration_output(full, target_weights=nominal_weights)
+    assert full_adc["scale_convention"] == "adc_reference_scale"
+    assert np.isclose(np.sum(full_adc["weight"]), np.sum(nominal_weights))
 
     fast = calibrate_weight_sine_lite(bits, freq_norm)
     assert isinstance(fast, np.ndarray)

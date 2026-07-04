@@ -17,6 +17,7 @@ from adctoolbox import (
     find_coherent_frequency,
     fit_sine_4param,
     calibrate_weight_sine,
+    scale_calibration_output,
 )
 ```
 
@@ -34,7 +35,8 @@ from adctoolbox.spectrum import compute_spectrum
 - Dynamic FFT metrics:
   `analyze_spectrum`, `analyze_spectrum_polar`, `compute_spectrum`
 - Digital calibration:
-  `calibrate_weight_sine`, `calibrate_weight_sine_lite`
+  `calibrate_weight_sine`, `calibrate_weight_sine_lite`,
+  `scale_calibration_output`
 - Synthetic signals:
   `ADC_Signal_Generator`
 - Pre-flight checks / coherent setup:
@@ -157,8 +159,14 @@ adctoolbox-install-skill --dev --editable --force --dest ~/.codex/skills
   `plot_data` (the latter has `freq`, `power_spectrum_db_plot`,
   `complex_spectrum`, `fundamental_bin`, …).
 - `calibrate_weight_sine(...)` returns a dict: `weight`, `offset`,
-  `calibrated_signal`, `ideal`, `error`, `refined_frequency`.
+  `calibrated_signal`, `ideal`, `error`, `refined_frequency`,
+  `scale_convention`.
   `calibrate_weight_sine_lite(...)` returns just the weights ndarray.
+  Calibration waveform fields are solver-unit-sine scaled by default; use
+  `scale_calibration_output(...)` before comparing calibrated dBFS, noise
+  floor, or NSD against a physical ADC/code full-scale. `max_scale_range=None`
+  is self-referenced; explicit ranges are required for physical dBFS and can
+  warn when data exceeds the declared full-scale.
 - `analyze_bit_activity(bits)` returns an ndarray (% of 1's per bit).
 - `analyze_overflow(bits, weight)` returns a 4-tuple of ndarrays
   `(range_min, range_max, ovf_pct_zero, ovf_pct_one)`. The second argument

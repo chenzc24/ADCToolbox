@@ -91,6 +91,13 @@ def calibrate_weight_sine(
         or merged rank-deficient bit columns. Array-valued entries are
         returned as a single array for single-dataset input or as a list of
         arrays for multi-dataset input.
+
+        The calibrated waveform fields use ``scale_convention ==
+        "solver_unit_sine"``: the least-squares solve fixes the fitted
+        fundamental sine magnitude to one. Before interpreting dBFS or NSD
+        against a physical ADC full-scale, rescale the result with
+        ``scale_calibration_output`` and pass an explicit full-scale range to
+        the spectrum analyzer.
     """
 
     # 0. Frequency-unit guard: freq must be NORMALIZED Fin/Fs in [0, 0.5].

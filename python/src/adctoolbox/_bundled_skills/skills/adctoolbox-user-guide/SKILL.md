@@ -91,6 +91,12 @@ absolute weights as `log2(sum(abs_w_sig) / min(abs_w_sig) + 1)`. It estimates
 the theoretical span of the supplied SAR/DAC weight list; it is not a
 missing-code, DNL/INL, or SAR-reachability check.
 
+`calibrate_weight_sine(...)` returns solver-unit-sine scaled waveform fields by
+default (`scale_convention == "solver_unit_sine"`). Use
+`scale_calibration_output(...)` before interpreting calibrated
+`sig_pwr_dbfs`, `noise_floor_dbfs`, or `nsd_dbfs_hz` against a known ADC/code
+full-scale.
+
 When docs conflict, trust the current `__init__.py` exports + the
 `tests/integration/test_user_guide_skill_examples.py` smoke tests.
 
@@ -168,7 +174,7 @@ m = quick_sndr(aout, fs=fs, win_type='rectangular')
 ## 4. Basic workflow — digital calibration
 
 ```python
-from adctoolbox import calibrate_weight_sine
+from adctoolbox import calibrate_weight_sine, scale_calibration_output
 from adctoolbox.calibration import calibrate_weight_sine_lite
 from adctoolbox.fundamentals import validate_dout_data
 
@@ -179,12 +185,24 @@ result = calibrate_weight_sine(bits, freq=freq_norm)
 weights = result["weight"]
 calibrated = result["calibrated_signal"]
 
+# Map solver-unit-sine calibration output back to an ADC/code convention
+# before interpreting dBFS, noise floor, or NSD.
+# Use the same nominal ADC/code weights that define the desired full scale.
+result_adc = scale_calibration_output(result, target_weights=nominal_weights)
+calibrated_adc = result_adc["calibrated_signal"]
+
 weights_fast = calibrate_weight_sine_lite(bits, freq_norm)   # ndarray, no dict
 ```
 
 `calibrate_weight_sine` returns a dict with `weight`, `offset`,
 `calibrated_signal`, `ideal`, `error`, `refined_frequency`. The `_lite` variant
 returns just the weights ndarray and is positional (no `freq=` kw).
+`calibrated_signal` is in solver-unit-sine scale unless explicitly rescaled.
+Ratio metrics are scale-invariant; `sig_pwr_dbfs`, `noise_floor_dbfs`, and
+`nsd_dbfs_hz` are not.
+`max_scale_range=None` is self-referenced, so calibrated dBFS can look tidy
+while still having no physical ADC full-scale meaning. Supply an explicit
+range when interpreting calibrated spectra against an ADC/code full-scale.
 If `freq` is omitted, `calibrate_weight_sine` estimates the tone frequency and
 then fine-searches it against the calibration residual. If the coherent
 training frequency is already known, pass `freq=k/N` to keep that exact

@@ -10,6 +10,11 @@ def calibrate_weight_sine_lite(
     """
     Minimal calibration at known frequency. Returns normalized weights.
     Expects well-conditioned binary data (N samples x M bits).
+
+    The returned weights are in the same solver-unit-sine convention as
+    ``calibrate_weight_sine``: the fitted fundamental sine magnitude is fixed
+    to one for identifiability. Apply an explicit scale factor before using
+    the reconstructed waveform for physical dBFS or NSD interpretation.
     """
     if freq is not None and freq > 0.5:
         raise ValueError(

@@ -15,7 +15,8 @@
 ## Syntax
 
 ```python
-from adctoolbox.calibration import calibrate_weight_sine
+from adctoolbox import analyze_spectrum
+from adctoolbox.calibration import calibrate_weight_sine, scale_calibration_output
 
 # Basic usage (auto frequency search)
 result = calibrate_weight_sine(bits)
@@ -115,6 +116,43 @@ Dictionary with keys:
   - `bit_weight_ratios`: nominal-weight ratios used for merged columns
   - `dropped_constant_bits`: bit columns that were constant in this capture
   - `unmapped_bits`: bit columns returned as zero for this fitted model
+
+## Output Scale Convention
+
+`calibrate_weight_sine` returns calibrated waveforms in **solver-unit-sine**
+scale. This is a mathematical gauge used to make the least-squares problem
+identifiable: the fitted fundamental sine magnitude is fixed to one. It is not
+automatically the ADC voltage or code full-scale.
+
+The result dictionary includes `scale_convention = "solver_unit_sine"`. Ratio
+metrics in the calibration result, such as `snr_db` and `enob`, are unchanged
+by a later linear rescale. Absolute full-scale-referenced spectrum metrics,
+such as `sig_pwr_dbfs`, `noise_floor_dbfs`, and `nsd_dbfs_hz`, require an
+explicit ADC/code reference scale before calling `analyze_spectrum`.
+When `max_scale_range=None`, the spectrum analyzer uses the waveform's own
+range as a self-reference; that keeps ratio metrics valid but does not recover
+the physical ADC full-scale. If an explicit `max_scale_range` is supplied and
+the waveform exceeds it, the analyzer emits an overrange warning without
+clipping or changing the data.
+
+Use `scale_calibration_output` to map the solver result to a chosen convention:
+
+```python
+result = calibrate_weight_sine(bits, freq=freq_true, nominal_weights=w_nominal)
+
+# Map back to the same code/voltage convention as the nominal reconstruction
+# weights before interpreting dBFS or NSD.
+result_adc = scale_calibration_output(result, target_weights=w_nominal)
+metrics = analyze_spectrum(
+    result_adc["calibrated_signal"][0],
+    max_scale_range=(0.0, 1.0),
+    create_plot=False,
+)
+```
+
+If the training sine peak is known directly in ADC units, use
+`target_sine_peak=A` instead. Do not treat `1/A` as a universal weight-scale
+rule; the correct bridge depends on the bit encoding and ADC convention.
 
 ## Algorithm
 
