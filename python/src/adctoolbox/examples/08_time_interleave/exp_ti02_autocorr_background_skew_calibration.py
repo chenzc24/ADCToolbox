@@ -223,8 +223,8 @@ output_dir.mkdir(exist_ok=True)
 trim_arr = np.array(trim_history)   # (N_ITER, M)
 iters = np.arange(N_ITER)
 
-# ---- Summary figure: 2×2 grid (spectra + trajectories) ----
-fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+# ---- Summary figure: 2×2 grid (spectra + trajectories), landscape 4:3 ----
+fig, axes = plt.subplots(2, 2, figsize=(12, 9))
 
 # Top-left: spectrum before
 plt.sca(axes[0, 0])
