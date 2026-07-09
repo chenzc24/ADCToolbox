@@ -67,8 +67,10 @@ Notes on shapes:
 - `analyze_overflow` is a 4-tuple of ndarrays — needs the calibrated
   `weights` as its second argument (it's measuring digital-domain over-range,
   not raw saturation).
-- `analyze_enob_sweep` is a 2-tuple `(enob_sweep, n_bits_vec)` and runs
-  `calibrate_weight_sine` once internally.
+- `analyze_enob_sweep` is a 2-tuple `(enob_sweep, n_bits_vec)`. Its default
+  calibrates all bits once, then sweeps prefixes of the full-bit weight
+  solution. Use `calibration_mode="recalibrate_each_subset"` only when
+  intentionally treating each bit-prefix subset as a separately calibrated ADC.
 - `analyze_weight_radix(weights)` returns a `dict` (was an ndarray in
   pre-`v0.6` versions).
 - `analyze_weight_radix(weights)["effres"]` is a theoretical weight-list span:
@@ -119,6 +121,9 @@ Pick by the error view you need:
 
 All of these expect `aout` (or fall back to `signal`) plus `fs` in Hz.
 They each fit a sine internally if no `frequency` kwarg is supplied.
+`analyze_error_envelope_spectrum` also accepts a precomputed residual with
+`input_kind="error"`; use that mode for MATLAB `errevspec` parity or when you
+have already subtracted the fitted sine.
 
 ## "I need cap array → weight conversion for CDAC modeling"
 

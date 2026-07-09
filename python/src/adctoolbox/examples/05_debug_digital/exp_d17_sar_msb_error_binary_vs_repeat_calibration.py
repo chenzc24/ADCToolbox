@@ -22,7 +22,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from adctoolbox import analyze_spectrum, calibrate_weight_sine
+from adctoolbox import analyze_spectrum, calibrate_weight_sine, scale_calibration_output
 from adctoolbox.models import sar_convert, sar_reconstruct
 
 
@@ -75,9 +75,8 @@ def calibrate_weights(bits: np.ndarray, nominal_weights: np.ndarray) -> np.ndarr
             freq=TRAIN_BIN / N_SAMPLES,
             nominal_weights=nominal_weights,
         )
-    # calibrate_weight_sine returns differential-scale weights for this
-    # single-ended normalized SAR setup.
-    return np.asarray(result["weight"], dtype=float) / 2.0
+    result_adc_scale = scale_calibration_output(result, target_weights=nominal_weights)
+    return np.asarray(result_adc_scale["weight"], dtype=float)
 
 
 def analyze_trace(trace: np.ndarray, ax=None, title: str | None = None) -> dict:

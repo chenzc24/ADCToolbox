@@ -14,6 +14,8 @@ def analyze_enob_sweep(
     harmonic_order: int = 1,
     osr: int = 1,
     win_type: str = 'hamming',
+    calibration_mode: str = "prefix_of_full_calibration",
+    frequency_policy: str = "python",
     create_plot: bool = True,
     ax=None,
     title: str | None = None,
@@ -37,6 +39,15 @@ def analyze_enob_sweep(
         Oversampling ratio for spectrum analysis
     win_type : str, default='hamming'
         Window function: 'boxcar', 'hann', 'hamming'
+    calibration_mode : {'prefix_of_full_calibration',
+        'recalibrate_each_subset'}, default='prefix_of_full_calibration'
+        ENOB sweep calibration policy. ``'prefix_of_full_calibration'``
+        calibrates all bits once and sweeps prefixes of the full-weight
+        solution. ``'recalibrate_each_subset'`` estimates the frequency once
+        when needed, then recalibrates each bit-prefix subset independently.
+    frequency_policy : {'python', 'matlab'}, default='python'
+        Coarse frequency estimator passed to ``calibrate_weight_sine`` when
+        automatic frequency search is requested.
     create_plot : bool, default=True
         If True, plot ENOB sweep curve
     ax : plt.Axes, optional
@@ -54,38 +65,51 @@ def analyze_enob_sweep(
 
     Notes
     -----
+    The default ``'prefix_of_full_calibration'`` mode answers the calibration
+    ablation question: "after a full-bit calibration, how much performance
+    remains if lower-bit terms are removed?" Use
+    ``'recalibrate_each_subset'`` only when intentionally asking: "if only the
+    first n bits are available, how well can that n-bit subsystem be
+    calibrated?"
+
     What to look for in the plot:
     - Increasing trend: More bits improve resolution
     - Plateau: Additional bits don't help (noise/distortion limited)
     - Decrease: Extra bits add noise/calibration errors
     """
     bits = np.asarray(bits)
-    n_samples, m_bits = bits.shape
+    _, m_bits = bits.shape
 
-    # Calibrate once with all bits to get all weights
-    result = calibrate_weight_sine(bits, freq=freq, harmonic_order=harmonic_order)
-    weights_all = result['weight']
-    freq = result['refined_frequency']
+    valid_modes = {"recalibrate_each_subset", "prefix_of_full_calibration"}
+    if calibration_mode not in valid_modes:
+        raise ValueError(
+            f"Unknown calibration_mode {calibration_mode!r}. "
+            f"Expected one of {sorted(valid_modes)}."
+        )
 
     enob_sweep = np.zeros(m_bits)
     n_bits_vec = np.arange(1, m_bits + 1)
 
-    # Sweep through bit counts using subsets of calibrated weights
-    for n_bits in range(1, m_bits + 1):
-        # Use only first n_bits and their corresponding weights
-        bits_subset = bits[:, :n_bits]
-        weights_subset = weights_all[:n_bits]
-
-        # Compute calibrated signal with subset of weights
-        calibrated_signal = bits_subset @ weights_subset
-
-        spectrum_result = analyze_spectrum(
-            calibrated_signal, osr=osr, win_type=win_type, create_plot=False
+    if calibration_mode == "recalibrate_each_subset":
+        enob_sweep = _sweep_recalibrating_each_subset(
+            bits=bits,
+            freq=freq,
+            harmonic_order=harmonic_order,
+            osr=osr,
+            win_type=win_type,
+            frequency_policy=frequency_policy,
+            verbose=verbose,
         )
-        enob_sweep[n_bits - 1] = spectrum_result['enob']
-
-        if verbose:
-            print(f"[{n_bits:2d} bits] ENOB = {enob_sweep[n_bits - 1]:.2f}")
+    else:
+        enob_sweep = _sweep_prefix_of_full_calibration(
+            bits=bits,
+            freq=freq,
+            harmonic_order=harmonic_order,
+            osr=osr,
+            win_type=win_type,
+            frequency_policy=frequency_policy,
+            verbose=verbose,
+        )
 
     # Plotting
     if create_plot:
@@ -133,3 +157,104 @@ def analyze_enob_sweep(
                         color=text_color)
 
     return enob_sweep, n_bits_vec
+
+
+def _sweep_recalibrating_each_subset(
+    bits: np.ndarray,
+    freq: float | None,
+    harmonic_order: int,
+    osr: int,
+    win_type: str,
+    frequency_policy: str,
+    verbose: bool,
+) -> np.ndarray:
+    """Diagnostic mode: recalibrate every bit-prefix subset independently."""
+    _, m_bits = bits.shape
+    enob_sweep = np.zeros(m_bits)
+
+    auto_frequency_requested = freq is None or np.all(np.asarray(freq) == 0)
+    if auto_frequency_requested:
+        full_result = calibrate_weight_sine(
+            bits,
+            freq=freq,
+            harmonic_order=harmonic_order,
+            frequency_policy=frequency_policy,
+        )
+        subset_freq = full_result["refined_frequency"]
+    else:
+        subset_freq = freq
+
+    for n_bits in range(1, m_bits + 1):
+        bits_subset = bits[:, :n_bits]
+
+        try:
+            result = calibrate_weight_sine(
+                bits_subset,
+                freq=subset_freq,
+                force_search=False,
+                harmonic_order=harmonic_order,
+                frequency_policy=frequency_policy,
+            )
+            spectrum_result = analyze_spectrum(
+                result["calibrated_signal"],
+                osr=osr,
+                win_type=win_type,
+                create_plot=False,
+            )
+            enob_sweep[n_bits - 1] = spectrum_result["enob"]
+        except Exception as exc:
+            enob_sweep[n_bits - 1] = np.nan
+            if verbose:
+                print(f"[{n_bits:2d} bits] FAILED: {exc}")
+            continue
+
+        if verbose:
+            print(f"[{n_bits:2d} bits] ENOB = {enob_sweep[n_bits - 1]:.2f}")
+
+    return enob_sweep
+
+
+def _sweep_prefix_of_full_calibration(
+    bits: np.ndarray,
+    freq: float | None,
+    harmonic_order: int,
+    osr: int,
+    win_type: str,
+    frequency_policy: str,
+    verbose: bool,
+) -> np.ndarray:
+    """Historical Python mode: sweep prefixes of one full-bit calibration."""
+    _, m_bits = bits.shape
+    enob_sweep = np.zeros(m_bits)
+
+    result = calibrate_weight_sine(
+        bits,
+        freq=freq,
+        harmonic_order=harmonic_order,
+        frequency_policy=frequency_policy,
+    )
+    weights_all = result["weight"]
+
+    for n_bits in range(1, m_bits + 1):
+        bits_subset = bits[:, :n_bits]
+        weights_subset = weights_all[:n_bits]
+        calibrated_signal = bits_subset @ weights_subset
+
+        try:
+            spectrum_result = analyze_spectrum(
+                calibrated_signal,
+                osr=osr,
+                win_type=win_type,
+                create_plot=False,
+            )
+            enob_sweep[n_bits - 1] = spectrum_result["enob"]
+        except Exception as exc:
+            enob_sweep[n_bits - 1] = np.nan
+            if verbose:
+                print(f"[{n_bits:2d} bits] FAILED: {exc}")
+            continue
+
+        if verbose:
+            print(f"[{n_bits:2d} bits] ENOB = {enob_sweep[n_bits - 1]:.2f}")
+
+    return enob_sweep

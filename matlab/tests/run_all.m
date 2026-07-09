@@ -1,10 +1,33 @@
 %% Run all unit tests
 
-thisDir = fileparts(mfilename('fullpath'));
-matlabRoot = fileparts(thisDir);
+scriptPath = mfilename('fullpath');
+if isempty(scriptPath)
+    searchDir = pwd;
+else
+    searchDir = fileparts(scriptPath);
+end
+
+matlabRoot = '';
+for k = 1:8
+    if isfolder(fullfile(searchDir, 'src')) && isfolder(fullfile(searchDir, 'tests'))
+        matlabRoot = searchDir;
+        break;
+    end
+    parentDir = fileparts(searchDir);
+    if isequal(parentDir, searchDir)
+        break;
+    end
+    searchDir = parentDir;
+end
+
+if isempty(matlabRoot)
+    error('run_all:notFound', 'Could not locate matlab/ root from current folder.');
+end
+
 addpath(genpath(fullfile(matlabRoot, 'src')));
-addpath(genpath(thisDir));
-cd(matlabRoot);
+addpath(genpath(fullfile(matlabRoot, 'tests')));
+addpath(fullfile(matlabRoot, 'data_generation'));
+cd(fullfile(matlabRoot, 'data_generation'));
 
 run_common
 

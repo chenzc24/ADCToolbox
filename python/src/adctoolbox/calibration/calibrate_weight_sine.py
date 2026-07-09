@@ -8,6 +8,8 @@ Main wrapper function that uses modular helper functions for:
 - Result assembly and normalization
 """
 
+import warnings
+
 import numpy as np
 
 from adctoolbox.calibration._prepare_input import _prepare_input
@@ -34,15 +36,20 @@ def calibrate_weight_sine(
     learning_rate: float = 0.5,
     reltol: float = 1e-12,
     max_iter: int = 100,
-    verbose: int = 0
+    verbose: int = 0,
+    frequency_policy: str = "python",
 ) -> dict:
     """
     FGCalSine — Foreground calibration using a sinewave input
 
     This function estimates per-bit weights and a DC offset for an ADC by
     fitting the weighted sum of raw bit columns to a sine series at a given
-    (or estimated) normalized frequency Fin/Fs. It optionally performs a
-    coarse and fine frequency search to refine the input tone frequency.
+    (or estimated) normalized frequency Fin/Fs. Harmonic terms above the
+    fundamental are fitted reference/nuisance terms: they can prevent source
+    or test-chain harmonics from contaminating weight estimation, but they do
+    not remove those harmonics from ``calibrated_signal``. It optionally
+    performs a coarse and fine frequency search to refine the input tone
+    frequency.
 
     Implementation uses a unified pipeline where single-dataset calibration
     is treated as a special case of multi-dataset calibration (N=1).
@@ -64,13 +71,22 @@ def calibrate_weight_sine(
         frequencies fixed. Set True to refine provided frequencies too, or
         False to disable fine search unless a zero frequency placeholder
         remains.
+    frequency_policy : {"python", "matlab"}, optional
+        Coarse frequency estimator used when ``freq`` is ``None`` or zero.
+        ``"python"`` preserves the historical Python estimator. ``"matlab"``
+        uses a MATLAB ``wcalsin(freq=0)`` compatible estimator based on
+        nominally reconstructed rank-patched bit prefixes. Explicit nonzero
+        frequencies are not changed by this option. Default is ``"python"``.
     nominal_weights : array-like, optional
         Nominal bit weights (only effective when rank is deficient).
         Default is 2^(M-1) down to 2^0.
     harmonic_order : int, optional
-        Number of harmonic terms to exclude in calibration.
-        Default is 1 (fundamental only, no harmonic exclusion).
-        Higher values exclude more harmonics from the error term.
+        Number of harmonic terms included in the fitted reference. Default is
+        1 (fundamental only). Values greater than 1 include H2/H3/... as
+        nuisance terms in ``ideal`` and exclude them from ``error``. This is
+        useful for source/test-chain harmonic nuisance modeling; it should not
+        be interpreted as proof that ADC harmonic distortion has been removed
+        from ``calibrated_signal``.
     learning_rate : float, optional
         Adaptive learning rate for frequency updates (0..1), default is 0.5.
     reltol : float, optional
@@ -85,13 +101,34 @@ def calibrate_weight_sine(
     dict
         Calibration result containing ``weight``, ``offset``,
         ``calibrated_signal``, ``ideal``, ``error``, and
-        ``refined_frequency``. Array-valued entries are returned as a single
-        array for single-dataset input or as a list of arrays for
-        multi-dataset input.
+        ``refined_frequency``. ``ideal`` includes fitted harmonics up to
+        ``harmonic_order``; ``error`` is the residual after subtracting that
+        fitted reference. The returned ``snr_db`` and ``enob`` are calibration
+        fitted-residual metrics, not FFT dynamic SNDR/ENOB when
+        ``harmonic_order`` is greater than 1. Use spectrum analysis on
+        ``calibrated_signal`` for ADC dynamic SNDR/THD/HDx. The ``rank_patch``
+        entry reports any dropped or merged rank-deficient bit columns.
+        Array-valued entries are returned as a single array for single-dataset
+        input or as a list of arrays for multi-dataset input.
+        ``initial_frequency`` records the coarse frequency used before fine
+        search, and ``frequency_policy`` records the coarse-estimator policy.
+
+        The calibrated waveform fields use ``scale_convention ==
+        "solver_unit_sine"``: the least-squares solve fixes the fitted
+        fundamental sine magnitude to one. Before interpreting dBFS or NSD
+        against a physical ADC full-scale, rescale the result with
+        ``scale_calibration_output`` and pass an explicit full-scale range to
+        the spectrum analyzer.
     """
 
     # 0. Frequency-unit guard: freq must be NORMALIZED Fin/Fs in [0, 0.5].
     # Silent-fail (all-zero weights) used to happen when callers passed Fin in Hz.
+    if frequency_policy not in {"python", "matlab"}:
+        raise ValueError(
+            "frequency_policy must be 'python' or 'matlab'; "
+            f"got {frequency_policy!r}."
+        )
+
     if freq is not None:
         _freq_check = np.atleast_1d(np.asarray(freq, dtype=float))
         if np.any(_freq_check > 0.5):
@@ -114,6 +151,19 @@ def calibrate_weight_sine(
     bit_to_col_map = patched_input["bit_to_col_map"]
     bit_weight_ratios = patched_input["bit_weight_ratios"]
     bit_width_effective = patched_input["bit_width_effective"]
+    rank_patch_applied = patched_input["rank_patch_applied"]
+    dropped_constant_bits = patched_input["dropped_constant_bits"]
+    unmapped_bits = patched_input["unmapped_bits"]
+
+    if unmapped_bits.size > 0:
+        warnings.warn(
+            "Some bit columns were constant or otherwise unobservable in this "
+            "capture and have no recoverable AC information. Returned weights "
+            "for these bits are set to 0 for this fitted model; this does not "
+            "imply their physical ADC weights are zero.",
+            UserWarning,
+            stacklevel=2,
+        )
 
     # Scale columns for numerical conditioning
     bits_stacked_effective_scaled, bit_scales = _scale_columns_for_conditioning(bits_stacked_effective, verbose)
@@ -121,7 +171,25 @@ def calibrate_weight_sine(
     auto_frequency_requested = freq is None or np.all(np.asarray(freq) == 0)
 
     # Estimate or validate frequencies
-    freq_array = _estimate_frequencies(bits_stacked, segment_lengths, freq, verbose)
+    frequency_bits = bits_stacked
+    frequency_nominal_weights = nominal_weights
+    if frequency_policy == "matlab":
+        frequency_bits = bits_stacked_effective
+        frequency_nominal_weights = _effective_nominal_weights(
+            nominal_weights=nominal_weights,
+            bit_to_col_map=bit_to_col_map,
+            bit_width_effective=bit_width_effective,
+        )
+
+    freq_array = _estimate_frequencies(
+        frequency_bits,
+        segment_lengths,
+        freq,
+        verbose,
+        frequency_policy=frequency_policy,
+        nominal_weights=frequency_nominal_weights,
+    )
+    initial_freq_array = freq_array.copy()
 
     bits_segments_scaled = []
     curr = 0
@@ -179,4 +247,38 @@ def calibrate_weight_sine(
         freq_array=freq_array
     )
 
+    results["rank_patch"] = {
+        "applied": rank_patch_applied,
+        "bit_width_effective": bit_width_effective,
+        "bit_to_col_map": bit_to_col_map.copy(),
+        "bit_weight_ratios": bit_weight_ratios.copy(),
+        "dropped_constant_bits": dropped_constant_bits.copy(),
+        "unmapped_bits": unmapped_bits.copy(),
+    }
+    is_single = len(bits_segments) == 1
+    results["frequency_policy"] = frequency_policy
+    results["initial_frequency"] = (
+        initial_freq_array[0] if is_single else initial_freq_array.copy()
+    )
+
     return results
+
+
+def _effective_nominal_weights(
+    nominal_weights: np.ndarray,
+    bit_to_col_map: np.ndarray,
+    bit_width_effective: int,
+) -> np.ndarray:
+    """Return the representative nominal weights used by MATLAB-style search."""
+    effective_nominal_weights = np.empty(bit_width_effective, dtype=float)
+
+    for col in range(bit_width_effective):
+        source_bits = np.flatnonzero(bit_to_col_map == col)
+        if source_bits.size == 0:
+            raise ValueError(
+                f"No source bit maps to effective column {col}; cannot "
+                "estimate MATLAB-compatible coarse frequency."
+            )
+        effective_nominal_weights[col] = nominal_weights[source_bits[0]]
+
+    return effective_nominal_weights

@@ -17,6 +17,7 @@ from adctoolbox import (
     find_coherent_frequency,
     fit_sine_4param,
     calibrate_weight_sine,
+    scale_calibration_output,
 )
 ```
 
@@ -34,7 +35,8 @@ from adctoolbox.spectrum import compute_spectrum
 - Dynamic FFT metrics:
   `analyze_spectrum`, `analyze_spectrum_polar`, `compute_spectrum`
 - Digital calibration:
-  `calibrate_weight_sine`, `calibrate_weight_sine_lite`
+  `calibrate_weight_sine`, `calibrate_weight_sine_lite`,
+  `scale_calibration_output`
 - Synthetic signals:
   `ADC_Signal_Generator`
 - Pre-flight checks / coherent setup:
@@ -132,8 +134,11 @@ adctoolbox-install-skill --dev --editable --force --dest ~/.codex/skills
   freq)` expect normalized `freq = Fin/Fs`. The `_lite` variant takes `freq`
   positionally (not as a keyword) and is required (no auto-search).
 - If `freq` is omitted, `calibrate_weight_sine` estimates the tone frequency
-  and fine-searches it against the calibration residual. A provided `freq`
-  remains fixed unless `force_search=True`.
+  and fine-searches it against the calibration residual. The default
+  `frequency_policy="python"` preserves the historical Python coarse estimator;
+  `frequency_policy="matlab"` uses the MATLAB `wcalsin(freq=0)` compatible
+  coarse estimator. A provided nonzero `freq` remains fixed unless
+  `force_search=True`.
 - `analyze_enob_sweep(bits, freq=...)` and `generate_dout_dashboard(bits,
   freq=...)` also expect normalized `freq`.
 - `generate_aout_dashboard(aout, fs=..., freq=...)` takes `freq` in Hz (it
@@ -157,19 +162,32 @@ adctoolbox-install-skill --dev --editable --force --dest ~/.codex/skills
   `plot_data` (the latter has `freq`, `power_spectrum_db_plot`,
   `complex_spectrum`, `fundamental_bin`, …).
 - `calibrate_weight_sine(...)` returns a dict: `weight`, `offset`,
-  `calibrated_signal`, `ideal`, `error`, `refined_frequency`.
+  `calibrated_signal`, `ideal`, `error`, `refined_frequency`,
+  `initial_frequency`, `frequency_policy`, `scale_convention`.
   `calibrate_weight_sine_lite(...)` returns just the weights ndarray.
+  Calibration waveform fields are solver-unit-sine scaled by default; use
+  `scale_calibration_output(...)` before comparing calibrated dBFS, noise
+  floor, or NSD against a physical ADC/code full-scale. `max_scale_range=None`
+  is self-referenced; explicit ranges are required for physical dBFS and can
+  warn when data exceeds the declared full-scale.
 - `analyze_bit_activity(bits)` returns an ndarray (% of 1's per bit).
 - `analyze_overflow(bits, weight)` returns a 4-tuple of ndarrays
   `(range_min, range_max, ovf_pct_zero, ovf_pct_one)`. The second argument
   is the calibrated weights vector — not optional.
 - `analyze_enob_sweep(bits, freq=...)` returns `(enob_sweep, n_bits_vec)`.
+  By default it calibrates all bits once, then evaluates prefixes of the
+  full-bit weight solution. Pass
+  `calibration_mode="recalibrate_each_subset"` only when intentionally testing
+  each bit-prefix subset as a separately calibrated ADC.
 - `analyze_weight_radix(weights)` returns a dict (`radix`, `wgtsca`, `effres`).
   `effres` is the significant-weight span:
   `log2(sum(abs_w_sig) / min(abs_w_sig) + 1)`, with the sorted absolute-weight
   tail dropped after the first adjacent ratio `>= 3`. Treat it as a theoretical
   SAR/DAC weight-list resolution estimate, not a missing-code, DNL/INL, or
   SAR-reachability check.
+- `analyze_error_envelope_spectrum(signal, input_kind="signal")` fits and
+  subtracts a sine internally. Pass `input_kind="error"` when the input is
+  already a residual/error waveform, matching MATLAB `errevspec`.
 - `fit_static_nonlin(sig_distorted, order)` returns
   `(k2, k3, fitted_sine, fitted_transfer)`. Input is a distorted signal,
   not INL/DNL data; `order >= 2`.

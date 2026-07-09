@@ -1,7 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
-from adctoolbox import freq_to_bin, calibrate_weight_sine, analyze_spectrum
+from adctoolbox import (
+    analyze_spectrum,
+    calibrate_weight_sine,
+    freq_to_bin,
+    scale_calibration_output,
+)
 
 output_dir = Path(__file__).parent / "output"
 output_dir.mkdir(exist_ok=True)
@@ -42,17 +47,30 @@ analog_before = np.dot(digital_output, weights_nominal)
 
 # Calibration
 results = calibrate_weight_sine(digital_output, freq=bin / n_samples)
-analog_after = results['calibrated_signal'][0]
-weights_calibrated = results['weight']
+results_adc_scale = scale_calibration_output(results, target_weights=weights_nominal)
+analog_after = results_adc_scale['calibrated_signal'][0]
+weights_calibrated = results_adc_scale['weight']
 
 # Spectrum comparison
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-result_before = analyze_spectrum(analog_before, max_harmonic=5, show_label=True, ax=axes[0])
+result_before = analyze_spectrum(
+    analog_before,
+    max_harmonic=5,
+    max_scale_range=(0.0, 1.0),
+    show_label=True,
+    ax=axes[0],
+)
 axes[0].set_title('Before Calibration', fontsize=12, fontweight='bold')
 axes[0].set_ylim(bottom= -140)
 
-result_after = analyze_spectrum(analog_after, max_harmonic=5, show_label=True, ax=axes[1])
+result_after = analyze_spectrum(
+    analog_after,
+    max_harmonic=5,
+    max_scale_range=(0.0, 1.0),
+    show_label=True,
+    ax=axes[1],
+)
 axes[1].set_title('After Calibration', fontsize=12, fontweight='bold')
 axes[1].set_ylim(bottom= -140)
 
@@ -60,11 +78,9 @@ axes[1].set_ylim(bottom= -140)
 weights_real = caps_real / np.sum(caps_real)
 weights_real[-1] = weights_real[-1] / 2  # Last bit is comparator
 
-# calibrate_weight_sine returns weights that sum to ~2.0 (differential signal)
-# Normalize to match the single-ended weights (sum ~1.0)
 weights_nominal_norm = weights_nominal
 weights_real_norm = weights_real
-weights_calibrated_norm = weights_calibrated / 2.0  # Convert differential to single-ended
+weights_calibrated_norm = weights_calibrated
 
 # Print results
 print(f"[Nominal Resolution] {n_bits} bits")

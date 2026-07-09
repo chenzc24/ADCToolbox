@@ -2,23 +2,27 @@
 
 ## Overview
 
-`calibrate_weight_sine` provides comprehensive, production-ready ADC foreground calibration using sinewave input. This is the full-featured version supporting automatic frequency search, rank deficiency handling, harmonic rejection, and multi-dataset calibration.
+`calibrate_weight_sine` provides comprehensive, production-ready ADC foreground calibration using sinewave input. This is the full-featured version supporting automatic frequency search, rank deficiency handling, harmonic nuisance fitting, and multi-dataset calibration.
 
 **Key Features:**
-- ✅ Automatic frequency search with coarse and fine refinement
+- ✅ Automatic frequency search with selectable coarse-estimator policies and fine refinement
 - ✅ Rank deficiency handling for redundant ADC architectures
-- ✅ Harmonic rejection to exclude distortion
+- ✅ Harmonic nuisance fitting for source/test-chain harmonic terms
 - ✅ Multi-dataset calibration for time-interleaved ADCs
 - ✅ Numerical conditioning for robust convergence
-- ✅ Comprehensive diagnostics (SNDR, ENOB, error signals)
+- ✅ Comprehensive diagnostics (weights, fitted residual metrics, error signals)
 
 ## Syntax
 
 ```python
-from adctoolbox.calibration import calibrate_weight_sine
+from adctoolbox import analyze_spectrum
+from adctoolbox.calibration import calibrate_weight_sine, scale_calibration_output
 
 # Basic usage (auto frequency search)
 result = calibrate_weight_sine(bits)
+
+# MATLAB wcalsin-compatible coarse frequency search
+result = calibrate_weight_sine(bits, freq=0, frequency_policy="matlab")
 
 # With known frequency
 result = calibrate_weight_sine(bits, freq=0.001587)
@@ -27,7 +31,7 @@ result = calibrate_weight_sine(bits, freq=0.001587)
 result = calibrate_weight_sine(bits, freq=0.001587,
                                nominal_weights=[2048, 1024, 512, 256, 128, 128, ...])
 
-# With harmonic rejection
+# With harmonic nuisance fitting
 result = calibrate_weight_sine(bits, freq=0.001587, harmonic_order=3)
 
 # Multi-dataset (time-interleaved ADC)
@@ -46,18 +50,27 @@ result = calibrate_weight_sine([bits_ch0, bits_ch1, bits_ch2, bits_ch3])
   - `float`: Single frequency for all datasets
   - `array`: Per-dataset frequencies for multi-dataset mode
 
-- **`force_search`** (bool, optional) — Force fine frequency search even when frequency is provided
-  - Default: `False`
-  - Set to `True` to refine provided frequencies
+- **`force_search`** (bool or None, optional) — Fine frequency search policy
+  - Default: `None`
+  - `None`: refine automatically estimated frequencies; keep explicitly provided nonzero frequencies fixed
+  - `True`: refine provided frequencies too
+  - `False`: disable fine search unless a zero frequency placeholder remains
+
+- **`frequency_policy`** (`"python"` or `"matlab"`, optional) — Coarse estimator used for automatic frequency search
+  - Default: `"python"` preserves the historical Python bit-activity/SNDR coarse estimator
+  - `"matlab"` uses the MATLAB `wcalsin(freq=0)` compatible estimator: rank-patched nominal bit-prefix reconstructions, one frequency fit per prefix, then the median candidate
+  - Explicit nonzero `freq` values remain fixed unless `force_search=True`
 
 - **`nominal_weights`** (array, optional) — Nominal bit weights (only effective when rank is deficient)
   - Default: `[2^(M-1), 2^(M-2), ..., 2, 1]`
   - Required for redundant ADCs (e.g., `[128, 128, 64, ...]`)
 
-- **`harmonic_order`** (int, optional) — Number of harmonic terms to exclude in calibration
-  - Default: `1` (fundamental only, no harmonic exclusion)
-  - Higher values exclude more harmonics from error term
-  - Example: `harmonic_order=3` excludes 1st, 2nd, 3rd harmonics
+- **`harmonic_order`** (int, optional) — Number of harmonic terms included in the fitted reference
+  - Default: `1` (fundamental only)
+  - Higher values include H2/H3/... as fitted nuisance terms in `ideal`
+  - Fitted harmonic terms are excluded from `error`
+  - Example: `harmonic_order=3` fits the fundamental plus H2/H3 in the reference
+  - Use this to keep source/test-chain harmonics from contaminating weight estimation; it does not prove ADC harmonic distortion was removed from `calibrated_signal`
 
 - **`learning_rate`** (float, optional) — Adaptive learning rate for frequency updates
   - Default: `0.5`
@@ -91,22 +104,75 @@ Dictionary with keys:
   - Single array for single dataset
   - List of arrays for multi-dataset
 
-- **`ideal`** (ndarray or list) — Best fitted sinewave (excluding harmonics > H)
+- **`ideal`** (ndarray or list) — Best fitted reference waveform
+  - Includes the fundamental and fitted harmonics up to `harmonic_order`
   - Single array for single dataset
   - List of arrays for multi-dataset
 
 - **`error`** (ndarray or list) — Residue errors after calibration
-  - error = calibrated_signal - ideal
-  - Excludes distortion harmonics
+  - `error = calibrated_signal - offset - ideal`
+  - Excludes the harmonic terms included in `ideal`
 
 - **`refined_frequency`** (float or ndarray) — Refined frequency from calibration
   - Single value for single dataset
   - Array for multi-dataset
 
-- **`snr_db`** (float or ndarray) — Signal-to-noise ratio in dB
+- **`initial_frequency`** (float or ndarray) — Coarse frequency used before fine search
+  - Useful for diagnosing automatic frequency-search policy differences
+
+- **`frequency_policy`** (str) — Coarse-estimator policy used for this result
+
+- **`snr_db`** (float or ndarray) — Fitted-reference to residual ratio in dB
+  - When `harmonic_order > 1`, this is not standard ADC dynamic SNDR
 
 - **`enob`** (float or ndarray) — Effective number of bits
   - Calculated as: `(snr_db - 1.76) / 6.02`
+  - Interpret as a fitted-residual ENOB estimate, not FFT ENOB, when harmonics are included in `ideal`
+
+- **`rank_patch`** (dict) — Rank-deficiency diagnostics
+  - `applied`: whether rank-deficiency patching was used
+  - `bit_width_effective`: number of effective columns used by the solver
+  - `bit_to_col_map`: original bit column to effective column map (`-1` means unmapped)
+  - `bit_weight_ratios`: nominal-weight ratios used for merged columns
+  - `dropped_constant_bits`: bit columns that were constant in this capture
+  - `unmapped_bits`: bit columns returned as zero for this fitted model
+
+## Output Scale Convention
+
+`calibrate_weight_sine` returns calibrated waveforms in **solver-unit-sine**
+scale. This is a mathematical gauge used to make the least-squares problem
+identifiable: the fitted fundamental sine magnitude is fixed to one. It is not
+automatically the ADC voltage or code full-scale.
+
+The result dictionary includes `scale_convention = "solver_unit_sine"`. Ratio
+metrics in the calibration result, such as `snr_db` and `enob`, are unchanged
+by a later linear rescale. Absolute full-scale-referenced spectrum metrics,
+such as `sig_pwr_dbfs`, `noise_floor_dbfs`, and `nsd_dbfs_hz`, require an
+explicit ADC/code reference scale before calling `analyze_spectrum`.
+When `max_scale_range=None`, the spectrum analyzer uses the waveform's own
+range as a self-reference; that keeps ratio metrics valid but does not recover
+the physical ADC full-scale. If an explicit `max_scale_range` is supplied and
+the waveform exceeds it, the analyzer emits an overrange warning without
+clipping or changing the data.
+
+Use `scale_calibration_output` to map the solver result to a chosen convention:
+
+```python
+result = calibrate_weight_sine(bits, freq=freq_true, nominal_weights=w_nominal)
+
+# Map back to the same code/voltage convention as the nominal reconstruction
+# weights before interpreting dBFS or NSD.
+result_adc = scale_calibration_output(result, target_weights=w_nominal)
+metrics = analyze_spectrum(
+    result_adc["calibrated_signal"][0],
+    max_scale_range=(0.0, 1.0),
+    create_plot=False,
+)
+```
+
+If the training sine peak is known directly in ADC units, use
+`target_sine_peak=A` instead. Do not treat `1/A` as a universal weight-scale
+rule; the correct bridge depends on the bit encoding and ADC convention.
 
 ## Algorithm
 
@@ -122,7 +188,8 @@ Each stage is implemented as a separate helper function.
 
 ### Mathematical Model
 
-The ADC output with harmonic rejection is modeled as:
+The weighted bit output is fitted to a reference waveform with optional
+harmonic nuisance terms:
 
 ```
 y(n) = Σ w_i · b_i(n) = Σ [A_k·cos(2πkfn) + B_k·sin(2πkfn)] + C
@@ -135,8 +202,13 @@ where:
 - `b_i(n) ∈ {0, 1}` = binary value of bit i
 - `f` = normalized frequency
 - `H` = harmonic order
-- `A_k, B_k` = amplitude coefficients for harmonic k
+- `A_k, B_k` = fitted reference coefficients for harmonic k
 - `C` = DC offset
+
+For `H > 1`, the harmonics are part of the fitted reference. They are useful
+when the training source or test chain contains harmonic content that should not
+be absorbed into ADC bit weights. They should not be read as a claim that ADC
+harmonic distortion has been removed from `calibrated_signal`.
 
 ### Dual-Basis Least Squares
 
@@ -177,19 +249,25 @@ For redundant ADCs (e.g., weights `[128, 128, 64, ...]`), the bit matrix has ran
 
 ### Frequency Search
 
-**Coarse Search** (when `freq=None`):
-1. Reconstruct signal using nominal weights: `y_nom(n) = Σ w_i^nom · b_i(n)`
-2. Compute FFT: `Y(k) = FFT(y_nom)`
-3. Find peak: `k_peak = argmax |Y(k)|`
-4. Initial frequency: `f_0 = k_peak / N`
+**Coarse Search** (when `freq=None` or `freq=0`):
+1. `frequency_policy="python"` preserves the historical Python estimator:
+   it ranks bit columns by toggle activity, builds low-toggle and high-toggle
+   surrogate waveforms, chooses the cleaner surrogate by spectrum quality, and
+   fits its tone frequency.
+2. `frequency_policy="matlab"` matches MATLAB `wcalsin(freq=0)` coarse search:
+   after rank patching, reconstruct prefixes of the first `min(M, 5)`
+   effective bit columns using nominal representative weights, fit one
+   frequency per prefix, and use the median candidate.
+3. Explicit nonzero `freq` values skip coarse search. They remain fixed by
+   default and are refined only when `force_search=True`.
 
 **Fine Search** (iterative refinement):
 ```
 for iteration = 1 to max_iter:
     1. Solve weights at current frequency f^(t)
-    2. Compute residual error: e(n) = y(n) - fitted_sinewave(n)
-    3. Compute phase gradient: ∇φ = angle(e · exp(-j2πf^(t)n))
-    4. Update frequency: f^(t+1) = f^(t) + α · ∇φ / (2πN)
+    2. Append the derivative of the fitted harmonic reference with respect to frequency
+    3. Solve the augmented least-squares system for a frequency correction
+    4. Update frequency: f^(t+1) = f^(t) + learning_rate * delta_f
     5. Check convergence: |f^(t+1) - f^(t)| / f^(t) < reltol
     6. If converged, break
 ```
@@ -221,8 +299,8 @@ result = calibrate_weight_sine(bits, freq=freq_true, verbose=2)
 # Access results
 print(f"Recovered weights: {result['weight']}")
 print(f"Refined frequency: {result['refined_frequency']:.8f}")
-print(f"SNDR: {result['snr_db']:.2f} dB")
-print(f"ENOB: {result['enob']:.2f} bits")
+print(f"Fitted residual SNR: {result['snr_db']:.2f} dB")
+print(f"Fitted residual ENOB: {result['enob']:.2f} bits")
 ```
 
 ### Example 2: Automatic Frequency Search
@@ -274,10 +352,12 @@ print(f"Recovered weights: {result['weight'] * np.max(true_weights)}")
 # NOT:      [2048, 1024, 512, 256, 128,   0, 64, 32, 16, 8, 4, 2] ❌
 ```
 
-### Example 4: Harmonic Rejection
+### Example 4: Harmonic Nuisance Fitting
 
 ```python
-# Exclude up to 3rd harmonic from error calculation
+from adctoolbox import analyze_spectrum
+
+# Fit source/test-chain harmonic nuisance terms up to H3.
 result = calibrate_weight_sine(
     bits,
     freq=freq_true,
@@ -285,9 +365,13 @@ result = calibrate_weight_sine(
     verbose=2
 )
 
-# Error signal excludes harmonics 1-3
-# Improves weight accuracy for ADCs with significant INL
-print(f"SNDR (with harmonic rejection): {result['snr_db']:.2f} dB")
+# The returned snr_db is a fitted-residual metric. Fitted H2/H3 terms are
+# included in result["ideal"] and excluded from result["error"].
+print(f"Fitted residual SNR: {result['snr_db']:.2f} dB")
+
+# To evaluate ADC dynamic performance, analyze the calibrated output itself.
+spec = analyze_spectrum(result["calibrated_signal"])
+print(f"FFT SNDR: {spec['sndr_dbc']:.2f} dBc")
 ```
 
 ### Example 5: Multi-Dataset Calibration (Time-Interleaved ADC)
@@ -310,7 +394,7 @@ result = calibrate_weight_sine(
 print(f"Shared weights: {result['weight']}")
 print(f"Per-channel offsets: {result['offset']}")
 print(f"Per-channel frequencies: {result['refined_frequency']}")
-print(f"Per-channel ENOB: {result['enob']}")
+print(f"Per-channel fitted residual ENOB: {result['enob']}")
 ```
 
 ### Example 6: Forced Frequency Refinement
@@ -358,18 +442,24 @@ print(f"Refined frequency: {result['refined_frequency']:.8f}")
 - Coarse FFT: Accuracy ≈ 1/N bins
 - Fine search: Accuracy < 10⁻¹² (relative)
 
-**ENOB Improvement**:
+**Fitted-Residual ENOB Improvement**:
 - Binary ADC (no INL): +0.5 to +2 ENOB
 - Redundant ADC: +2 to +4 ENOB (error correction)
 - Time-interleaved: +3 to +6 ENOB (timing skew correction)
+
+These values are based on the fitted residual returned by calibration. When
+`harmonic_order > 1`, fitted harmonics are excluded from that residual. Use
+`analyze_spectrum(result["calibrated_signal"])` for standard FFT SNDR, THD, HDx,
+and dynamic ENOB.
 
 ## Limitations
 
 ### Input Signal Requirements
 
 1. **Amplitude**: Input should be > -6 dBFS for stable weight recovery
-2. **Purity**: Input signal should have low distortion (THD < -60 dB) for best results
+2. **Purity**: Input signal should have low distortion (THD < -60 dB) for best results. If source/test-chain harmonics are unavoidable, `harmonic_order > 1` can model them as nuisance terms for weight estimation, but the calibrated output spectrum remains the source of truth for ADC distortion.
 3. **Coherency**: For FFT-based frequency estimation, use coherent sampling when possible
+4. **Bit activity**: Each weight can only be estimated if its bit column has AC activity in the capture
 
 ### Frequency Constraints
 
@@ -399,17 +489,31 @@ Multi-dataset calibration assumes:
 
 For ADCs with **per-channel weight variation**, use separate single-dataset calibrations.
 
+### Rank-Deficient Captures
+
+Constant bit columns have no AC information and are not identifiable separately
+from the fitted offset. If all bit columns are constant, calibration raises a
+`ValueError` because no effective bit columns remain. If only some columns are
+constant or otherwise unmapped, the solver continues with observable columns,
+sets the unmapped fitted weights to zero for the current model, emits a
+`UserWarning`, and reports the affected columns in `result["rank_patch"]`.
+
+Those zero fitted weights do **not** mean the physical ADC weights are zero.
+They mean the current capture did not observe those columns. Increase input
+amplitude, improve code coverage, use a different common-mode/window, or combine
+multiple captures if those weights must be calibrated.
+
 ## Comparison with Lite Version
 
 | Feature | Lite Version | Full Version |
 |---------|-------------|--------------|
 | **Frequency handling** | Known frequency only | Auto search + refinement |
 | **Rank deficiency** | ❌ Collapses redundancy | ✅ Preserves all weights |
-| **Harmonic rejection** | ❌ No | ✅ Configurable order |
+| **Harmonic nuisance fitting** | ❌ No | ✅ Configurable order |
 | **Multi-dataset** | ❌ Single only | ✅ Multiple datasets |
 | **Numerical stability** | Basic lstsq | Column scaling + conditioning |
 | **Output** | Weights only (ndarray) | Full diagnostics (dict) |
-| **Return values** | 1 (weights) | 7 (weights, offset, signals, SNDR, ENOB, etc.) |
+| **Return values** | 1 (weights) | weights, offset, signals, fitted residual metrics, rank patch diagnostics, etc. |
 | **Code complexity** | ~40 lines | ~600+ lines (modular) |
 | **Typical runtime** | 5 ms | 20-100 ms |
 
@@ -420,7 +524,7 @@ For ADCs with **per-channel weight variation**, use separate single-dataset cali
 - Redundant ADC architecture
 - Need comprehensive diagnostics
 - Multi-dataset or time-interleaved ADCs
-- Harmonic rejection required
+- Harmonic nuisance fitting required for source/test-chain distortion
 - Production/research environments
 
 ❌ **Use lite version when:**
@@ -467,7 +571,8 @@ b̃_i = b_i / s_i
 **Purpose**: Estimate or validate input frequencies
 
 **Logic**:
-- If `freq=None`: FFT-based coarse estimation for each dataset
+- If `freq=None` or `freq=0`: coarse estimation for each dataset using
+  `frequency_policy`
 - If `freq=scalar`: broadcast to all datasets
 - If `freq=array`: validate length matches number of datasets
 
@@ -484,15 +589,15 @@ b̃_i = b_i / s_i
 1. Initialize with coarse frequency
 2. Loop until convergence:
    - Solve weights at current frequency
-   - Compute phase error
-   - Update frequency using gradient
+   - Append the frequency-derivative column
+   - Solve the augmented least-squares system for a correction
    - Check convergence
 
 ### Stage 6-8: Recovery and Post-Processing
 
 - **Recover column scaling**: Undo normalization
 - **Recover rank deficiency**: Distribute effective weights to all physical bits
-- **Post-process**: Assemble results dictionary with SNDR, ENOB, error signals
+- **Post-process**: Assemble results dictionary with fitted residual metrics and error signals
 
 ## References
 

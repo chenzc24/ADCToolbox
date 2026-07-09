@@ -43,7 +43,7 @@ Other Common Functions:
 >>> from adctoolbox import analyze_error_by_phase, compute_spectrum
 """
 
-__version__ = '0.9.0'
+__version__ = '0.9.1'
 
 # ======================================================================
 # Public API Registry
@@ -180,9 +180,13 @@ _export('fit_static_nonlin', fit_static_nonlin)
 
 from .calibration import (
     calibrate_weight_sine,
+    scale_calibration_output,
+    diagnose_calibration_matrix,
 )
 
 _export('calibrate_weight_sine', calibrate_weight_sine)
+_export('scale_calibration_output', scale_calibration_output)
+_export('diagnose_calibration_matrix', diagnose_calibration_matrix)
 
 # ======================================================================
 # Digital Output (DOUT) Analysis Functions

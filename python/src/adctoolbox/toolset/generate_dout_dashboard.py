@@ -53,7 +53,8 @@ def generate_dout_dashboard(bits, freq=None, fs=1.0, weights=None, output_path=N
     fig, axes = plt.subplots(2, 3, figsize=(24, 12))
     axes = axes.flatten()
 
-    # Perform calibration once for all tools
+    # Perform a full calibration for tools that need full-bit weights; the
+    # ENOB sweep uses the same full-calibration prefix policy by default.
     result = calibrate_weight_sine(bits, freq=freq)
     weights_calibrated = result['weight']
     freq_refined = result['refined_frequency']
