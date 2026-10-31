@@ -1,6 +1,6 @@
 # ADCToolbox Examples
 
-This directory contains 64 runnable ADCToolbox examples. They are copied to a
+This directory contains runnable ADCToolbox examples. They are copied to a
 user workspace by:
 
 ```bash
@@ -134,3 +134,13 @@ python 05_debug_digital/exp_d02_cal_weight_sine.py
 | `exp_o01_noise_shaping_spectrum.py` | Noise-shaped quantization spectra |
 | `exp_o02_ifilter_band_analysis.py` | In-band extraction with MATLAB-compatible `ifilter` |
 | `exp_o03_ntfperf_perfosr.py` | NTF theory and performance-vs-OSR sweep |
+
+### `11_calibration/` - foreground and background calibration models
+
+| File | Topic |
+|---|---|
+| `exp_cal01_dither_background.py` | Pipeline PN gain calibration: convergence, drift, and frozen foreground comparison |
+
+The adjacent README documents injection assumptions, observable signals,
+causal block updates and probe-off controls. `pipeline_dither_model.py`
+contains reusable example helpers; it is not a stable public calibration API.

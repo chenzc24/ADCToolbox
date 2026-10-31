@@ -21,6 +21,11 @@ current packaged examples under `python/src/adctoolbox/examples/`.
   `02_spectrum/exp_s09_sar_fft_length_near_nyquist.py`
 - Noise-shaped quantization spectrum:
   `10_oversampling/exp_o01_noise_shaping_spectrum.py`
+- Pipeline dither background gain calibration, convergence and drift tracking:
+  `11_calibration/exp_cal01_dither_background.py`.
+  Read the adjacent `README.md` for the injection model, causal updates and
+  frozen foreground/probe-off controls. These are example helpers, not a
+  generic public background calibration API.
 
 ## Example Families
 

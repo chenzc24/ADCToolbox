@@ -5,3 +5,4 @@ include LICENSE
 # Include examples and bundled example READMEs
 graft src/adctoolbox/examples
 prune src/adctoolbox/examples/*/output
+global-exclude *.py[cod]
