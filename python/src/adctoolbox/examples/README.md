@@ -140,7 +140,10 @@ python 05_debug_digital/exp_d02_cal_weight_sine.py
 | File | Topic |
 |---|---|
 | `exp_cal01_dither_background.py` | Pipeline PN gain calibration: convergence, drift, and frozen foreground comparison |
+| `exp_cal02_dither_coverage.py` | Dither randomization and mechanism-specific gain, memory, capacitor and nonlinear identification |
 
 The adjacent README documents injection assumptions, observable signals,
 causal block updates and probe-off controls. `pipeline_dither_model.py`
 contains reusable example helpers; it is not a stable public calibration API.
+`DITHER_COVERAGE.md` documents the second experiment and its literature sources;
+`dither_mechanisms.py` contains its behavioral models and observable-only trackers.

@@ -1,5 +1,13 @@
 # Calibration simulation examples
 
+Two experiments are available:
+
+- `exp_cal01_dither_background.py`: minimal gain-only calibration, continuous
+  drift, step tracking and probe-amplitude diagnostics (documented below).
+- `exp_cal02_dither_coverage.py`: subtractive randomization, gain, linear memory,
+  capacitor mismatch and nonlinear moment identification, with failure controls.
+  See [DITHER_COVERAGE.md](DITHER_COVERAGE.md) for equations, sources and limits.
+
 `exp_cal01_dither_background.py` models foreground and background interstage
 gain calibration entirely in software. It is a minimal two-stage Pipeline
 model, not a reproduction of the earlier five-stage GCN paper or a transistor
