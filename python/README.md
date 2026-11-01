@@ -59,11 +59,14 @@ Use foreground calibration for dedicated identification followed by frozen
 correction. Use background calibration for causal parameter updates during normal
 conversion. Linearity and memory are separate properties of the correction model.
 
-- Public foreground APIs: sine-based bit weights and TI offset/gain/skew correction.
+- Public foreground APIs: sine-based bit weights, TI offset/gain/skew correction,
+  direct polynomial/MLP reference-based fitting, and Pipeline gain sine fitting.
+- Public background API: `DitherGainTracker`, with apply/update/reset and optional
+  foreground initialization. Gain correction is shared by both workflows.
 - Packaged background examples: Pipeline PN gain/memory, capacitor switching and
   inverse-cubic identification; TI statistical timing control.
-- General foreground polynomial/LUT/MLP workflows remain to be packaged from
-  research experiments. Background helpers are still example-level interfaces.
+- LUT and architecture-specific research workflows remain to be packaged.
+  Background memory/capacitor/nonlinear helpers are still example-level interfaces.
 
 After copying the examples, open `11_calibration/CALIBRATION_SYSTEM.md` for the
 complete inventory, observable-data requirements and implementation priorities.

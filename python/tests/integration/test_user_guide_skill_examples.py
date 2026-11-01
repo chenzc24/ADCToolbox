@@ -21,6 +21,45 @@ import numpy as np
 import pytest
 
 
+def test_calibration_workflow_skill_supervised_snippet():
+    from adctoolbox import (build_calibration_features, fit_calibration_polynomial,
+                           fit_calibration_mlp, apply_calibration)
+    rng = np.random.default_rng(11)
+    training_reference, validation_reference, test_reference = [rng.uniform(-.8, .8, 256) for _ in range(3)]
+    training_output, validation_output, test_output = [x+.03*x**3 for x in
+        (training_reference, validation_reference, test_reference)]
+    train = build_calibration_features(training_output, history=3)
+    valid = build_calibration_features(validation_output, history=3)
+    test = build_calibration_features(test_output, history=3)
+    train_reference = training_reference[train['sample_indices']]
+    valid_reference = validation_reference[valid['sample_indices']]
+    poly = fit_calibration_polynomial(train['features'], train_reference, degree=3)
+    mlp = fit_calibration_mlp(train['features'], train_reference,
+        validation_features=valid['features'], validation_reference=valid_reference,
+        hidden_units=16, max_iterations=200, seed=11)
+    corrected = apply_calibration(test['features'], poly['model'])
+    corrected_mlp = apply_calibration(test['features'], mlp['model'])
+    assert corrected['calibrated_signal'].shape == corrected_mlp['calibrated_signal'].shape == (253,)
+    assert np.isfinite(corrected_mlp['calibrated_signal']).all()
+
+
+def test_calibration_workflow_skill_hybrid_snippet():
+    import importlib
+    from adctoolbox import fit_pipeline_gain_sine, DitherGainTracker
+    model = importlib.import_module('adctoolbox.examples.11_calibration.pipeline_dither_model')
+    n = np.arange(8192)
+    fin_over_fs = 137/8192
+    adc = model.DitherPipeline(seed=11)
+    calibration_captures = [adc.convert(.8*np.sin(2*np.pi*fin_over_fs*n), 3.88, probe_enabled=False)]
+    capture = adc.convert(.8*np.sin(2*np.pi*fin_over_fs*n), 3.88)
+    foreground_result = fit_pipeline_gain_sine(calibration_captures, frequency=fin_over_fs)
+    tracker = DitherGainTracker(initial_gain=foreground_result['gain_estimate'])
+    corrected = tracker.apply(capture['coarse'], capture['backend'], capture['pn'])
+    update = tracker.update(capture['backend'], capture['pn'], capture['backend_code'])
+    assert corrected['gain_used'] == foreground_result['gain_estimate']
+    assert update['status'] == 'updated'
+
+
 # ----------------------------------------------------------------------
 # Shared fixture — a small synthetic dout/aout pair used by most tests
 # ----------------------------------------------------------------------

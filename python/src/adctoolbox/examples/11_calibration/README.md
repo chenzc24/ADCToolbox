@@ -5,19 +5,28 @@ background method inventory, shared correction models, current API maturity and
 remaining implementation priorities. The guide also routes to the existing
 bit-weight and time-interleaved calibration examples.
 
-Two experiments are available:
+Five experiments are available:
 
 - `exp_cal01_dither_background.py`: minimal gain-only calibration, continuous
   drift, step tracking and probe-amplitude diagnostics (documented below).
 - `exp_cal02_dither_coverage.py`: subtractive randomization, gain, linear memory,
   capacitor mismatch and nonlinear moment identification, with failure controls.
   See [DITHER_COVERAGE.md](DITHER_COVERAGE.md) for equations, sources and limits.
+- `exp_cal03_foreground_nonlinear.py`: public polynomial and MLP fit/apply APIs,
+  independent reference captures, frozen held-out tests and reference-bias control.
+- `exp_cal04_hybrid_tracking.py`: foreground initialization followed by causal
+  background gain tracking, compared with frozen foreground and nominal startup.
+  See [FOREGROUND_AND_HYBRID.md](FOREGROUND_AND_HYBRID.md) for both new experiments.
+- `exp_cal05_foreground_excitation.py`: same-budget single-tone versus mixed-tone
+  training, keeping polynomial structures fixed; exposes joint-history coverage
+  failures that numerical rank and per-feature range checks can miss.
 
 `exp_cal01_dither_background.py` models foreground and background interstage
 gain calibration entirely in software. It is a minimal two-stage Pipeline
 model, not a reproduction of the earlier five-stage GCN paper or a transistor
-implementation. Helper classes in `pipeline_dither_model.py` are example
-interfaces; they are not exported as stable top-level ADCToolbox APIs.
+implementation. The plant in `pipeline_dither_model.py` remains an example
+interface. Gain fitting/tracking now routes to public `fit_pipeline_gain_sine`
+and `DitherGainTracker`; the legacy `reconstruct` wrapper still returns an array.
 
 ## Run
 

@@ -145,9 +145,14 @@ public functions from example helpers and planned algorithms.
 |---|---|
 | `exp_cal01_dither_background.py` | Pipeline PN gain calibration: convergence, drift, and frozen foreground comparison |
 | `exp_cal02_dither_coverage.py` | Dither randomization and mechanism-specific gain, memory, capacitor and nonlinear identification |
+| `exp_cal03_foreground_nonlinear.py` | Polynomial/MLP foreground correction, reference bias and independent test conditions |
+| `exp_cal04_hybrid_tracking.py` | Foreground initialization plus background gain tracking versus frozen and nominal-start controls |
+| `exp_cal05_foreground_excitation.py` | Fixed-model single-tone versus mixed-tone training and multitone generalization |
 
 The adjacent README documents injection assumptions, observable signals,
 causal block updates and probe-off controls. `pipeline_dither_model.py`
-contains reusable example helpers; it is not a stable public calibration API.
+contains the example plant and compatibility wrappers for the public gain API.
 `DITHER_COVERAGE.md` documents the second experiment and its literature sources;
 `dither_mechanisms.py` contains its behavioral models and observable-only trackers.
+`FOREGROUND_AND_HYBRID.md` documents the public supervised correction interfaces
+and the new foreground/hybrid experiments. Other mechanism trackers remain examples.

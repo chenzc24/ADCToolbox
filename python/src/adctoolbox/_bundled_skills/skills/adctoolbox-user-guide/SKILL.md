@@ -183,11 +183,13 @@ independently. Offline-trained NN inference is not automatically background.
 
 For the full inventory, read packaged
 `11_calibration/CALIBRATION_SYSTEM.md` (paths in `references/example-map.md`).
-Public foreground APIs cover bit weights and TI mismatch correction. Pipeline
-dither gain, memory, capacitor-switch and inverse-cubic trackers are packaged
-example helpers, not stable public APIs. Generic polynomial/LUT/MLP workflows
-remain research work awaiting packaging. Dither randomization alone need not
-estimate any calibration parameter.
+Public foreground APIs cover bit weights, TI mismatch, direct polynomial/MLP
+correction and Pipeline gain sine fitting. `DitherGainTracker` is a public
+background gain interface supporting foreground initialization. Memory,
+capacitor-switch and inverse-cubic trackers remain example helpers. LUT and the
+older GCN comparisons remain research work. Dither randomization alone need not
+estimate any calibration parameter. For these newer interfaces and reference
+requirements, read `references/calibration-workflows.md`.
 
 ```python
 from adctoolbox import calibrate_weight_sine, scale_calibration_output

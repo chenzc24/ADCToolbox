@@ -23,9 +23,8 @@ it is foreground calibration, even if its inference runs continuously on chip.
 
 Foreground initialization followed by background tracking is a useful combination.
 It shares the correction model and needs compatible parameter definitions and
-state initialization. The current Pipeline experiments compare separate frozen
-foreground and nominal-initialized background paths; they do not yet demonstrate
-this combined startup procedure.
+state initialization. `exp_cal04_hybrid_tracking.py` compares this combined
+startup with frozen foreground and nominal-initialized background paths.
 
 ## Classification axes
 
@@ -54,8 +53,12 @@ has history even though its frozen gain correction is memoryless.
 | TI offset, gain and skew | Per-channel affine correction plus fractional delay; interleaved sine capture and channel count | `adctoolbox.extract_mismatch_sine`, then `adctoolbox.calibrate_foreground` | Public API; extraction and application are separate |
 | Pipeline gain fit | Dedicated sine, coarse subcode and backend output; frozen inverse gain | `pipeline_dither_model.py`: `fit_foreground_gain`; run `exp_cal01_dither_background.py` | Packaged example |
 | Pipeline mechanism-specific fits | Gain, linear memory, capacitor-switch mismatch or inverse cubic; dedicated sine and internal observables | `dither_mechanisms.py`: `foreground_fit`; run `exp_cal02_dither_coverage.py` | Packaged examples, including a specialized nonlinear baseline |
+| Direct polynomial correction | Aligned supplied reference; arbitrary declared features, optional history and cross terms | `fit_calibration_polynomial` + `apply_calibration` | Public API; `exp_cal03_foreground_nonlinear.py` demonstrates independent-reference fitting |
+| Residual MLP correction | Supplied training and separate validation reference; frozen affine baseline plus trained tanh network | `fit_calibration_mlp` + `apply_calibration` | Public API; same foreground example |
 
-The last two entries live in `11_calibration/`. Public weight examples remain
+Pipeline gain fitting is also available as `fit_pipeline_gain_sine`, with shared
+`apply_gain_calibration` reconstruction. The mechanism-specific examples live
+in `11_calibration/`. Public weight examples remain
 under `05_debug_digital/`; the TI examples remain under `08_time_interleave/`.
 
 For bit weights, `bits` has shape `(N_samples, N_decisions)` and binary values.
@@ -80,14 +83,15 @@ tracking API.
 
 | Method | Observable information and estimator | Correction | Entry point / status |
 | --- | --- | --- | --- |
-| Pipeline gain | Known PN and backend residue; normalized covariance | Frozen inverse gain within each block, then PN subtraction | `DitherGainTracker` in `pipeline_dither_model.py`; `exp_cal01_dither_background.py`; example |
+| Pipeline gain | Known PN and backend residue; normalized covariance | Frozen inverse gain within each block, then PN subtraction | Public `DitherGainTracker` and `apply_gain_calibration`; `exp_cal01` / `exp_cal04` examples |
 | Pipeline gain and linear memory | Present/delayed PN and residue; covariance system | Stateful inverse of the gain-plus-one-delay model | `MemoryTracker` + `MemoryCorrector` in `dither_mechanisms.py`; `exp_cal02_dither_coverage.py`; example |
 | Capacitor mismatch | Known random capacitor-role switching and coarse codes; code-conditioned instrument | Switching-dependent affine reconstruction of observed residue/coarse code | `CapacitorTracker` + `capacitor_correct`; same module and runner; example |
 | Inverse cubic nonlinearity | Four-level PN and residue; two independent moment conditions | `q + c1*r + c3*r**3 - a*p` | `NonlinearTracker` + `nonlinear_correct`; same module and runner; example |
 | TI timing skew | Adjacent-channel mean absolute differences and statistical assumptions | Digital estimator controls analog delay-line trim | `08_time_interleave/exp_ti02_autocorr_background_skew_calibration.py`; example |
 
-The Pipeline helpers are **not yet stable public calibration APIs**. They model
-specific injection points, ADC structures and accessible internal signals.
+The Pipeline gain interface is now public. The memory, capacitor-switch and
+inverse-cubic trackers remain **example interfaces**. All model specific
+injection points, ADC structures and accessible internal signals.
 There is no universal estimator that can calibrate an arbitrary ADC using its
 final output code alone.
 
@@ -109,12 +113,14 @@ Pipeline tracking benchmark's validation claims.
 
 | Workflow | Affine / linear correction | Nonlinear correction |
 | --- | --- | --- |
-| Foreground | Public bit weights and TI correction; Pipeline gain/memory example fits | Specialized inverse-cubic example; general polynomial, LUT and MLP workflows still need packaging |
-| Background | Pipeline PN gain/memory and switching-dependent mismatch examples; TI analog timing-control example | Specialized inverse-cubic moment example; no general nonlinear-memory or neural-network tracker |
+| Foreground | Public bit weights, TI correction and Pipeline gain fit; Pipeline memory example fit | Public supervised polynomial and MLP correction; specialized inverse-cubic example; general LUT still to package |
+| Background | Public Pipeline PN gain tracker; memory and switching-dependent mismatch examples; TI analog timing-control example | Specialized inverse-cubic moment example; no general nonlinear-memory or neural-network tracker |
 
-Generic polynomial, LUT, MLP and GCN comparisons exist as repository research
-experiments, not packaged public algorithms. Their independent-data results are
-recorded in `docs/plans/2026-10-31-calibration-expansion.md` in the repository.
+Earlier Pipeline polynomial, LUT, MLP and GCN comparisons remain repository
+research experiments. The new generic polynomial/MLP APIs and foreground
+benchmark are separate from that paper reproduction. See
+`FOREGROUND_AND_HYBRID.md` for the implemented interfaces and reference contract;
+earlier results remain in `docs/plans/2026-10-31-calibration-expansion.md`.
 
 Dither randomization is a supporting technique, not necessarily calibration.
 The threshold-INL randomization sweep in `exp_cal02_dither_coverage.py` estimates
@@ -124,7 +130,8 @@ of subtracting a known injected signal. Keep it separate from parameter tracking
 ## Common architecture for future APIs
 
 Use the following responsibilities when extracting reusable APIs from examples.
-These are design boundaries, not a new implemented universal class hierarchy.
+Polynomial/MLP fitting and Pipeline gain tracking now follow these boundaries;
+they do not require a universal class hierarchy.
 
 ```text
 ADC / probe model -> observable capture -> correction model -> corrected output
@@ -144,11 +151,13 @@ true input and true device parameters -> evaluator only
 4. **Evaluator** compares methods and computes metrics. Simulator truth and
    oracle parameters never feed the practical estimator or choose its updates.
 
-Reserve consistent semantics for future `fit`, `apply`, `update` and `reset`
+Use consistent semantics for `fit`, `apply`, `update` and `reset`
 interfaces. `fit` identifies parameters from a dedicated dataset; `apply` corrects
 with a supplied snapshot; `update` changes the estimate using observable data;
-`reset` deliberately clears the relevant estimator or signal-path state. Existing
-functions and example helpers do not yet all implement this common interface.
+`reset` deliberately clears the relevant estimator or signal-path state.
+The public gain tracker implements apply/update/reset. Generic foreground models
+use separate fit/apply functions and JSON model dictionaries; history state is
+explicit in `build_calibration_features`. Older helpers retain their existing APIs.
 
 For the current block-based Pipeline benchmark, correct block k with the parameters
 available at its start, update after observing block k, and use the new parameters
@@ -162,13 +171,13 @@ excitation rather than treating an unidentifiable update as successful calibrati
 
 ## Next implementation priorities
 
-1. Package foreground inverse-polynomial and lightweight MLP examples with
-   independent training, validation and test captures. Compare frozen weights,
-   polynomial and neural models with the same available observables and reference.
-   Add a LUT baseline and optional history only when the experiment needs them.
-2. Extract the tested Pipeline estimators and correction models into documented
-   reusable APIs, retaining architecture-specific observability and state. Add
-   foreground initialization followed by background tracking as an explicit test.
+1. Extend the packaged polynomial/MLP foreground benchmark to architecture-specific
+   stage-code inputs and a LUT baseline, retaining independent reference and test
+   captures. Do not compare methods with different observable information as
+   though their input budgets were identical.
+2. Extend public gain calibration to other tested Pipeline mechanisms after
+   documenting their architecture-specific observability and persistent state.
+   Gain-only foreground initialization plus background tracking is implemented.
 3. Bring the TI background example to the same continuous-stream evaluation
    standard: quantization, drift, current parameters, excitation failures and
    multiple input spectra.

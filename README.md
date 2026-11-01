@@ -28,7 +28,8 @@
 
 - **Realistic Signal Modeling**: generates high-fidelity ADC waveforms simulating real-world impairments, including clock jitter, thermal noise, quantization effects, settling errors, and noise-shaped quantization.
 
-- **Calibration**: foreground bit-weight and time-interleaved correction APIs,
+- **Calibration**: foreground bit-weight, polynomial, MLP and time-interleaved correction APIs,
+  a reusable Pipeline dither gain tracker with hybrid foreground initialization,
   plus Pipeline dither background simulation examples for gain, memory,
   capacitor mismatch and nonlinear identification. See the
   [calibration system guide](python/src/adctoolbox/examples/11_calibration/CALIBRATION_SYSTEM.md)
@@ -100,7 +101,7 @@ See [Usage Examples](#usage-examples) section below for detailed code examples.
 | `08_time_interleave/` | 2 | Time-interleaved ADC skew extraction and statistical background timing control |
 | `09_downsample/` | 1 | Subsample-only debug output and aliasing behavior |
 | `10_oversampling/` | 3 | Noise shaping, in-band filtering, NTF analysis, and OSR sweeps |
-| `11_calibration/` | 2 | Pipeline dither identification, causal tracking, and frozen foreground comparisons |
+| `11_calibration/` | 5 | Dither mechanisms, nonlinear foreground correction, excitation coverage, and hybrid tracking |
 
 See the packaged `examples/README.md` after running `adctoolbox-get-examples`
 for the full script map.

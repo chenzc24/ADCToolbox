@@ -33,6 +33,7 @@ Complete Documentation
    installation
    quickstart
    calibration
+   calibration_workflows
    api/index
    algorithms/index
    examples/index

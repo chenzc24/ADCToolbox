@@ -27,13 +27,24 @@ current packaged examples under `python/src/adctoolbox/examples/`.
 - Pipeline dither background gain calibration, convergence and drift tracking:
   `11_calibration/exp_cal01_dither_background.py`.
   Read the adjacent `README.md` for the injection model, causal updates and
-  frozen foreground/probe-off controls. These are example helpers, not a
-  generic public background calibration API.
+  frozen foreground/probe-off controls. The plant remains an example;
+  `DitherGainTracker` and `fit_pipeline_gain_sine` are now public gain interfaces.
 - Dither mechanisms: gain, linear memory, capacitor switching, inverse cubic,
   randomization and identifiability failures:
   `11_calibration/exp_cal02_dither_coverage.py`; read adjacent
   `DITHER_COVERAGE.md` for equations and limits. The foreground fits here are
   mechanism-specific baselines, not a general polynomial fitting API.
+- Direct polynomial/MLP foreground correction with an independent reference:
+  `11_calibration/exp_cal03_foreground_nonlinear.py`.
+- Foreground-initialized background gain tracking:
+  `11_calibration/exp_cal04_hybrid_tracking.py`.
+  Read `11_calibration/FOREGROUND_AND_HYBRID.md`; public API snippets are in
+  `references/calibration-workflows.md`.
+- Nonlinear history-feature excitation and multitone generalization:
+  `11_calibration/exp_cal05_foreground_excitation.py` consumes a completed
+  `exp_cal03` run and changes training excitation at fixed polynomial structure
+  and sample budget. Single-tone test performance does not establish multitone
+  correction accuracy, even when the numerical design rank is full.
 - TI statistical background timing control:
   `08_time_interleave/exp_ti02_autocorr_background_skew_calibration.py`.
   This older demo lacks quantization and continuous drift evaluation and

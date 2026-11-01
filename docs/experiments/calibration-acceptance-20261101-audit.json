@@ -1,0 +1,52 @@
+{
+  "foreground": {
+    "cases": 6,
+    "frozen_model_metric_rows_replayed": 1080,
+    "maximum_replay_error_db": 0.0,
+    "aggregate_recomputed": true,
+    "optimizer_not_converged": [
+      {
+        "case": "static_seed11",
+        "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT"
+      },
+      {
+        "case": "static_seed22",
+        "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT"
+      },
+      {
+        "case": "static_seed33",
+        "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT"
+      },
+      {
+        "case": "memory_seed11",
+        "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT"
+      },
+      {
+        "case": "memory_seed22",
+        "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT"
+      },
+      {
+        "case": "memory_seed33",
+        "message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT"
+      }
+    ]
+  },
+  "hybrid": {
+    "cases": 18,
+    "causal_blocks_checked": 4608,
+    "aggregate_recomputed": true,
+    "backend_overloads": 0
+  },
+  "environment": {
+    "python": "3.13.1",
+    "numpy": "2.4.3",
+    "scipy": "1.17.1"
+  },
+  "audit_script_sha256": "d9dbe454599658b7dfc55f42d1f969e875ad3f7ecc5c9efe53cb07123f69f088",
+  "status": "passed",
+  "excitation": {
+    "cases": 6,
+    "mixed_model_metric_rows_replayed": 480,
+    "aggregate_recomputed": true
+  }
+}
