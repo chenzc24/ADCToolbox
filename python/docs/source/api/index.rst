@@ -9,6 +9,7 @@ This section provides detailed documentation for all ADCToolbox modules and func
    fundamentals
    spectrum
    aout
+   calibration
    dout
    models
    siggen
@@ -29,7 +30,10 @@ Module Overview
     Analog output analysis tools for INL/DNL, harmonic decomposition, and error characterization
 
 :doc:`dout`
-    Digital output analysis tools for bit weight calibration, overflow detection, and ENOB analysis
+    Digital output analysis tools for bit activity, overflow detection, and ENOB analysis
+
+:doc:`calibration`
+    Foreground bit-weight identification, output scaling, diagnostics, and routing to background examples
 
 :doc:`models`
     ADC behavioral models, including SAR conversion, reconstruction, ideal weights, and capacitor mismatch

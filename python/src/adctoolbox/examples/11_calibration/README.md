@@ -1,5 +1,10 @@
 # Calibration simulation examples
 
+Start with [CALIBRATION_SYSTEM.md](CALIBRATION_SYSTEM.md) for the foreground /
+background method inventory, shared correction models, current API maturity and
+remaining implementation priorities. The guide also routes to the existing
+bit-weight and time-interleaved calibration examples.
+
 Two experiments are available:
 
 - `exp_cal01_dither_background.py`: minimal gain-only calibration, continuous

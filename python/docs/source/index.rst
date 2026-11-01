@@ -32,6 +32,7 @@ Complete Documentation
 
    installation
    quickstart
+   calibration
    api/index
    algorithms/index
    examples/index
@@ -94,11 +95,11 @@ Analysis Areas
       mismatch-aware behavioral modeling.
 
    .. grid-item-card:: Calibration
-      :link: algorithms/calibrate_weight_sine
+      :link: calibration
       :link-type: doc
 
-      Foreground bit-weight calibration from sine-wave decisions, plus
-      lightweight and example-driven workflows.
+      Foreground identification, background tracking, correction models,
+      and packaged simulation examples.
 
    .. grid-item-card:: Analog Debug
       :link: api/aout

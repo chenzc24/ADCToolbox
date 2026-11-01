@@ -137,6 +137,10 @@ python 05_debug_digital/exp_d02_cal_weight_sine.py
 
 ### `11_calibration/` - foreground and background calibration models
 
+Start with [the calibration system guide](11_calibration/CALIBRATION_SYSTEM.md)
+to choose between dedicated fitting and online tracking, and to distinguish
+public functions from example helpers and planned algorithms.
+
 | File | Topic |
 |---|---|
 | `exp_cal01_dither_background.py` | Pipeline PN gain calibration: convergence, drift, and frozen foreground comparison |

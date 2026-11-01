@@ -28,7 +28,11 @@
 
 - **Realistic Signal Modeling**: generates high-fidelity ADC waveforms simulating real-world impairments, including clock jitter, thermal noise, quantization effects, settling errors, and noise-shaped quantization.
 
-- **Calibration Algorithms**: built-in reference implementations for digital calibration, including bit-weight extraction and redundancy management for SAR and Pipeline architectures.
+- **Calibration**: foreground bit-weight and time-interleaved correction APIs,
+  plus Pipeline dither background simulation examples for gain, memory,
+  capacitor mismatch and nonlinear identification. See the
+  [calibration system guide](python/src/adctoolbox/examples/11_calibration/CALIBRATION_SYSTEM.md)
+  for workflows, available interfaces and remaining gaps.
 
 - **Oversampling Workflows**: MATLAB-compatible `ifilter`, `perfosr`, and
   `ntfperf` entry points for in-band extraction, performance-vs-OSR sweeps,
@@ -54,7 +58,7 @@ python -c "import adctoolbox; print(adctoolbox.__version__)"
 
 ## Quick Start
 
-**Get all 63 runnable examples in one command:**
+**Get all runnable examples in one command:**
 
 ```bash
 cd /path/to/your/workspace
@@ -93,9 +97,10 @@ See [Usage Examples](#usage-examples) section below for detailed code examples.
 | `05_debug_digital/` | 11 | Bit activity, overflow, digital weight calibration, SAR redundancy, and mismatch calibration |
 | `06_use_toolsets/` | 4 | One-command AOUT/DOUT dashboard workflows |
 | `07_conversions/` | 5 | Aliasing, dB/unit conversions, FoM, SNR, and NSD conversions |
-| `08_time_interleave/` | 2 | Time-interleaved ADC skew extraction, spur prediction, and foreground calibration |
+| `08_time_interleave/` | 2 | Time-interleaved ADC skew extraction and statistical background timing control |
 | `09_downsample/` | 1 | Subsample-only debug output and aliasing behavior |
 | `10_oversampling/` | 3 | Noise shaping, in-band filtering, NTF analysis, and OSR sweeps |
+| `11_calibration/` | 2 | Pipeline dither identification, causal tracking, and frozen foreground comparisons |
 
 See the packaged `examples/README.md` after running `adctoolbox-get-examples`
 for the full script map.

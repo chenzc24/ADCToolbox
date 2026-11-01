@@ -5,6 +5,9 @@ current packaged examples under `python/src/adctoolbox/examples/`.
 
 ## Start Here
 
+- Calibration workflow and capability inventory:
+  `11_calibration/CALIBRATION_SYSTEM.md`. Choose foreground/background, then
+  correction form, memory and architecture; distinguish public APIs from examples.
 - FFT fundamentals and amplitude scaling rules:
   `02_spectrum/exp_s00_fft_fundamentals.py`
 - Environment / smoke test:
@@ -26,6 +29,15 @@ current packaged examples under `python/src/adctoolbox/examples/`.
   Read the adjacent `README.md` for the injection model, causal updates and
   frozen foreground/probe-off controls. These are example helpers, not a
   generic public background calibration API.
+- Dither mechanisms: gain, linear memory, capacitor switching, inverse cubic,
+  randomization and identifiability failures:
+  `11_calibration/exp_cal02_dither_coverage.py`; read adjacent
+  `DITHER_COVERAGE.md` for equations and limits. The foreground fits here are
+  mechanism-specific baselines, not a general polynomial fitting API.
+- TI statistical background timing control:
+  `08_time_interleave/exp_ti02_autocorr_background_skew_calibration.py`.
+  This older demo lacks quantization and continuous drift evaluation and
+  selects a history-best SFDR result; do not claim general blind tracking validation.
 
 ## Example Families
 
@@ -37,6 +49,9 @@ current packaged examples under `python/src/adctoolbox/examples/`.
   start in `04_debug_analog/`
 - Digital calibration and DOUT debug:
   start in `05_debug_digital/`
+- Foreground/background calibration model selection:
+  start with `11_calibration/CALIBRATION_SYSTEM.md`; existing weight examples
+  stay in `05_debug_digital/`, TI examples in `08_time_interleave/`
 - Toolset dashboards:
   start in `06_use_toolsets/`
 - Metric and frequency conversions:

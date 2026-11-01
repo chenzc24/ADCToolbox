@@ -8,9 +8,8 @@ The ``dout`` module provides tools for analyzing digital ADC outputs and bit-wei
 Weight Calibration
 ------------------
 
-.. autofunction:: calibrate_weight_sine
-.. autofunction:: scale_calibration_output
-.. autofunction:: adctoolbox.calibration.calibrate_weight_sine_lite
+See :doc:`calibration` for bit-weight identification, scaling, and diagnostics.
+For foreground/background workflow selection, see :doc:`../calibration`.
 
 Bit And Weight Analysis
 -----------------------

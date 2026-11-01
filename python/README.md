@@ -48,9 +48,25 @@ python 01_basic/exp_b01_environment_check.py
 python 02_spectrum/exp_s01_analyze_spectrum_simplest.py
 ```
 
-The package currently ships 59 runnable examples across spectrum analysis,
+The package ships runnable examples across spectrum analysis,
 signal generation, analog debug, digital calibration, toolset dashboards,
-unit conversions, time-interleaved ADC analysis, and subsample output behavior.
+unit conversions, time-interleaved ADC analysis, oversampling and Pipeline
+background calibration.
+
+## Choosing a calibration workflow
+
+Use foreground calibration for dedicated identification followed by frozen
+correction. Use background calibration for causal parameter updates during normal
+conversion. Linearity and memory are separate properties of the correction model.
+
+- Public foreground APIs: sine-based bit weights and TI offset/gain/skew correction.
+- Packaged background examples: Pipeline PN gain/memory, capacitor switching and
+  inverse-cubic identification; TI statistical timing control.
+- General foreground polynomial/LUT/MLP workflows remain to be packaged from
+  research experiments. Background helpers are still example-level interfaces.
+
+After copying the examples, open `11_calibration/CALIBRATION_SYSTEM.md` for the
+complete inventory, observable-data requirements and implementation priorities.
 
 ## Common APIs
 

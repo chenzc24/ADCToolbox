@@ -1,7 +1,7 @@
 Examples
 ================
 
-ADCToolbox includes 63 ready-to-run examples organized into 10 categories. This
+ADCToolbox includes ready-to-run examples organized by topic. This
 page demonstrates common use cases and analysis workflows.
 
 Getting the Examples
@@ -41,6 +41,12 @@ within each category folder.
 * ``08_time_interleave/`` - Time-interleaved ADC analysis examples
 * ``09_downsample/`` - Subsample and aliasing examples
 * ``10_oversampling/`` - Oversampling and noise-shaping examples
+* ``11_calibration/`` - Pipeline foreground/background calibration simulations
+
+For a method inventory and the relationship between foreground fitting,
+background tracking and shared correction models, see :doc:`../calibration`.
+The copied examples include the same guide at
+``11_calibration/CALIBRATION_SYSTEM.md``.
 
 Expected Outputs
 ----------------

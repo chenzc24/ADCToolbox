@@ -4,7 +4,8 @@ description: >
   Router skill for using ADCToolbox from Python. Trigger when a task
   involves: computing or plotting spectra (SNDR, SFDR, ENOB, THD) from
   ADC output, fitting a sine to measured aout, calibrating SAR weights
-  (weight_sine / weight_sine_lite), generating synthetic ADC
+  (weight_sine / weight_sine_lite), choosing foreground or background
+  calibration models, generating synthetic ADC
   stimulus/output, or validating aout/dout buffer shapes. For deeper
   debug (dashboards, phase-plane, bit-level, error decomposition,
   static nonlinearity, ramp INL/DNL, cap-to-weight), open
@@ -49,7 +50,9 @@ Do NOT use for:
 ### Names
 
 - **`bits`** is the per-sample binary decision matrix shape `(N_samples, N_bits)`,
-  values in `{0, 1}` — used by every digital-calibration / bit-level helper.
+  values in `{0, 1}` — used by sine-weight calibration and bit-level helpers.
+  Pipeline multi-bit subcodes and TI interleaved samples have different formats;
+  follow each method's observable-data contract.
 - **`aout`** is the analog output (1D `float` array) — used by spectrum and
   error-analysis helpers.
 - ADC integer codes are *not* `bits`; convert separately if your data is
@@ -173,6 +176,19 @@ m = quick_sndr(aout, fs=fs, win_type='rectangular')
 
 ## 4. Basic workflow — digital calibration
 
+Choose the identification workflow first: foreground uses dedicated calibration
+data and then freezes parameters; background updates from allowed observations
+during normal conversion. Linearity and memory describe the correction model
+independently. Offline-trained NN inference is not automatically background.
+
+For the full inventory, read packaged
+`11_calibration/CALIBRATION_SYSTEM.md` (paths in `references/example-map.md`).
+Public foreground APIs cover bit weights and TI mismatch correction. Pipeline
+dither gain, memory, capacitor-switch and inverse-cubic trackers are packaged
+example helpers, not stable public APIs. Generic polynomial/LUT/MLP workflows
+remain research work awaiting packaging. Dither randomization alone need not
+estimate any calibration parameter.
+
 ```python
 from adctoolbox import calibrate_weight_sine, scale_calibration_output
 from adctoolbox.calibration import calibrate_weight_sine_lite
@@ -208,6 +224,10 @@ then fine-searches it against the calibration residual. If the coherent
 training frequency is already known, pass `freq=k/N` to keep that exact
 frequency fixed; use `force_search=True` only when you deliberately want to
 refine a provided frequency.
+
+`harmonic_order > 1` fits nuisance harmonics in the reference; the corrected
+output is still an affine bit-weight reconstruction, not polynomial inverse
+calibration. `fit_static_nonlin` is forward distortion characterization.
 
 ## 5. Import rules (compressed)
 
