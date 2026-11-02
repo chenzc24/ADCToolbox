@@ -244,6 +244,61 @@ offset/amplitude matrix and the balanced-scan grid are recorded with source
 hashes. See `docs/experiments/2026-11-02-hdc-small-signal.md` for the dated
 results and acceptance limits.
 
+## Correlation attribution experiments
+
+`hdc_correlation.py` adds evaluator-only controls without changing the HDC
+tracker or PN amplitude. Low-amplitude/DC inputs are a new operating-boundary
+study, not an assertion that the upstream repository previously supported
+HDC calibration for those inputs. Upstream already has a separate foreground
+bit-weight amplitude sweep; it tests a different mechanism.
+
+For `r0=g*(z+d)+k*(z+d)^3`, let n be additive noise in r units and
+`e=Q(r0+n)-(r0+n)` the quantization error. The experiment records the exact
+finite-record identity, using `c3=p1*p2*p3` and angle brackets for averages:
+
+```
+k_hat-k = [<(r0-d)*c3>/(6A^3)-k] + <n*c3>/(6A^3) + <e*c3>/(6A^3)
+```
+
+The first bracket is further divided into input leakage, terms linear and
+quadratic in d, and imbalance of the cubic-PN moment. These are finite-record
+terms, not an assumption that all errors are independent white noise. The
+diagnostic also records PN means/pair moments, conditional quantization-error
+means for c3=+1/-1, the raw error moment and centered covariance separately.
+
+The corresponding normalized-gain identity is
+
+```
+g_hat-g = B1 + <n*p1>/A + <e*p1>/A
+          + 3*k*(<z^2>-eta) - (7*A^2+3*eta)*(k_hat-k)
+B1 = <(r0-d)*p1>/A - [g-1+(7*A^2+3*<z^2>)*k]
+```
+
+This separates finite linear-correlation error, direct noise/quantization,
+the eta approximation, and propagation of cubic-estimation error into gain.
+The partitions are verified by reconstructing the measured total errors.
+
+Controls compare unquantized, 13-bit and 24-bit backends on identical analog
+captures, isolated versus joint plants, zero/default analog noise, and nested
+record lengths. Balanced PN/phase repetition tests deterministic bias.
+Permuting only e preserves its histogram while breaking its pairing with PN;
+an independent reference deliberately removes useful cubic information too.
+In balanced controls that reference is enumerated as +/-1 for every input/PN
+tuple; the streaming negative control uses a separate LFSR.
+
+Truth decomposition and error permutations cannot be supplied to a deployed
+learner. They identify causes; they do not implement residue decorrelation,
+prove a universal convergence rate, or justify a new hardware resource claim.
+For reproduction, choose a fresh output directory:
+
+```powershell
+uv run --no-sync python src/adctoolbox/examples/11_calibration/hdc_correlation.py --output ../agent_playground/hdc-correlation
+```
+
+Defaults retain peak 0.2, seeds 601/702/803, and sample counts 2^16/2^20/2^24.
+`--quick` is only a command/artifact smoke check. Dated evidence is under
+`docs/experiments/2026-11-02-hdc-correlation.md`.
+
 ## Explicit resource budget, one stage
 
 This is a chosen unpipelined sample datapath and a shared slow controller,

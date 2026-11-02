@@ -38,6 +38,8 @@ Nine experiments are available:
   `hdc_small_signal.py` adds DC-offset/amplitude scans and large-signal training
   followed by continued versus frozen small-signal operation. HDC exposes
   `--dither-peak` consistently across injection, identification and subtraction.
+  `hdc_correlation.py` separates finite-record, quantization, analog-noise and
+  gain/cubic coupling terms, with balanced and error-permutation controls.
 - `exp_cal09_pn_architectures.py`: common three-PN construction across Pipeline
   placement controls, redundant SAR paired weight calibration, TI timing
   observability and Delta-sigma transfer-aware subtraction. See DITHER_GUIDE.md.

@@ -1,0 +1,204 @@
+{
+  "configuration": [
+    {
+      "arguments": {
+        "output": "E:\\ADCToolbox\\agent_playground\\hdc-correlation-main-601-20261102",
+        "seeds": [
+          601
+        ],
+        "checkpoints": [
+          16,
+          20,
+          24
+        ],
+        "noise_rms": [
+          0.0,
+          0.0002
+        ],
+        "dither_peak": 0.2,
+        "quick": false
+      },
+      "sources": {
+        "hdc_correlation.py": "7b4cbb460b24a2f46c8cf71d1da7e07fad3bf7513106241b054c8a6f02fefc7f",
+        "hdc_fixed.py": "c3fe7d13a73994459ef29fdf8fb6378dadcf47d854cb8cf537f10361a60f0e5b",
+        "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8",
+        "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5"
+      },
+      "truth": {
+        "gain": 2.04,
+        "cubic": -0.24,
+        "history": 0.12,
+        "delta": 0.012
+      },
+      "cases": [
+        [
+          "large_sine",
+          0.0,
+          0.78
+        ],
+        [
+          "tiny_inner",
+          0.137,
+          1e-05
+        ],
+        [
+          "dc_bias_control",
+          -0.1846875,
+          0.0
+        ]
+      ],
+      "backend_bits": [
+        0,
+        13,
+        24
+      ],
+      "python": "3.13.1",
+      "numpy": "2.4.3",
+      "scope": "Diagnostic truth decomposition and nonphysical error permutation; no estimator changes; no 2013 RD implementation"
+    },
+    {
+      "arguments": {
+        "output": "E:\\ADCToolbox\\agent_playground\\hdc-correlation-main-702-20261102",
+        "seeds": [
+          702
+        ],
+        "checkpoints": [
+          16,
+          20,
+          24
+        ],
+        "noise_rms": [
+          0.0,
+          0.0002
+        ],
+        "dither_peak": 0.2,
+        "quick": false
+      },
+      "sources": {
+        "hdc_correlation.py": "7b4cbb460b24a2f46c8cf71d1da7e07fad3bf7513106241b054c8a6f02fefc7f",
+        "hdc_fixed.py": "c3fe7d13a73994459ef29fdf8fb6378dadcf47d854cb8cf537f10361a60f0e5b",
+        "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8",
+        "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5"
+      },
+      "truth": {
+        "gain": 2.04,
+        "cubic": -0.24,
+        "history": 0.12,
+        "delta": 0.012
+      },
+      "cases": [
+        [
+          "large_sine",
+          0.0,
+          0.78
+        ],
+        [
+          "tiny_inner",
+          0.137,
+          1e-05
+        ],
+        [
+          "dc_bias_control",
+          -0.1846875,
+          0.0
+        ]
+      ],
+      "backend_bits": [
+        0,
+        13,
+        24
+      ],
+      "python": "3.13.1",
+      "numpy": "2.4.3",
+      "scope": "Diagnostic truth decomposition and nonphysical error permutation; no estimator changes; no 2013 RD implementation"
+    },
+    {
+      "arguments": {
+        "output": "E:\\ADCToolbox\\agent_playground\\hdc-correlation-main-803-20261102",
+        "seeds": [
+          803
+        ],
+        "checkpoints": [
+          16,
+          20,
+          24
+        ],
+        "noise_rms": [
+          0.0,
+          0.0002
+        ],
+        "dither_peak": 0.2,
+        "quick": false
+      },
+      "sources": {
+        "hdc_correlation.py": "7b4cbb460b24a2f46c8cf71d1da7e07fad3bf7513106241b054c8a6f02fefc7f",
+        "hdc_fixed.py": "c3fe7d13a73994459ef29fdf8fb6378dadcf47d854cb8cf537f10361a60f0e5b",
+        "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8",
+        "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5"
+      },
+      "truth": {
+        "gain": 2.04,
+        "cubic": -0.24,
+        "history": 0.12,
+        "delta": 0.012
+      },
+      "cases": [
+        [
+          "large_sine",
+          0.0,
+          0.78
+        ],
+        [
+          "tiny_inner",
+          0.137,
+          1e-05
+        ],
+        [
+          "dc_bias_control",
+          -0.1846875,
+          0.0
+        ]
+      ],
+      "backend_bits": [
+        0,
+        13,
+        24
+      ],
+      "python": "3.13.1",
+      "numpy": "2.4.3",
+      "scope": "Diagnostic truth decomposition and nonphysical error permutation; no estimator changes; no 2013 RD implementation"
+    }
+  ],
+  "completion": [
+    {
+      "elapsed_seconds": 148.56933030000073,
+      "stream_rows": 108,
+      "balanced_rows": 27,
+      "source_hashes_match": true,
+      "maximum_cubic_identity_error": 3.382016888764383e-14,
+      "maximum_gain_identity_error": 6.202178527703328e-16
+    },
+    {
+      "elapsed_seconds": 146.97453099999984,
+      "stream_rows": 108,
+      "balanced_rows": 27,
+      "source_hashes_match": true,
+      "maximum_cubic_identity_error": 3.382016888764383e-14,
+      "maximum_gain_identity_error": 6.202178527703328e-16
+    },
+    {
+      "elapsed_seconds": 148.38451390000046,
+      "stream_rows": 108,
+      "balanced_rows": 27,
+      "source_hashes_match": true,
+      "maximum_cubic_identity_error": 3.382016888764383e-14,
+      "maximum_gain_identity_error": 6.202178527703328e-16
+    }
+  ],
+  "stream_rows": 324,
+  "balanced_rows": 27,
+  "minimum_headroom": 0.040484268286102076,
+  "maximum_overloads": 0,
+  "maximum_partition_residual": 7.446734201499439e-15,
+  "interpretation": "Raw floating moment diagnostics, not committed Tracker coefficients; same PN peak; no RD or production estimator change"
+}
