@@ -103,7 +103,7 @@ uv run --no-sync --with numba python src/adctoolbox/examples/11_calibration/exp_
 - [Delta-sigma全部记录](pn-architectures-delta-sigma-20261102.csv)
 - [PN分布检查](pn-architectures-distribution-20261102.csv)
 
-新机制测试12项通过，覆盖PN跨块状态、SAR因果更新与同样本要求、二进制空隙信息损失、TI探针可观察性、Delta-sigma精确传递关系、频谱标签及不可覆盖输出目录。更大范围回归、技能临时安装、文档和发行包验证的结果在发布记录中汇总。
+新机制测试12项通过，覆盖PN跨块状态、SAR因果更新与同样本要求、二进制空隙信息损失、TI探针可观察性、Delta-sigma精确传递关系、频谱标签及不可覆盖输出目录。更大范围回归、技能临时安装、文档和发行包验证的结果在[发布记录](2026-11-02-dither-release.md)中汇总。
 
 不新增公共校准API，不修改既有实验的PN分布和历史结论。Flash阈值逐项校准、完整Pipeline-SAR、任意多位SAR权重、一般非线性记忆、多阶Delta-sigma和真实TI执行器仍是明确缺口。它们在总览中有位置，不被列为已实现能力。
 
