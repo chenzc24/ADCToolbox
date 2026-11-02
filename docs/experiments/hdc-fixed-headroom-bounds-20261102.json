@@ -1,0 +1,16 @@
+[
+  {
+    "device": "initial",
+    "conservative_peak_at_input_point8": 0.9613790583922172,
+    "headroom_at_point8": 0.038620941607782844,
+    "maximum_input_peak_no_noise": 0.8224302066477635,
+    "maximum_input_peak_six_sigma": 0.8217284500861947
+  },
+  {
+    "device": "final",
+    "conservative_peak_at_input_point8": 1.0191417850393323,
+    "headroom_at_point8": -0.019141785039332282,
+    "maximum_input_peak_no_noise": 0.7889470955957278,
+    "maximum_input_peak_six_sigma": 0.7882581675451185
+  }
+]

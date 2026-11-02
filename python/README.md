@@ -109,6 +109,8 @@ adctoolbox-install-skill --dev --editable --force --dest ~/.codex/skills
 
 ## Documentation
 
+- Dither mechanisms: the copied `11_calibration/DITHER_GUIDE.md` maps Pipeline,
+  SAR, TI and Delta-sigma injection/identification examples and their limits.
 - Website: https://adctoolbox.tokenzhang.com/
 - Docs: https://adctoolbox.tokenzhang.com/doc/
 - GitHub: https://github.com/Arcadia-1/ADCToolbox

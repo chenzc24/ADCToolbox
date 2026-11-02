@@ -5,7 +5,11 @@ background method inventory, shared correction models, current API maturity and
 remaining implementation priorities. The guide also routes to the existing
 bit-weight and time-interleaved calibration examples.
 
-Five experiments are available:
+For Dither specifically, start with [DITHER_GUIDE.md](DITHER_GUIDE.md): it maps
+ADC architecture to physical injection, observable moments, correction and
+failure conditions, and separates published mechanisms from our model extensions.
+
+Nine experiments are available:
 
 - `exp_cal01_dither_background.py`: minimal gain-only calibration, continuous
   drift, step tracking and probe-amplitude diagnostics (documented below).
@@ -20,6 +24,20 @@ Five experiments are available:
 - `exp_cal05_foreground_excitation.py`: same-budget single-tone versus mixed-tone
   training, keeping polynomial structures fixed; exposes joint-history coverage
   failures that numerical rank and per-feature range checks can miss.
+- `exp_cal06_joint_dither.py`: gain, memory, capacitor mismatch and nonlinearity
+  in one conversion path, with joint background identification, correction
+  ablations, parameter convergence bands and injection headroom checks.
+  See [JOINT_DITHER.md](JOINT_DITHER.md) for the model and statistical assumptions.
+- `exp_cal07_joint_convergence.py`: fixed-amplitude sample-budget, averaging,
+  coupling and bias controls, plus code-stratified joint moment identification.
+  See [JOINT_CONVERGENCE.md](JOINT_CONVERGENCE.md).
+- `exp_cal08_hdc_fixed.py`: three equal PN probes, HDC sign correlations,
+  fixed-point gain/cubic correction and joint memory/DAC mismatch tests.
+  See [HDC_FIXED.md](HDC_FIXED.md) for the charge model, fixed arithmetic,
+  range limitations, long averaging windows and explicit hardware budget.
+- `exp_cal09_pn_architectures.py`: common three-PN construction across Pipeline
+  placement controls, redundant SAR paired weight calibration, TI timing
+  observability and Delta-sigma transfer-aware subtraction. See DITHER_GUIDE.md.
 
 `exp_cal01_dither_background.py` models foreground and background interstage
 gain calibration entirely in software. It is a minimal two-stage Pipeline

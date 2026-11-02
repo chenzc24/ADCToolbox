@@ -33,7 +33,10 @@
   plus Pipeline dither background simulation examples for gain, memory,
   capacitor mismatch and nonlinear identification. See the
   [calibration system guide](python/src/adctoolbox/examples/11_calibration/CALIBRATION_SYSTEM.md)
-  for workflows, available interfaces and remaining gaps.
+  for workflows, available interfaces and remaining gaps. The
+  [Dither guide](python/src/adctoolbox/examples/11_calibration/DITHER_GUIDE.md)
+  maps injection and identification across Pipeline, SAR, TI and Delta-sigma
+  examples, including fixed-point HDC and explicit failure controls.
 
 - **Oversampling Workflows**: MATLAB-compatible `ifilter`, `perfosr`, and
   `ntfperf` entry points for in-band extraction, performance-vs-OSR sweeps,
@@ -101,7 +104,7 @@ See [Usage Examples](#usage-examples) section below for detailed code examples.
 | `08_time_interleave/` | 2 | Time-interleaved ADC skew extraction and statistical background timing control |
 | `09_downsample/` | 1 | Subsample-only debug output and aliasing behavior |
 | `10_oversampling/` | 3 | Noise shaping, in-band filtering, NTF analysis, and OSR sweeps |
-| `11_calibration/` | 5 | Dither mechanisms, nonlinear foreground correction, excitation coverage, and hybrid tracking |
+| `11_calibration/` | 9 | Dither injection/identification, fixed-point HDC, SAR/TI/Delta-sigma controls, foreground correction and tracking |
 
 See the packaged `examples/README.md` after running `adctoolbox-get-examples`
 for the full script map.

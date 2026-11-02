@@ -5,6 +5,12 @@ current packaged examples under `python/src/adctoolbox/examples/`.
 
 ## Start Here
 
+- Dither injection locations, PN construction, identification versus noise
+  randomization, and architecture-specific limits:
+  `11_calibration/DITHER_GUIDE.md`. Use `exp_cal08_hdc_fixed.py` for fixed-point
+  three-PN HDC; `exp_cal09_pn_architectures.py` for SAR paired bit weights,
+  TI timing observability and Delta-sigma probe subtraction. These are example
+  models, not universal calibration APIs or synthesized circuits.
 - Calibration workflow and capability inventory:
   `11_calibration/CALIBRATION_SYSTEM.md`. Choose foreground/background, then
   correction form, memory and architecture; distinguish public APIs from examples.

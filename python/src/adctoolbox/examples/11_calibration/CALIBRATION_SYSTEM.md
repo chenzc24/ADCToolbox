@@ -1,5 +1,8 @@
 # Calibration system: foreground and background
 
+For Dither injection positions, PN statistics and architecture-specific
+identification/correction, start with [DITHER_GUIDE.md](DITHER_GUIDE.md).
+
 Choose **foreground or background by how parameters are identified and updated**.
 Then describe the correction model independently: linear or nonlinear, memoryless
 or with memory, and the ADC architecture and observable signals it requires.
@@ -87,6 +90,8 @@ tracking API.
 | Pipeline gain and linear memory | Present/delayed PN and residue; covariance system | Stateful inverse of the gain-plus-one-delay model | `MemoryTracker` + `MemoryCorrector` in `dither_mechanisms.py`; `exp_cal02_dither_coverage.py`; example |
 | Capacitor mismatch | Known random capacitor-role switching and coarse codes; code-conditioned instrument | Switching-dependent affine reconstruction of observed residue/coarse code | `CapacitorTracker` + `capacitor_correct`; same module and runner; example |
 | Inverse cubic nonlinearity | Four-level PN and residue; two independent moment conditions | `q + c1*r + c3*r**3 - a*p` | `NonlinearTracker` + `nonlinear_correct`; same module and runner; example |
+| Joint capacitor / gain / memory / nonlinear model | Independent cap switching plus four-level present/delayed PN; three electronics moments followed by a deembedded cap moment | Stateful inverse cubic/memory path, probe subtraction, cap correction | `joint_dither_model.py` + `exp_cal06_joint_dither.py`; [research example](JOINT_DITHER.md), convergence must be checked |
+| Joint convergence diagnosis and refinement | Same probe amplitude; retain moments separately for observed coarse-code pairs; compare EMA and cumulative averaging | Same joint correction path and capacitor moment | `joint_dither_convergence.py` + `exp_cal07_joint_convergence.py`; [research study](JOINT_CONVERGENCE.md), includes finite-sample and bias controls |
 | TI timing skew | Adjacent-channel mean absolute differences and statistical assumptions | Digital estimator controls analog delay-line trim | `08_time_interleave/exp_ti02_autocorr_background_skew_calibration.py`; example |
 
 The Pipeline gain interface is now public. The memory, capacitor-switch and
@@ -192,5 +197,15 @@ adaptive and truth-only diagnostic controls where applicable.
 
 Existing experiment evidence is recorded in repository reports
 `docs/experiments/2026-10-31-dither-background.md` and
-`docs/experiments/2026-11-01-dither-coverage.md`. Results validate the stated models
+`docs/experiments/2026-11-01-dither-coverage.md`, with joint-error results in
+`docs/experiments/2026-11-01-joint-dither.md`. Results validate the stated models
 and conditions, not arbitrary ADC architectures or silicon implementation cost.
+
+The hardware-oriented three-PN HDC example is documented in
+[HDC_FIXED.md](HDC_FIXED.md). Its integer arithmetic, serial divider and
+register inventory are explicit; the memory and two-element DAC correlators
+are extensions to the published HDC equations. The fixed-feedback capacitor
+network and forward-cubic plant differ from the earlier joint experiment.
+It is not yet synthesized RTL or a verified analog circuit. The dated
+`docs/experiments/2026-11-02-hdc-fixed.md` report includes both successful
+tone tests and DC/low-frequency headroom failures at unchanged dither peak.

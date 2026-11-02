@@ -148,6 +148,10 @@ public functions from example helpers and planned algorithms.
 | `exp_cal03_foreground_nonlinear.py` | Polynomial/MLP foreground correction, reference bias and independent test conditions |
 | `exp_cal04_hybrid_tracking.py` | Foreground initialization plus background gain tracking versus frozen and nominal-start controls |
 | `exp_cal05_foreground_excitation.py` | Fixed-model single-tone versus mixed-tone training and multitone generalization |
+| `exp_cal06_joint_dither.py` | Joint gain/memory/capacitor/nonlinear background calibration, convergence limits and injection headroom |
+| `exp_cal07_joint_convergence.py` | Fixed-probe averaging/coupling/bias controls and code-stratified joint identification |
+| `exp_cal08_hdc_fixed.py` | Three-PN HDC fixed arithmetic, joint memory/DAC mismatch, range checks and hardware budget |
+| `exp_cal09_pn_architectures.py` | Common three-PN injection: Pipeline visibility, SAR paired weights, TI timing and Delta-sigma subtraction |
 
 The adjacent README documents injection assumptions, observable signals,
 causal block updates and probe-off controls. `pipeline_dither_model.py`
@@ -156,3 +160,6 @@ contains the example plant and compatibility wrappers for the public gain API.
 `dither_mechanisms.py` contains its behavioral models and observable-only trackers.
 `FOREGROUND_AND_HYBRID.md` documents the public supervised correction interfaces
 and the new foreground/hybrid experiments. Other mechanism trackers remain examples.
+`JOINT_DITHER.md` documents the combined error path and observable joint estimator.
+Start with `DITHER_GUIDE.md` for the architecture/injection/estimation map and
+the evidence boundaries across all these Dither examples.

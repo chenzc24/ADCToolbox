@@ -34,6 +34,7 @@ Complete Documentation
    quickstart
    calibration
    calibration_workflows
+   dither
    api/index
    algorithms/index
    examples/index

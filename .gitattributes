@@ -31,3 +31,12 @@
 *.pdf binary
 *.png binary
 *.xlsx binary
+
+## Preserve byte-level source hashes in calibration experiment audits.
+/python/src/adctoolbox/examples/11_calibration/exp_cal*.py text eol=lf
+/python/src/adctoolbox/examples/11_calibration/dither_mechanisms.py text eol=lf
+/python/src/adctoolbox/examples/11_calibration/joint_*.py text eol=lf
+/python/src/adctoolbox/examples/11_calibration/hdc_*.py text eol=lf
+/python/src/adctoolbox/examples/11_calibration/pn_architectures.py text eol=lf
+/python/src/adctoolbox/examples/11_calibration/foreground_benchmark.py text eol=lf
+/python/src/adctoolbox/examples/11_calibration/audit_calibration_acceptance.py text eol=lf

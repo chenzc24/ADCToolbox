@@ -6,3 +6,4 @@ include LICENSE
 graft src/adctoolbox/examples
 prune src/adctoolbox/examples/*/output
 global-exclude *.py[cod]
+global-exclude *.nbi *.nbc

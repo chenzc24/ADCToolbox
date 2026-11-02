@@ -1,0 +1,78 @@
+{
+  "configuration": {
+    "blocks": 256,
+    "long_blocks": 1024,
+    "block_size": 32768,
+    "seeds": [
+      101,
+      202,
+      303
+    ],
+    "amplitude": 0.2,
+    "peak": 0.8,
+    "sample_rate": 100000000.0,
+    "methods": [
+      "pooled_04",
+      "pooled_01",
+      "cumulative",
+      "grouped_04",
+      "grouped_01"
+    ],
+    "bands": {
+      "gain": 0.01,
+      "history": 0.1,
+      "delta": 0.1,
+      "beta": 0.1
+    },
+    "pilot_seed": 44,
+    "parameter_policy": "constant FINAL; step INITIAL to FINAL at midpoint; no estimator reset",
+    "versions": {
+      "python": "3.13.1",
+      "numpy": "2.4.3",
+      "scipy": "1.17.1"
+    },
+    "source_sha256": {
+      "exp_cal07_joint_convergence.py": "601759118e3896e718ab22399329db956ae8e26392badd340cb88c1495c276ab",
+      "joint_dither_convergence.py": "9f1ef29c32953029c7cbc10ac4b576189ca6f3894afb86c423ab5e451cd589c7",
+      "joint_dither_model.py": "d4cb60c0ace94a42978678dd826d29b5cb55ec8d64188d34d856260d4f0fc81d",
+      "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5",
+      "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8"
+    }
+  },
+  "audit": {
+    "main_runs": 12,
+    "main_samples": 100663296,
+    "diagnostic_samples": 301989888,
+    "minimum_headroom": 0.11286679917897158,
+    "overloads": 0,
+    "max_causality_gap": 0.0,
+    "finite_numeric_results": true,
+    "all_outputs_use_start_of_block_coefficients": true
+  },
+  "output_sha256": {
+    "101_long_moments.npz": "a57299e75a14ece2fef09769bb0bbafe70e541a4fe59b779928abc1c7b1d50fa",
+    "101_multitone_constant.csv": "84ca1f006a2264b03a71074d6702a10a79d15d17758adf81cac130019b30036d",
+    "101_multitone_step.csv": "05a06d6e8759648826cde12d48465aab63a53982400bbef62d6239a6c9d328e7",
+    "101_sine_constant.csv": "683af39939f4e4f0e53c0d53f0533ee3aafb26f31bd93e5d2847c6a0f125e144",
+    "101_sine_step.csv": "1fd2e0f2b10c97f9c178211daa0219c1d33bc091dcf0eb152725d4f51805a2f4",
+    "202_long_moments.npz": "07d6970ab8aa127d3848d000b828aacc39f3e044b7114f5fdea9c37586a898cc",
+    "202_multitone_constant.csv": "ba14e6e8513312f665fd7fc1eec975f2d7631d5e041a6cae53dc745854cec1ba",
+    "202_multitone_step.csv": "4f2502ad2ff56e7807b6701533d0b7e970f42cbe0b593bb87ce685245c3437e2",
+    "202_sine_constant.csv": "24aea3904802b36e29f9f2109ebfbc1d40c59f61e713d8e76cf8a8e300dc1ea0",
+    "202_sine_step.csv": "f4b041aed928df92537abe3ed291f1be0087b91a89a6f427cd25149654cb59f1",
+    "303_long_moments.npz": "5ea69212354efc481e8be774d1733c39ebc77e13a76186f81bc22a4f7603f749",
+    "303_multitone_constant.csv": "3aaedafd8c94adf97a2a03f6c044a9f549390e88ff5832e5607cbdfb1c05bb71",
+    "303_multitone_step.csv": "0cf64f2dc10f4514c3ea6d24b32f427bd2b00880364043e39bdc8b3aaa333e6e",
+    "303_sine_constant.csv": "2c0d4637b2dcaf7201d59749d41e7cb1db3f6a58410f08bbaf9ba79cce0efe7d",
+    "303_sine_step.csv": "e23167fab79c17481d1415489b48e08ae3ce0a7a26fba3081d9e347d9425e626",
+    "audit.json": "2a16a499e5482a98619a6bf5ecf69c64b037a451ecaa6767d6b6c3130560fe3d",
+    "balanced_controls.csv": "ca403b8b50041b70ea71639d3548b9a7ba81e2d473dd0d2df63632bbdfcd6bac",
+    "configuration.json": "81e05b91f030e6a501dd8e3f433fbae10bdd0d0fef69ed2bcbdef227354fa1d2",
+    "fixed_probe_convergence.png": "7abd71a2a8811510e44cd51dd7d76a206ecc101f39d4fad5e6c2a18b6654eecb",
+    "long_summary.csv": "5e0487ce362e9addfa1bc38d51f49f6c91008cd9381949126c889c4a4ae2258d",
+    "sample_budget.png": "e21e0a6920b491a4ba46467a96fc3a85d83ae2eb6caf587ba8a34f3787ebc47f",
+    "summary.csv": "fa98fc7af0c7e51e7ce93909cb66c0be816b5ab6e7cf4ce4133df1db84e26aa4"
+  },
+  "validation": "Original pooled estimator equivalence; exact balanced joint moments; backend-noise bias identity; guards; causality; CLI: 17 relevant tests passed across focused runs.",
+  "seed_policy": "Pilot 44 only; validation 101,202,303; no retuning after validation."
+}

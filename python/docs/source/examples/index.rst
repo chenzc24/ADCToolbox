@@ -41,12 +41,14 @@ within each category folder.
 * ``08_time_interleave/`` - Time-interleaved ADC analysis examples
 * ``09_downsample/`` - Subsample and aliasing examples
 * ``10_oversampling/`` - Oversampling and noise-shaping examples
-* ``11_calibration/`` - Pipeline foreground/background calibration simulations
+* ``11_calibration/`` - Calibration models, fixed-point HDC and PN architecture experiments
 
 For a method inventory and the relationship between foreground fitting,
 background tracking and shared correction models, see :doc:`../calibration`.
 The copied examples include the same guide at
 ``11_calibration/CALIBRATION_SYSTEM.md``.
+For Dither injection, observable statistics and architecture limits, see
+:doc:`../dither` and the copied ``11_calibration/DITHER_GUIDE.md``.
 
 Expected Outputs
 ----------------

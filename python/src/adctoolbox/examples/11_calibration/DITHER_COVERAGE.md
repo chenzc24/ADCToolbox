@@ -1,9 +1,19 @@
 # Dither mechanisms and reproducible experiments
 
+Start with [DITHER_GUIDE.md](DITHER_GUIDE.md) for the architecture/injection map
+and the shared three-PN experiments. This document preserves the original
+isolated-mechanism models and their different probe distributions. Published-form
+fixed-point HDC is documented separately in [HDC_FIXED.md](HDC_FIXED.md).
+
 `exp_cal02_dither_coverage.py` separates randomization from parameter
 identification. It extends the gain-only `exp_cal01` example with linear
 memory, capacitor-role modulation and nonlinear moment identification.
 These are software behavioral examples, not public calibration APIs.
+
+For all four errors in one conversion path, see
+[JOINT_DITHER.md](JOINT_DITHER.md) and `exp_cal06_joint_dither.py`. That joint
+model uses a 1.5-bit capacitor stage (nominal gain 2) and a newly derived joint
+estimator; it is not a direct concatenation of the isolated gain-4 helpers.
 
 ## Run and outputs
 

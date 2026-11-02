@@ -1,0 +1,3145 @@
+{
+  "configuration": {
+    "seeds": [
+      707,
+      808,
+      909
+    ],
+    "quick": false,
+    "samples": {
+      "sar": 524288,
+      "ti": 4194304,
+      "ds": 262144
+    },
+    "sources": {
+      "pn_architectures.py": "37d5a7c17e1250e92bc7e27530fdb67ef813ac15ce4571abcd0ea33aa745e813",
+      "exp_cal09_pn_architectures.py": "652274db7e2c807848b80c37ac5d53732a3b69debcd591404678d1c9fdbd1bd6",
+      "hdc_fixed.py": "0054c3a00fd4bc0352ae2093b33a3601c4abf11062342e0207fbb144d0299b1e",
+      "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8",
+      "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5"
+    },
+    "python": "3.13.1",
+    "numpy": "2.4.3",
+    "scipy": "1.17.1",
+    "pn": {
+      "lengths": [
+        31,
+        29,
+        23
+      ],
+      "peak": 0.2,
+      "level_probabilities": [
+        0.125,
+        0.375,
+        0.375,
+        0.125
+      ]
+    },
+    "sar": {
+      "decisions": 14,
+      "radix": 1.85,
+      "active_weights": 4,
+      "rate": 0.0009765625,
+      "input_noise_rms": 2e-05
+    },
+    "ti": {
+      "channels": 2,
+      "backend_bits": 13,
+      "noise_rms": 0.0001,
+      "clock_trim_step": 0.000244140625
+    },
+    "ds": {
+      "order": 1,
+      "osr": 32,
+      "warmup": 8192
+    },
+    "acceptance": "No overrange in valid cases; scalar update causality; observable-only estimators; expected invalid controls retained; spectral conclusions only for declared band/model"
+  },
+  "completion": {
+    "elapsed_seconds": 17.894781400000284,
+    "cases": 33,
+    "source_hashes_match": true
+  },
+  "summaries": [
+    {
+      "family": "sar",
+      "seed": 707,
+      "kind": "sine",
+      "valid_pair": true,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10115564339299288,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.46321439744191223,
+        0.24691002381959673,
+        0.13494157276873608,
+        0.07228856698329472,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 6.850221024106613e-06,
+      "excitation_minimum_eigenvalue": 0.168590055286078,
+      "excitation_condition": 21.889616109677775,
+      "updated": 521983,
+      "rejected": 0,
+      "unexcited": 2305,
+      "misapplied_hdc_valid": false,
+      "misapplied_hdc_gain": 0.3545509288670621,
+      "misapplied_hdc_cubic": 0.781684935372777,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 44.18167819514579,
+          "spur_ratio_db": 46.19434200554103,
+          "error_snr_db": 42.45078002316795
+        },
+        "learned": {
+          "spectral_ratio_db": 75.28410796829587,
+          "spur_ratio_db": 103.99538314311478,
+          "error_snr_db": 75.27495477225179
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 75.2857203579398,
+          "spur_ratio_db": 103.99639513827738,
+          "error_snr_db": 75.28545462852067
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 44.18167819514579,
+          "spur_ratio_db": 46.19434200554103,
+          "error_snr_db": 42.45078002316795
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 46.506830146188165,
+          "spur_ratio_db": 50.56547844877468,
+          "error_snr_db": 45.97395313776122
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 46.487058475186174,
+          "spur_ratio_db": 48.71909989487436,
+          "error_snr_db": 42.96952463118916
+        },
+        "learned": {
+          "spectral_ratio_db": 78.34054362469666,
+          "spur_ratio_db": 101.85621560986557,
+          "error_snr_db": 77.18580251111214
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 78.38533526661114,
+          "spur_ratio_db": 103.80916100877104,
+          "error_snr_db": 78.3821442181999
+        }
+      }
+    },
+    {
+      "family": "sar",
+      "seed": 707,
+      "kind": "sine",
+      "valid_pair": false,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10115202156437353,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.4135927515398783,
+        0.2235684055631432,
+        0.12084962063286586,
+        0.06545974981967553,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 0.10030756546965215,
+      "excitation_minimum_eigenvalue": 0.7533573966036998,
+      "excitation_condition": 3.2534337819231696,
+      "updated": 69990,
+      "rejected": 400156,
+      "unexcited": 54142,
+      "misapplied_hdc_valid": false,
+      "misapplied_hdc_gain": 0.3545509288670621,
+      "misapplied_hdc_cubic": 0.781684935372777,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 44.18167819514579,
+          "spur_ratio_db": 46.19434200554103,
+          "error_snr_db": 42.45078002316795
+        },
+        "learned": {
+          "spectral_ratio_db": 39.40903892949761,
+          "spur_ratio_db": 42.8398089041644,
+          "error_snr_db": 19.80589792105389
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 75.2857203579398,
+          "spur_ratio_db": 103.99639513827738,
+          "error_snr_db": 75.28545462852067
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 44.18167819514579,
+          "spur_ratio_db": 46.19434200554103,
+          "error_snr_db": 42.45078002316795
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 46.506830146188165,
+          "spur_ratio_db": 50.56547844877468,
+          "error_snr_db": 45.97395313776122
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 47.58093661020726,
+          "spur_ratio_db": 58.37436855835726,
+          "error_snr_db": 7.586331583680133
+        },
+        "learned": {
+          "spectral_ratio_db": 42.572856115028344,
+          "spur_ratio_db": 54.52356950190728,
+          "error_snr_db": 7.3615678442560375
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 77.53102996871968,
+          "spur_ratio_db": 103.56969931753089,
+          "error_snr_db": 7.5873406250484114
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 707,
+      "kind": "sine",
+      "placement": "linear_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08169313783323251,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0013791732490063,
+        1.0158971144119278
+      ],
+      "skew": [
+        0.007917836463088064,
+        0.052047760007886704
+      ],
+      "clock_trim": [
+        0.0078125,
+        0.052001953125
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.002065033419141899,
+      "relative_skew_error_samples": 0.004129923544798637,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 32.18862628511302,
+          "spur_ratio_db": 32.18906116734372,
+          "error_snr_db": 27.26924002980671
+        },
+        "learned": {
+          "spectral_ratio_db": 48.88731164180995,
+          "spur_ratio_db": 48.90746611141786,
+          "error_snr_db": 48.31990906139409
+        },
+        "oracle": {
+          "spectral_ratio_db": 72.21638183550853,
+          "spur_ratio_db": 103.68652219553573,
+          "error_snr_db": 72.21616132611699
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 707,
+      "kind": "sine",
+      "placement": "flat_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08158210577779978,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0013790172524748,
+        1.0159003880107773
+      ],
+      "skew": [
+        -0.0020492333525385835,
+        0.0019110944617057861
+      ],
+      "clock_trim": [
+        -0.001953125,
+        0.001953125
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.03505514841114578,
+      "relative_skew_error_samples": -0.03603967218575563,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 32.18862628511302,
+          "spur_ratio_db": 32.18906116734372,
+          "error_snr_db": 27.26924002980671
+        },
+        "learned": {
+          "spectral_ratio_db": 33.77370006190288,
+          "spur_ratio_db": 33.77432137220966,
+          "error_snr_db": 28.055738504540784
+        },
+        "oracle": {
+          "spectral_ratio_db": 72.21638183550853,
+          "spur_ratio_db": 103.68652219553573,
+          "error_snr_db": 72.21616132611699
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 707,
+      "kind": "sine",
+      "placement": "after_sampler",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08558210577779979,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0013790172524748,
+        0.9959229413652785
+      ],
+      "skew": [
+        -0.0020492333525385835,
+        0.0019487749491032965
+      ],
+      "clock_trim": [
+        -0.001953125,
+        0.001953125
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.0350293038274803,
+      "relative_skew_error_samples": -0.03600199169835812,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 32.18862628511302,
+          "spur_ratio_db": 32.18906116734372,
+          "error_snr_db": 27.26924002980671
+        },
+        "learned": {
+          "spectral_ratio_db": 32.42872549028543,
+          "spur_ratio_db": 32.42918117345959,
+          "error_snr_db": 27.26279597509459
+        },
+        "oracle": {
+          "spectral_ratio_db": 72.21638183550853,
+          "spur_ratio_db": 103.68652219553573,
+          "error_snr_db": 72.21616132611699
+        }
+      }
+    },
+    {
+      "family": "sar",
+      "seed": 707,
+      "kind": "multitone",
+      "valid_pair": true,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10128703776160763,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.46321823771319903,
+        0.24691152584498752,
+        0.13494333179847198,
+        0.07228959313979309,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 7.13239323699338e-06,
+      "excitation_minimum_eigenvalue": 0.18035499489054424,
+      "excitation_condition": 18.108072256085865,
+      "updated": 521634,
+      "rejected": 0,
+      "unexcited": 2654,
+      "misapplied_hdc_valid": false,
+      "misapplied_hdc_gain": 0.2564483604240486,
+      "misapplied_hdc_cubic": 1.8177972236732698,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 40.40846843160242,
+          "spur_ratio_db": 44.234931495150676,
+          "error_snr_db": 37.86836375807913
+        },
+        "learned": {
+          "spectral_ratio_db": 72.3961886706199,
+          "spur_ratio_db": 101.20845361689749,
+          "error_snr_db": 72.39273930858424
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 72.40161595248291,
+          "spur_ratio_db": 101.20864309892404,
+          "error_snr_db": 72.40049498962082
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 40.40846843160242,
+          "spur_ratio_db": 44.234931495150676,
+          "error_snr_db": 37.86836375807913
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 43.4321512769284,
+          "spur_ratio_db": 49.78801380171611,
+          "error_snr_db": 42.99539129172558
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 42.88525809654253,
+          "spur_ratio_db": 47.10933250824003,
+          "error_snr_db": 39.15009262755192
+        },
+        "learned": {
+          "spectral_ratio_db": 75.36224261040567,
+          "spur_ratio_db": 99.22557595072121,
+          "error_snr_db": 75.24369742466153
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 75.36588165265633,
+          "spur_ratio_db": 99.2133693865327,
+          "error_snr_db": 75.36400731897922
+        }
+      }
+    },
+    {
+      "family": "sar",
+      "seed": 707,
+      "kind": "multitone",
+      "valid_pair": false,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10128035294128568,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.41359618737490955,
+        0.22356445484747473,
+        0.1208900114102488,
+        0.06545303153759285,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 0.10025343515104625,
+      "excitation_minimum_eigenvalue": 0.47848805546404705,
+      "excitation_condition": 5.438449388909804,
+      "updated": 119360,
+      "rejected": 339806,
+      "unexcited": 65122,
+      "misapplied_hdc_valid": false,
+      "misapplied_hdc_gain": 0.2564483604240486,
+      "misapplied_hdc_cubic": 1.8177972236732698,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 40.40846843160242,
+          "spur_ratio_db": 44.234931495150676,
+          "error_snr_db": 37.86836375807913
+        },
+        "learned": {
+          "spectral_ratio_db": 36.34413127537455,
+          "spur_ratio_db": 42.93177877622263,
+          "error_snr_db": 19.330273695333933
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 72.40161595248291,
+          "spur_ratio_db": 101.20864309892404,
+          "error_snr_db": 72.40049498962082
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 40.40846843160242,
+          "spur_ratio_db": 44.234931495150676,
+          "error_snr_db": 37.86836375807913
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 43.4321512769284,
+          "spur_ratio_db": 49.78801380171611,
+          "error_snr_db": 42.99539129172558
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 42.575950958098346,
+          "spur_ratio_db": 46.989054888161334,
+          "error_snr_db": 7.359675300682931
+        },
+        "learned": {
+          "spectral_ratio_db": 38.61853769510013,
+          "spur_ratio_db": 48.316707335796686,
+          "error_snr_db": 7.140632516807978
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 74.46120210168817,
+          "spur_ratio_db": 99.14242061103018,
+          "error_snr_db": 7.3618245691569
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 707,
+      "kind": "multitone",
+      "placement": "linear_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08219731410586972,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        0.9989381814375519,
+        1.017063614563085
+      ],
+      "skew": [
+        0.011358968285436392,
+        0.04738732555151305
+      ],
+      "clock_trim": [
+        0.011474609375,
+        0.04736328125
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.0020824099709949675,
+      "relative_skew_error_samples": -0.003971642733923343,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 34.42667718020688,
+          "spur_ratio_db": 34.13554872255966,
+          "error_snr_db": 29.705623447194107
+        },
+        "learned": {
+          "spectral_ratio_db": 54.29857505520441,
+          "spur_ratio_db": 54.032095117920534,
+          "error_snr_db": 51.05183277789077
+        },
+        "oracle": {
+          "spectral_ratio_db": 69.29619885869326,
+          "spur_ratio_db": 99.46135434669998,
+          "error_snr_db": 69.29565862346956
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 707,
+      "kind": "multitone",
+      "placement": "flat_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.0821117228370013,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        0.9989378030877561,
+        1.0170664970064538
+      ],
+      "skew": [
+        0.0013677496024941296,
+        -0.002692425068761689
+      ],
+      "clock_trim": [
+        0.00146484375,
+        -0.002685546875
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.0377558432997616,
+      "relative_skew_error_samples": -0.04406017467125582,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 34.42667718020688,
+          "spur_ratio_db": 34.13554872255966,
+          "error_snr_db": 29.705623447194107
+        },
+        "learned": {
+          "spectral_ratio_db": 34.9340930063823,
+          "spur_ratio_db": 33.94141958886801,
+          "error_snr_db": 30.25617883171114
+        },
+        "oracle": {
+          "spectral_ratio_db": 69.29619885869326,
+          "spur_ratio_db": 99.46135434669998,
+          "error_snr_db": 69.29565862346956
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 707,
+      "kind": "multitone",
+      "placement": "after_sampler",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.0861117228370013,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        0.9989378030877561,
+        0.9970884973881762
+      ],
+      "skew": [
+        0.0013677496024941296,
+        -0.0027473737445084887
+      ],
+      "clock_trim": [
+        0.00146484375,
+        -0.002685546875
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.037794187277067515,
+      "relative_skew_error_samples": -0.04411512334700262,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 34.42667718020688,
+          "spur_ratio_db": 34.13554872255966,
+          "error_snr_db": 29.705623447194107
+        },
+        "learned": {
+          "spectral_ratio_db": 33.59122642165817,
+          "spur_ratio_db": 33.28937911819002,
+          "error_snr_db": 29.133410995064246
+        },
+        "oracle": {
+          "spectral_ratio_db": 69.29619885869326,
+          "spur_ratio_db": 99.46135434669998,
+          "error_snr_db": 69.29565862346956
+        }
+      }
+    },
+    {
+      "family": "delta_sigma",
+      "seed": 707,
+      "rows": [
+        {
+          "seed": 707,
+          "waveform": "dc_1_64",
+          "location": "off",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.0,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.100383144803885,
+          "largest_inband_spur_dbfs": -30.102999566398122,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_1_64",
+          "location": "input",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.490689260402103,
+          "largest_inband_spur_dbfs": -56.66321132856994,
+          "dc_error": 0.00012969970703125
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_1_64",
+          "location": "input",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.0368963866383,
+          "largest_inband_spur_dbfs": -63.60310184057701,
+          "dc_error": 1.5258789062486122e-06
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_1_64",
+          "location": "input",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.0368963866383,
+          "largest_inband_spur_dbfs": -63.60310184057701,
+          "dc_error": 1.5258789062486122e-06
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_1_64",
+          "location": "quantizer",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1875,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -32.25048008917257,
+          "largest_inband_spur_dbfs": -32.434718354467364,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_1_64",
+          "location": "quantizer",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1875,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -28.58004533902363,
+          "largest_inband_spur_dbfs": -32.5731813857046,
+          "dc_error": -0.0001281738281250014
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_1_64",
+          "location": "quantizer",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1875,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -32.27551672385384,
+          "largest_inband_spur_dbfs": -32.43935752712531,
+          "dc_error": 5.086263020828707e-07
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_3_128",
+          "location": "off",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.0,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -58.329771475073414,
+          "largest_inband_spur_dbfs": -60.97468792645994,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_3_128",
+          "location": "input",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.516607772692513,
+          "largest_inband_spur_dbfs": -57.85206427504601,
+          "dc_error": 0.00012969970703125
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_3_128",
+          "location": "input",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.233734543527056,
+          "largest_inband_spur_dbfs": -63.9482129095397,
+          "dc_error": 1.5258789062486122e-06
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_3_128",
+          "location": "input",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.233734543527056,
+          "largest_inband_spur_dbfs": -63.9482129095397,
+          "dc_error": 1.5258789062486122e-06
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_3_128",
+          "location": "quantizer",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1953125,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -46.0667921395511,
+          "largest_inband_spur_dbfs": -68.92509739066473,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_3_128",
+          "location": "quantizer",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1953125,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.781561152646017,
+          "largest_inband_spur_dbfs": -57.262668608769914,
+          "dc_error": -0.0001281738281250014
+        },
+        {
+          "seed": 707,
+          "waveform": "dc_3_128",
+          "location": "quantizer",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1953125,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -46.62388401077867,
+          "largest_inband_spur_dbfs": -69.06833085515122,
+          "dc_error": 5.086263020828707e-07
+        },
+        {
+          "seed": 707,
+          "waveform": "sine",
+          "location": "off",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.0,
+          "maximum_state": 0.9999911264261581,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 37.73097511390864,
+          "sfdr_db": 42.96284315606257,
+          "inband_noise_dbfs": -45.67814169995647,
+          "largest_inband_spur_dbfs": -50.910009742110404,
+          "dc_error": -9.324138683375338e-18
+        },
+        {
+          "seed": 707,
+          "waveform": "sine",
+          "location": "input",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999989590216589,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 22.77434502551529,
+          "sfdr_db": 49.46054026015642,
+          "inband_noise_dbfs": -30.74115847973449,
+          "largest_inband_spur_dbfs": -57.42735371437562,
+          "dc_error": 0.00012969970703124068
+        },
+        {
+          "seed": 707,
+          "waveform": "sine",
+          "location": "input",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999989590216589,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 37.649379230335825,
+          "sfdr_db": 60.38835121408969,
+          "inband_noise_dbfs": -45.60820047339645,
+          "largest_inband_spur_dbfs": -68.34717245715031,
+          "dc_error": 1.525878906240318e-06
+        },
+        {
+          "seed": 707,
+          "waveform": "sine",
+          "location": "input",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999989590216589,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 37.649379230335825,
+          "sfdr_db": 60.38835121408969,
+          "inband_noise_dbfs": -45.60820047339645,
+          "largest_inband_spur_dbfs": -68.34717245715031,
+          "dc_error": 1.525878906240318e-06
+        },
+        {
+          "seed": 707,
+          "waveform": "sine",
+          "location": "quantizer",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.199990576845177,
+          "transfer_identity_error": 4.440892098500626e-16,
+          "sndr_db": 36.453858316881686,
+          "sfdr_db": 45.7334377276983,
+          "inband_noise_dbfs": -44.40337399254641,
+          "largest_inband_spur_dbfs": -53.68295340336303,
+          "dc_error": -9.324138683375338e-18
+        },
+        {
+          "seed": 707,
+          "waveform": "sine",
+          "location": "quantizer",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.199990576845177,
+          "transfer_identity_error": 4.440892098500626e-16,
+          "sndr_db": 22.79062322653434,
+          "sfdr_db": 47.46069507984004,
+          "inband_noise_dbfs": -30.732162440883428,
+          "largest_inband_spur_dbfs": -55.40223429418914,
+          "dc_error": -0.00012817382812500898
+        },
+        {
+          "seed": 707,
+          "waveform": "sine",
+          "location": "quantizer",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.199990576845177,
+          "transfer_identity_error": 4.440892098500626e-16,
+          "sndr_db": 36.80530686914336,
+          "sfdr_db": 45.7359836629228,
+          "inband_noise_dbfs": -44.75484497912876,
+          "largest_inband_spur_dbfs": -53.6855217729082,
+          "dc_error": 5.086263020743869e-07
+        }
+      ]
+    },
+    {
+      "family": "sar",
+      "seed": 808,
+      "kind": "sine",
+      "valid_pair": true,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.1011710512193843,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.4632143737448739,
+        0.24690810033145022,
+        0.13494158876347273,
+        0.07228665322926803,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 1.6649749031053663e-05,
+      "excitation_minimum_eigenvalue": 0.16884344064184761,
+      "excitation_condition": 21.875054372947403,
+      "updated": 522037,
+      "rejected": 0,
+      "unexcited": 2251,
+      "misapplied_hdc_valid": false,
+      "misapplied_hdc_gain": -0.07385311120964566,
+      "misapplied_hdc_cubic": 1.3799696716137293,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 44.1811839323332,
+          "spur_ratio_db": 46.19429948377423,
+          "error_snr_db": 42.451115545582894
+        },
+        "learned": {
+          "spectral_ratio_db": 75.2892791840702,
+          "spur_ratio_db": 104.86554643861885,
+          "error_snr_db": 75.27353475801482
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 75.28998428054771,
+          "spur_ratio_db": 104.86557521729853,
+          "error_snr_db": 75.28893143002607
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 44.1811839323332,
+          "spur_ratio_db": 46.19429948377423,
+          "error_snr_db": 42.451115545582894
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 46.49743867046158,
+          "spur_ratio_db": 50.56253522155511,
+          "error_snr_db": 45.954528759578956
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 46.49073942226572,
+          "spur_ratio_db": 48.72081239278812,
+          "error_snr_db": 42.96517057475546
+        },
+        "learned": {
+          "spectral_ratio_db": 78.32930297658774,
+          "spur_ratio_db": 102.43760443212238,
+          "error_snr_db": 77.17405041055378
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 78.36928565459465,
+          "spur_ratio_db": 104.00439117395055,
+          "error_snr_db": 78.36659050900226
+        }
+      }
+    },
+    {
+      "family": "sar",
+      "seed": 808,
+      "kind": "sine",
+      "valid_pair": false,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10117001305780027,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.41359257928675075,
+        0.22357900233396497,
+        0.12086179905011865,
+        0.06535849009964186,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 0.10060587907873987,
+      "excitation_minimum_eigenvalue": 0.7512399064056235,
+      "excitation_condition": 3.2503663594897607,
+      "updated": 69950,
+      "rejected": 400453,
+      "unexcited": 53885,
+      "misapplied_hdc_valid": false,
+      "misapplied_hdc_gain": -0.07385311120964566,
+      "misapplied_hdc_cubic": 1.3799696716137293,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 44.1811839323332,
+          "spur_ratio_db": 46.19429948377423,
+          "error_snr_db": 42.451115545582894
+        },
+        "learned": {
+          "spectral_ratio_db": 39.3981578754255,
+          "spur_ratio_db": 42.92663554290719,
+          "error_snr_db": 19.798496880556296
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 75.28998428054771,
+          "spur_ratio_db": 104.86557521729853,
+          "error_snr_db": 75.28893143002607
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 44.1811839323332,
+          "spur_ratio_db": 46.19429948377423,
+          "error_snr_db": 42.451115545582894
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 46.49743867046158,
+          "spur_ratio_db": 50.56253522155511,
+          "error_snr_db": 45.954528759578956
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 47.56216103814539,
+          "spur_ratio_db": 58.409519392354945,
+          "error_snr_db": 7.58676732111765
+        },
+        "learned": {
+          "spectral_ratio_db": 42.56401744428685,
+          "spur_ratio_db": 54.43760625332986,
+          "error_snr_db": 7.361703087643492
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 77.51083994238788,
+          "spur_ratio_db": 103.80430126206889,
+          "error_snr_db": 7.587345245827132
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 808,
+      "kind": "sine",
+      "placement": "linear_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08172342676949274,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0123713035136463,
+        1.0291233030147846
+      ],
+      "skew": [
+        0.012586105852852133,
+        0.05706781471407163
+      ],
+      "clock_trim": [
+        0.0126953125,
+        0.05712890625
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.005321745405156256,
+      "relative_skew_error_samples": 0.0044817088612194925,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 32.18890233225691,
+          "spur_ratio_db": 32.18933554867566,
+          "error_snr_db": 27.269178089565553
+        },
+        "learned": {
+          "spectral_ratio_db": 50.387464133101155,
+          "spur_ratio_db": 50.41639701719602,
+          "error_snr_db": 38.22707113677848
+        },
+        "oracle": {
+          "spectral_ratio_db": 72.20856976324012,
+          "spur_ratio_db": 104.47291135351438,
+          "error_snr_db": 72.20821156609627
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 808,
+      "kind": "sine",
+      "placement": "flat_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08172342676949274,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0123706783633675,
+        1.0291240736842158
+      ],
+      "skew": [
+        0.002718497813028729,
+        0.007512260188915685
+      ],
+      "clock_trim": [
+        0.002685546875,
+        0.007568359375
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.030481373889256265,
+      "relative_skew_error_samples": -0.03520623762411305,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 32.18890233225691,
+          "spur_ratio_db": 32.18933554867566,
+          "error_snr_db": 27.269178089565553
+        },
+        "learned": {
+          "spectral_ratio_db": 34.05730406619747,
+          "spur_ratio_db": 34.05797859979924,
+          "error_snr_db": 28.942997460736958
+        },
+        "oracle": {
+          "spectral_ratio_db": 72.20856976324012,
+          "spur_ratio_db": 104.47291135351438,
+          "error_snr_db": 72.20821156609627
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 808,
+      "kind": "sine",
+      "placement": "after_sampler",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08572342676949274,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0123706783633675,
+        1.0091322625521566
+      ],
+      "skew": [
+        0.002718497813028729,
+        0.007665635217130244
+      ],
+      "clock_trim": [
+        0.002685546875,
+        0.007568359375
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.03037448530977892,
+      "relative_skew_error_samples": -0.03505286259589849,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 32.18890233225691,
+          "spur_ratio_db": 32.18933554867566,
+          "error_snr_db": 27.269178089565553
+        },
+        "learned": {
+          "spectral_ratio_db": 32.8207903231671,
+          "spur_ratio_db": 32.82129757631197,
+          "error_snr_db": 28.805561684086083
+        },
+        "oracle": {
+          "spectral_ratio_db": 72.20856976324012,
+          "spur_ratio_db": 104.47291135351438,
+          "error_snr_db": 72.20821156609627
+        }
+      }
+    },
+    {
+      "family": "sar",
+      "seed": 808,
+      "kind": "multitone",
+      "valid_pair": true,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10130030201181905,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.4632181161751479,
+        0.24690861041594406,
+        0.13494165151871812,
+        0.07228947948656311,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 8.360626770814194e-06,
+      "excitation_minimum_eigenvalue": 0.1806632605244472,
+      "excitation_condition": 18.043470090126714,
+      "updated": 521654,
+      "rejected": 0,
+      "unexcited": 2634,
+      "misapplied_hdc_valid": true,
+      "misapplied_hdc_gain": 1.167063475661689,
+      "misapplied_hdc_cubic": -0.43677417314494016,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 40.40859042567686,
+          "spur_ratio_db": 44.23469502978761,
+          "error_snr_db": 37.86807316060338
+        },
+        "learned": {
+          "spectral_ratio_db": 72.39814558744763,
+          "spur_ratio_db": 100.39747607686864,
+          "error_snr_db": 72.39531904454
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 72.40034074865879,
+          "spur_ratio_db": 100.38504278548464,
+          "error_snr_db": 72.39860450435461
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 27.60698302585196,
+          "spur_ratio_db": 30.686659233247603,
+          "error_snr_db": 20.454444434887588
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 43.45052189782078,
+          "spur_ratio_db": 49.84010578095675,
+          "error_snr_db": 43.01579594899299
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 42.901393014411155,
+          "spur_ratio_db": 47.14489571467578,
+          "error_snr_db": 39.1664013954929
+        },
+        "learned": {
+          "spectral_ratio_db": 75.34385619581906,
+          "spur_ratio_db": 99.49673547589671,
+          "error_snr_db": 75.22273848614775
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 75.3486562279886,
+          "spur_ratio_db": 99.50546704572815,
+          "error_snr_db": 75.34614302580762
+        }
+      }
+    },
+    {
+      "family": "sar",
+      "seed": 808,
+      "kind": "multitone",
+      "valid_pair": false,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10130035902476997,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.4136120937035903,
+        0.2235622191818652,
+        0.12087925765376367,
+        0.06534370092932773,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 0.10062589435865672,
+      "excitation_minimum_eigenvalue": 0.47882757815459037,
+      "excitation_condition": 5.426869173950243,
+      "updated": 119625,
+      "rejected": 339455,
+      "unexcited": 65208,
+      "misapplied_hdc_valid": true,
+      "misapplied_hdc_gain": 1.167063475661689,
+      "misapplied_hdc_cubic": -0.43677417314494016,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 40.40859042567686,
+          "spur_ratio_db": 44.23469502978761,
+          "error_snr_db": 37.86807316060338
+        },
+        "learned": {
+          "spectral_ratio_db": 36.31851668822105,
+          "spur_ratio_db": 42.96521886021459,
+          "error_snr_db": 19.330133207548002
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 72.40034074865879,
+          "spur_ratio_db": 100.38504278548464,
+          "error_snr_db": 72.39860450435461
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 27.60698302585196,
+          "spur_ratio_db": 30.686659233247603,
+          "error_snr_db": 20.454444434887588
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 43.45052189782078,
+          "spur_ratio_db": 49.84010578095675,
+          "error_snr_db": 43.01579594899299
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 42.58135512303668,
+          "spur_ratio_db": 47.03603439047505,
+          "error_snr_db": 7.3594920665548855
+        },
+        "learned": {
+          "spectral_ratio_db": 38.604529416820355,
+          "spur_ratio_db": 48.361519203896506,
+          "error_snr_db": 7.140184746005416
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 74.45247793283252,
+          "spur_ratio_db": 98.97526290156851,
+          "error_snr_db": 7.361840184202777
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 808,
+      "kind": "multitone",
+      "placement": "linear_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08211090293372647,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.003547151340172,
+        1.0193435184191912
+      ],
+      "skew": [
+        0.012333198674917384,
+        0.05111329633201808
+      ],
+      "clock_trim": [
+        0.012451171875,
+        0.051025390625
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.0018280105004513988,
+      "relative_skew_error_samples": -0.001219902342899301,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 34.425095505558325,
+          "spur_ratio_db": 34.1333278515774,
+          "error_snr_db": 29.70512566037562
+        },
+        "learned": {
+          "spectral_ratio_db": 53.15951505970921,
+          "spur_ratio_db": 53.48706417620412,
+          "error_snr_db": 50.51374660390068
+        },
+        "oracle": {
+          "spectral_ratio_db": 69.26535691151538,
+          "spur_ratio_db": 99.37760365185471,
+          "error_snr_db": 69.26428130578289
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 808,
+      "kind": "multitone",
+      "placement": "flat_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08203519077486365,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0035460919607424,
+        1.019344729138538
+      ],
+      "skew": [
+        0.0023789750133372386,
+        0.0010833190656683058
+      ],
+      "clock_trim": [
+        0.00244140625,
+        0.0009765625
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.035006582920063395,
+      "relative_skew_error_samples": -0.04129565594766894,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 34.425095505558325,
+          "spur_ratio_db": 34.1333278515774,
+          "error_snr_db": 29.70512566037562
+        },
+        "learned": {
+          "spectral_ratio_db": 35.4237754303962,
+          "spur_ratio_db": 34.46224698688406,
+          "error_snr_db": 30.88930016271434
+        },
+        "oracle": {
+          "spectral_ratio_db": 69.26535691151538,
+          "spur_ratio_db": 99.37760365185471,
+          "error_snr_db": 69.26428130578289
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 808,
+      "kind": "multitone",
+      "placement": "after_sampler",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08603519077486355,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0035460919607424,
+        0.9993507887702436
+      ],
+      "skew": [
+        0.0023789750133372386,
+        0.001107633220758848
+      ],
+      "clock_trim": [
+        0.00244140625,
+        0.001220703125
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.03498959524718157,
+      "relative_skew_error_samples": -0.041271341792578395,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 34.425095505558325,
+          "spur_ratio_db": 34.1333278515774,
+          "error_snr_db": 29.70512566037562
+        },
+        "learned": {
+          "spectral_ratio_db": 33.73537112789866,
+          "spur_ratio_db": 33.642718540587616,
+          "error_snr_db": 29.846123030044062
+        },
+        "oracle": {
+          "spectral_ratio_db": 69.26535691151538,
+          "spur_ratio_db": 99.37760365185471,
+          "error_snr_db": 69.26428130578289
+        }
+      }
+    },
+    {
+      "family": "delta_sigma",
+      "seed": 808,
+      "rows": [
+        {
+          "seed": 808,
+          "waveform": "dc_1_64",
+          "location": "off",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.0,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.100383144803885,
+          "largest_inband_spur_dbfs": -30.102999566398122,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_1_64",
+          "location": "input",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.54065545474874,
+          "largest_inband_spur_dbfs": -57.19110159056106,
+          "dc_error": 0.0002899169921875
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_1_64",
+          "location": "input",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.07808571636741,
+          "largest_inband_spur_dbfs": -64.66310994952754,
+          "dc_error": 3.0517578124972244e-06
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_1_64",
+          "location": "input",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.07808571636741,
+          "largest_inband_spur_dbfs": -64.66310994952754,
+          "dc_error": 3.0517578124972244e-06
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_1_64",
+          "location": "quantizer",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1875,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -32.27253280971426,
+          "largest_inband_spur_dbfs": -32.462139468167834,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_1_64",
+          "location": "quantizer",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1875,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -28.473412389404334,
+          "largest_inband_spur_dbfs": -32.236961617437416,
+          "dc_error": -0.00028686523437500104
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_1_64",
+          "location": "quantizer",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1875,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -32.28884038427343,
+          "largest_inband_spur_dbfs": -32.45836198030272,
+          "dc_error": -1.0172526041657415e-06
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_3_128",
+          "location": "off",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.0,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -58.329771475073414,
+          "largest_inband_spur_dbfs": -60.97468792645994,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_3_128",
+          "location": "input",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999999999999996,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.593558959674873,
+          "largest_inband_spur_dbfs": -56.75752995535887,
+          "dc_error": 0.0002899169921875
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_3_128",
+          "location": "input",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999999999999996,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.42405725940719,
+          "largest_inband_spur_dbfs": -65.16182477556367,
+          "dc_error": 3.0517578124972244e-06
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_3_128",
+          "location": "input",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999999999999996,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.42405725940719,
+          "largest_inband_spur_dbfs": -65.16182477556367,
+          "dc_error": 3.0517578124972244e-06
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_3_128",
+          "location": "quantizer",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1953125,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -46.03959683042953,
+          "largest_inband_spur_dbfs": -69.16072090954867,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_3_128",
+          "location": "quantizer",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1953125,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.834329194403686,
+          "largest_inband_spur_dbfs": -57.1226511218708,
+          "dc_error": -0.0002868652343750028
+        },
+        {
+          "seed": 808,
+          "waveform": "dc_3_128",
+          "location": "quantizer",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1953125,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -46.51123321098842,
+          "largest_inband_spur_dbfs": -70.15428026320448,
+          "dc_error": -1.0172526041657415e-06
+        },
+        {
+          "seed": 808,
+          "waveform": "sine",
+          "location": "off",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.0,
+          "maximum_state": 0.9999911264261581,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 37.73097511390864,
+          "sfdr_db": 42.96284315606257,
+          "inband_noise_dbfs": -45.67814169995647,
+          "largest_inband_spur_dbfs": -50.910009742110404,
+          "dc_error": -9.324138683375338e-18
+        },
+        {
+          "seed": 808,
+          "waveform": "sine",
+          "location": "input",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999963100081397,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 22.870590616883643,
+          "sfdr_db": 49.21196291426463,
+          "inband_noise_dbfs": -30.825244554658,
+          "largest_inband_spur_dbfs": -57.16661685203899,
+          "dc_error": 0.0002822875976562407
+        },
+        {
+          "seed": 808,
+          "waveform": "sine",
+          "location": "input",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999963100081397,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 37.46848557992126,
+          "sfdr_db": 59.96347669123396,
+          "inband_noise_dbfs": -45.42702816596143,
+          "largest_inband_spur_dbfs": -67.92201927727413,
+          "dc_error": -4.577636718759606e-06
+        },
+        {
+          "seed": 808,
+          "waveform": "sine",
+          "location": "input",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999963100081397,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 37.46848557992126,
+          "sfdr_db": 59.96347669123396,
+          "inband_noise_dbfs": -45.42702816596143,
+          "largest_inband_spur_dbfs": -67.92201927727413,
+          "dc_error": -4.577636718759606e-06
+        },
+        {
+          "seed": 808,
+          "waveform": "sine",
+          "location": "quantizer",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1999934690357326,
+          "transfer_identity_error": 4.440892098500626e-16,
+          "sndr_db": 36.51932766962039,
+          "sfdr_db": 46.97733844046725,
+          "inband_noise_dbfs": -44.46954055423596,
+          "largest_inband_spur_dbfs": -54.927551325082824,
+          "dc_error": 7.629394531240676e-06
+        },
+        {
+          "seed": 808,
+          "waveform": "sine",
+          "location": "quantizer",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1999934690357326,
+          "transfer_identity_error": 4.440892098500626e-16,
+          "sndr_db": 22.83703417928877,
+          "sfdr_db": 45.90317678208975,
+          "inband_noise_dbfs": -30.791133018113204,
+          "largest_inband_spur_dbfs": -53.85727562091418,
+          "dc_error": -0.00027923583984376004
+        },
+        {
+          "seed": 808,
+          "waveform": "sine",
+          "location": "quantizer",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1999934690357326,
+          "transfer_identity_error": 4.440892098500626e-16,
+          "sndr_db": 36.87510716347254,
+          "sfdr_db": 46.71094769893554,
+          "inband_noise_dbfs": -44.825391413323686,
+          "largest_inband_spur_dbfs": -54.66123194878669,
+          "dc_error": 6.612141927073118e-06
+        }
+      ]
+    },
+    {
+      "family": "sar",
+      "seed": 909,
+      "kind": "sine",
+      "valid_pair": true,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10116003972262733,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.4632142196593685,
+        0.24691023084215985,
+        0.1349405839685847,
+        0.0722872657000571,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 1.3466023528703865e-05,
+      "excitation_minimum_eigenvalue": 0.16939293843688374,
+      "excitation_condition": 21.77885578948294,
+      "updated": 521986,
+      "rejected": 0,
+      "unexcited": 2302,
+      "misapplied_hdc_valid": false,
+      "misapplied_hdc_gain": 1.427539860474723,
+      "misapplied_hdc_cubic": -0.5761435017087373,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 44.180870684268896,
+          "spur_ratio_db": 46.1929666806784,
+          "error_snr_db": 42.450583864938366
+        },
+        "learned": {
+          "spectral_ratio_db": 75.2803420585139,
+          "spur_ratio_db": 104.79179127559456,
+          "error_snr_db": 75.2719723698086
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 75.2836363756445,
+          "spur_ratio_db": 104.79346605967068,
+          "error_snr_db": 75.28284384564252
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 44.180870684268896,
+          "spur_ratio_db": 46.1929666806784,
+          "error_snr_db": 42.450583864938366
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 46.50472699419349,
+          "spur_ratio_db": 50.56363499708135,
+          "error_snr_db": 45.954255174755076
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 46.474767083365265,
+          "spur_ratio_db": 48.69850363301763,
+          "error_snr_db": 42.95907090125534
+        },
+        "learned": {
+          "spectral_ratio_db": 78.3390934298845,
+          "spur_ratio_db": 102.35955838007828,
+          "error_snr_db": 77.15848648948895
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 78.38354097811109,
+          "spur_ratio_db": 104.23410086922522,
+          "error_snr_db": 78.3811230946511
+        }
+      }
+    },
+    {
+      "family": "sar",
+      "seed": 909,
+      "kind": "sine",
+      "valid_pair": false,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10116003972262733,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.4136189898460768,
+        0.22359453200781296,
+        0.12085490565057043,
+        0.06535326195713217,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 0.10060642502590568,
+      "excitation_minimum_eigenvalue": 0.7541382257825945,
+      "excitation_condition": 3.2481506165094074,
+      "updated": 70798,
+      "rejected": 399618,
+      "unexcited": 53872,
+      "misapplied_hdc_valid": false,
+      "misapplied_hdc_gain": 1.427539860474723,
+      "misapplied_hdc_cubic": -0.5761435017087373,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 44.180870684268896,
+          "spur_ratio_db": 46.1929666806784,
+          "error_snr_db": 42.450583864938366
+        },
+        "learned": {
+          "spectral_ratio_db": 39.38683910393071,
+          "spur_ratio_db": 42.91359080013894,
+          "error_snr_db": 19.803747654300714
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 75.2836363756445,
+          "spur_ratio_db": 104.79346605967068,
+          "error_snr_db": 75.28284384564252
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 44.180870684268896,
+          "spur_ratio_db": 46.1929666806784,
+          "error_snr_db": 42.450583864938366
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 46.50472699419349,
+          "spur_ratio_db": 50.56363499708135,
+          "error_snr_db": 45.954255174755076
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 47.58631285375742,
+          "spur_ratio_db": 58.366922053512056,
+          "error_snr_db": 7.586420952105849
+        },
+        "learned": {
+          "spectral_ratio_db": 42.57816086577792,
+          "spur_ratio_db": 54.37285483427878,
+          "error_snr_db": 7.361518550088951
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 77.50729555561986,
+          "spur_ratio_db": 103.30689733366071,
+          "error_snr_db": 7.5873434962261115
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 909,
+      "kind": "sine",
+      "placement": "linear_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08171044685637907,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        0.9948901360621673,
+        1.0163346683839338
+      ],
+      "skew": [
+        0.01165259068236916,
+        0.04574142626120542
+      ],
+      "clock_trim": [
+        0.01171875,
+        0.045654296875
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.003230054663020754,
+      "relative_skew_error_samples": -0.005911164421163739,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 32.188128980619354,
+          "spur_ratio_db": 32.188551756437604,
+          "error_snr_db": 27.26891327530728
+        },
+        "learned": {
+          "spectral_ratio_db": 49.11107007646752,
+          "spur_ratio_db": 49.13223021365444,
+          "error_snr_db": 44.73053610199664
+        },
+        "oracle": {
+          "spectral_ratio_db": 72.26434821022049,
+          "spur_ratio_db": 104.17097034369053,
+          "error_snr_db": 72.263638439346
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 909,
+      "kind": "sine",
+      "placement": "flat_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08167124158402794,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        0.9948804421583186,
+        1.0163883114000776
+      ],
+      "skew": [
+        0.0015905191810314232,
+        -0.0044597081963370375
+      ],
+      "clock_trim": [
+        0.001708984375,
+        -0.00439453125
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.03896523568820533,
+      "relative_skew_error_samples": -0.04605022737736846,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 32.188128980619354,
+          "spur_ratio_db": 32.188551756437604,
+          "error_snr_db": 27.26891327530728
+        },
+        "learned": {
+          "spectral_ratio_db": 31.719473128465555,
+          "spur_ratio_db": 31.71985754677206,
+          "error_snr_db": 27.121395998352057
+        },
+        "oracle": {
+          "spectral_ratio_db": 72.26434821022049,
+          "spur_ratio_db": 104.17097034369053,
+          "error_snr_db": 72.263638439346
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 909,
+      "kind": "sine",
+      "placement": "after_sampler",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08567124158402806,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        0.9948804421583186,
+        0.9964084549574179
+      ],
+      "skew": [
+        0.0015905191810314232,
+        -0.004524119925174863
+      ],
+      "clock_trim": [
+        0.001708984375,
+        -0.004638671875
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.03901024878964149,
+      "relative_skew_error_samples": -0.046114639106206286,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 32.188128980619354,
+          "spur_ratio_db": 32.188551756437604,
+          "error_snr_db": 27.26891327530728
+        },
+        "learned": {
+          "spectral_ratio_db": 31.174674367203043,
+          "spur_ratio_db": 31.175014314526205,
+          "error_snr_db": 26.44135392335524
+        },
+        "oracle": {
+          "spectral_ratio_db": 72.26434821022049,
+          "spur_ratio_db": 104.17097034369053,
+          "error_snr_db": 72.263638439346
+        }
+      }
+    },
+    {
+      "family": "sar",
+      "seed": 909,
+      "kind": "multitone",
+      "valid_pair": true,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10127181889882164,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.4632198959859313,
+        0.2469102406871638,
+        0.13494224039391367,
+        0.07228985018062407,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 8.388143038112718e-06,
+      "excitation_minimum_eigenvalue": 0.18155666355622882,
+      "excitation_condition": 17.996126326110645,
+      "updated": 521666,
+      "rejected": 0,
+      "unexcited": 2622,
+      "misapplied_hdc_valid": true,
+      "misapplied_hdc_gain": 1.2235326557964392,
+      "misapplied_hdc_cubic": -0.6236168231613856,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 40.40975952819289,
+          "spur_ratio_db": 44.23614426115161,
+          "error_snr_db": 37.86866322913753
+        },
+        "learned": {
+          "spectral_ratio_db": 72.38576746907704,
+          "spur_ratio_db": 100.88483429040917,
+          "error_snr_db": 72.38527230376717
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 72.38863801313649,
+          "spur_ratio_db": 100.8711266892918,
+          "error_snr_db": 72.38694969279494
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 26.201297668299254,
+          "spur_ratio_db": 29.295093299742483,
+          "error_snr_db": 18.23680405392262
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 43.45592718269679,
+          "spur_ratio_db": 49.855405464290186,
+          "error_snr_db": 43.0106608308017
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 42.90388982578507,
+          "spur_ratio_db": 47.148896652086826,
+          "error_snr_db": 39.15656374597607
+        },
+        "learned": {
+          "spectral_ratio_db": 75.34056451911638,
+          "spur_ratio_db": 99.3729583183792,
+          "error_snr_db": 75.21162904502219
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 75.34553414168413,
+          "spur_ratio_db": 99.35601569052245,
+          "error_snr_db": 75.34289410989057
+        }
+      }
+    },
+    {
+      "family": "sar",
+      "seed": 909,
+      "kind": "multitone",
+      "valid_pair": false,
+      "held_pairs": 524288,
+      "conversions": 1048576,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.10128452443968972,
+      "rail_blocks": 0,
+      "estimated_weights": [
+        0.41358914173340106,
+        0.22356263199061377,
+        0.12087003505586737,
+        0.06545116968785074,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "true_weights": [
+        0.4632193487857222,
+        0.2469112144428399,
+        0.1349425039507608,
+        0.0722886830361478,
+        0.03923189136879832,
+        0.02120642776691801,
+        0.011462933928063789,
+        0.006196180501656102,
+        0.0033492867576519468,
+        0.001810425274406458,
+        0.000978608256435923,
+        0.0005289774359113097,
+        0.0002859337491412485,
+        0.0001545587833195938
+      ],
+      "leading_weight_relative_rmse": 0.10030377092292579,
+      "excitation_minimum_eigenvalue": 0.48028156178745707,
+      "excitation_condition": 5.422040467762924,
+      "updated": 118439,
+      "rejected": 341019,
+      "unexcited": 64830,
+      "misapplied_hdc_valid": true,
+      "misapplied_hdc_gain": 1.2235326557964392,
+      "misapplied_hdc_cubic": -0.6236168231613856,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 40.40975952819289,
+          "spur_ratio_db": 44.23614426115161,
+          "error_snr_db": 37.86866322913753
+        },
+        "learned": {
+          "spectral_ratio_db": 36.33822107382451,
+          "spur_ratio_db": 42.92584627354401,
+          "error_snr_db": 19.329817275849305
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 72.38863801313649,
+          "spur_ratio_db": 100.8711266892918,
+          "error_snr_db": 72.38694969279494
+        },
+        "misapplied_hdc": {
+          "spectral_ratio_db": 26.201297668299254,
+          "spur_ratio_db": 29.295093299742483,
+          "error_snr_db": 18.23680405392262
+        },
+        "oracle_global_cubic_fit": {
+          "spectral_ratio_db": 43.45592718269679,
+          "spur_ratio_db": 49.855405464290186,
+          "error_snr_db": 43.0106608308017
+        }
+      },
+      "final_training": {
+        "nominal": {
+          "spectral_ratio_db": 42.58020692807624,
+          "spur_ratio_db": 47.015757016640706,
+          "error_snr_db": 7.359075315541016
+        },
+        "learned": {
+          "spectral_ratio_db": 38.611745054355225,
+          "spur_ratio_db": 48.36981248930767,
+          "error_snr_db": 7.139914983301841
+        },
+        "oracle_weights": {
+          "spectral_ratio_db": 74.48431380641364,
+          "spur_ratio_db": 99.21600086311005,
+          "error_snr_db": 7.361816743631964
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 909,
+      "kind": "multitone",
+      "placement": "linear_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08216983200853367,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0053471120772879,
+        1.0264402156462886
+      ],
+      "skew": [
+        0.010016935261744542,
+        0.053441850097075215
+      ],
+      "clock_trim": [
+        0.010009765625,
+        0.053466796875
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.0024337850042502733,
+      "relative_skew_error_samples": 0.003424914835330674,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 34.42379009270517,
+          "spur_ratio_db": 34.13145537837864,
+          "error_snr_db": 29.705259471940977
+        },
+        "learned": {
+          "spectral_ratio_db": 56.37351040854461,
+          "spur_ratio_db": 55.850649845286384,
+          "error_snr_db": 44.218980707214925
+        },
+        "oracle": {
+          "spectral_ratio_db": 69.33055172114922,
+          "spur_ratio_db": 99.07606550477469,
+          "error_snr_db": 69.330060355146
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 909,
+      "kind": "multitone",
+      "placement": "flat_before",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08197663328979687,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0053360048914328,
+        1.0264927305979652
+      ],
+      "skew": [
+        5.865834421300771e-05,
+        0.00373293731626248
+      ],
+      "clock_trim": [
+        0.0,
+        0.003662109375
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.03346245181765663,
+      "relative_skew_error_samples": -0.03632572102795053,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 34.42379009270517,
+          "spur_ratio_db": 34.13145537837864,
+          "error_snr_db": 29.705259471940977
+        },
+        "learned": {
+          "spectral_ratio_db": 36.62908764021221,
+          "spur_ratio_db": 35.6326147450734,
+          "error_snr_db": 31.14990883244812
+        },
+        "oracle": {
+          "spectral_ratio_db": 69.33055172114922,
+          "spur_ratio_db": 99.07606550477469,
+          "error_snr_db": 69.330060355146
+        }
+      }
+    },
+    {
+      "family": "ti",
+      "seed": 909,
+      "kind": "multitone",
+      "placement": "after_sampler",
+      "samples": 4194304,
+      "probe_peak": 0.2,
+      "minimum_headroom": 0.08597663328979699,
+      "overloads": 0,
+      "estimate_valid": true,
+      "gain": [
+        1.0053360048914328,
+        1.0065122769447041
+      ],
+      "skew": [
+        5.865834421300771e-05,
+        0.003832133408943573
+      ],
+      "clock_trim": [
+        0.0,
+        0.00390625
+      ],
+      "true_gain": [
+        1.0,
+        1.02
+      ],
+      "true_skew": [
+        0.01,
+        0.05
+      ],
+      "skew_rmse_samples": 0.03339387802791606,
+      "relative_skew_error_samples": -0.036226524935269434,
+      "heldout_probe_off": {
+        "nominal": {
+          "spectral_ratio_db": 34.42379009270517,
+          "spur_ratio_db": 34.13145537837864,
+          "error_snr_db": 29.705259471940977
+        },
+        "learned": {
+          "spectral_ratio_db": 35.21407798196747,
+          "spur_ratio_db": 34.96974521506102,
+          "error_snr_db": 30.738465004097144
+        },
+        "oracle": {
+          "spectral_ratio_db": 69.33055172114922,
+          "spur_ratio_db": 99.07606550477469,
+          "error_snr_db": 69.330060355146
+        }
+      }
+    },
+    {
+      "family": "delta_sigma",
+      "seed": 909,
+      "rows": [
+        {
+          "seed": 909,
+          "waveform": "dc_1_64",
+          "location": "off",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.0,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.100383144803885,
+          "largest_inband_spur_dbfs": -30.102999566398122,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_1_64",
+          "location": "input",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.37993986607176,
+          "largest_inband_spur_dbfs": -56.72521880606773,
+          "dc_error": -6.866455078125e-05
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_1_64",
+          "location": "input",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.03543018429577,
+          "largest_inband_spur_dbfs": -64.67871750706864,
+          "dc_error": -2.0345052083332177e-06
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_1_64",
+          "location": "input",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.03543018429577,
+          "largest_inband_spur_dbfs": -64.67871750706864,
+          "dc_error": -2.0345052083332177e-06
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_1_64",
+          "location": "quantizer",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1875,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -32.30650579492845,
+          "largest_inband_spur_dbfs": -32.493788882072096,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_1_64",
+          "location": "quantizer",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1875,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -28.462790036674704,
+          "largest_inband_spur_dbfs": -32.48268392011332,
+          "dc_error": 6.663004557291852e-05
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_1_64",
+          "location": "quantizer",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1875,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -32.32539173698386,
+          "largest_inband_spur_dbfs": -32.49439961830791,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_3_128",
+          "location": "off",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.0,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -58.329771475073414,
+          "largest_inband_spur_dbfs": -60.97468792645994,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_3_128",
+          "location": "input",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.4029199349188,
+          "largest_inband_spur_dbfs": -57.072627105408074,
+          "dc_error": -6.866455078125e-05
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_3_128",
+          "location": "input",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.38317646777932,
+          "largest_inband_spur_dbfs": -65.42754267033077,
+          "dc_error": -2.034505208331483e-06
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_3_128",
+          "location": "input",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.0,
+          "transfer_identity_error": 0.0,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -41.38317646777932,
+          "largest_inband_spur_dbfs": -65.42754267033077,
+          "dc_error": -2.034505208331483e-06
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_3_128",
+          "location": "quantizer",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1953125,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -46.20163617036194,
+          "largest_inband_spur_dbfs": -69.78792433747711,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_3_128",
+          "location": "quantizer",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1953125,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -30.644194076374266,
+          "largest_inband_spur_dbfs": -56.75540457512054,
+          "dc_error": 6.663004557291852e-05
+        },
+        {
+          "seed": 909,
+          "waveform": "dc_3_128",
+          "location": "quantizer",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1953125,
+          "transfer_identity_error": 1.1102230246251565e-16,
+          "sndr_db": null,
+          "sfdr_db": null,
+          "inband_noise_dbfs": -46.66488606198708,
+          "largest_inband_spur_dbfs": -70.16974820385818,
+          "dc_error": 0.0
+        },
+        {
+          "seed": 909,
+          "waveform": "sine",
+          "location": "off",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.0,
+          "maximum_state": 0.9999911264261581,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 37.73097511390864,
+          "sfdr_db": 42.96284315606257,
+          "inband_noise_dbfs": -45.67814169995647,
+          "largest_inband_spur_dbfs": -50.910009742110404,
+          "dc_error": -9.324138683375338e-18
+        },
+        {
+          "seed": 909,
+          "waveform": "sine",
+          "location": "input",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999934690357193,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 22.635859933964902,
+          "sfdr_db": 48.709215059202876,
+          "inband_noise_dbfs": -30.59240958572895,
+          "largest_inband_spur_dbfs": -56.66576471096693,
+          "dc_error": -6.866455078125932e-05
+        },
+        {
+          "seed": 909,
+          "waveform": "sine",
+          "location": "input",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999934690357193,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 37.4737867920872,
+          "sfdr_db": 60.84947960223798,
+          "inband_noise_dbfs": -45.432824101815335,
+          "largest_inband_spur_dbfs": -68.80851691196611,
+          "dc_error": -2.034505208342596e-06
+        },
+        {
+          "seed": 909,
+          "waveform": "sine",
+          "location": "input",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 0.9999934690357193,
+          "transfer_identity_error": 2.220446049250313e-16,
+          "sndr_db": 37.4737867920872,
+          "sfdr_db": 60.84947960223798,
+          "inband_noise_dbfs": -45.432824101815335,
+          "largest_inband_spur_dbfs": -68.80851691196611,
+          "dc_error": -2.034505208342596e-06
+        },
+        {
+          "seed": 909,
+          "waveform": "sine",
+          "location": "quantizer",
+          "method": "raw",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1999999619112145,
+          "transfer_identity_error": 4.440892098500626e-16,
+          "sndr_db": 36.57524105430076,
+          "sfdr_db": 46.43640831165675,
+          "inband_noise_dbfs": -44.52523906630706,
+          "largest_inband_spur_dbfs": -54.386406323663046,
+          "dc_error": -9.324138683375338e-18
+        },
+        {
+          "seed": 909,
+          "waveform": "sine",
+          "location": "quantizer",
+          "method": "subtract_raw_d",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1999999619112145,
+          "transfer_identity_error": 4.440892098500626e-16,
+          "sndr_db": 22.644446747784535,
+          "sfdr_db": 46.43456236143854,
+          "inband_noise_dbfs": -30.596930497893315,
+          "largest_inband_spur_dbfs": -54.38704611154732,
+          "dc_error": 6.663004557290673e-05
+        },
+        {
+          "seed": 909,
+          "waveform": "sine",
+          "location": "quantizer",
+          "method": "subtract_matched_path",
+          "samples": 262144,
+          "osr": 32,
+          "probe_peak": 0.2,
+          "maximum_state": 1.1999999619112145,
+          "transfer_identity_error": 4.440892098500626e-16,
+          "sndr_db": 36.91695061707655,
+          "sfdr_db": 46.21676735583665,
+          "inband_noise_dbfs": -44.86693806545226,
+          "largest_inband_spur_dbfs": -54.16675480421236,
+          "dc_error": -8.836247705756861e-18
+        }
+      ]
+    }
+  ],
+  "raw_directory": "E:\\ADCToolbox\\agent_playground\\pn-architectures-main-20261102",
+  "scope": "Behavioral mechanisms only. HDC fixed point is in exp_cal08; SAR/TI/Delta-sigma here are floating reference arithmetic."
+}
