@@ -1,0 +1,192 @@
+{
+  "runs": 18,
+  "blocks": 4608,
+  "finite": true,
+  "max_causality_gap": 0.0,
+  "max_summary_gap": 0.0,
+  "source_hashes_match": true,
+  "configurations": {
+    "joint_dither_acceptance_20261101": {
+      "output": "E:\\ADCToolbox\\python\\src\\adctoolbox\\examples\\11_calibration\\output\\joint_dither_acceptance_20261101",
+      "blocks": 256,
+      "block_size": 32768,
+      "seeds": [
+        11,
+        22,
+        33
+      ],
+      "waveforms": [
+        "sine",
+        "multitone"
+      ],
+      "scenarios": [
+        "constant",
+        "step"
+      ],
+      "amplitude": 0.2,
+      "peak": 0.8,
+      "rate": 0.04,
+      "fs_hz": 100000000.0,
+      "initial_parameters": {
+        "gain": 1.94,
+        "history": 0.06,
+        "delta": 0.006,
+        "beta": 0.16
+      },
+      "final_parameters": {
+        "gain": 2.04,
+        "history": 0.12,
+        "delta": 0.012,
+        "beta": 0.24
+      },
+      "backend_bits": 13,
+      "backend_noise_rms": 0.0002,
+      "relative_parameter_bands": {
+        "gain": 0.01,
+        "history": 0.1,
+        "delta": 0.1,
+        "beta": 0.1
+      },
+      "python": "3.13.1",
+      "numpy": "2.4.3",
+      "scipy": "1.17.1",
+      "matplotlib": "3.10.8",
+      "git_head": "8e6f54136d6acbcd13b2ccc6bf8010b1a9027dbb",
+      "source_sha256": {
+        "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5",
+        "joint_dither_model.py": "d4cb60c0ace94a42978678dd826d29b5cb55ec8d64188d34d856260d4f0fc81d",
+        "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8"
+      },
+      "note": "Source hashes identify actual files, including uncommitted new example code; git_head alone is insufficient."
+    },
+    "joint_dither_weak_probe_20261101": {
+      "output": "E:\\ADCToolbox\\python\\src\\adctoolbox\\examples\\11_calibration\\output\\joint_dither_weak_probe_20261101",
+      "blocks": 256,
+      "block_size": 32768,
+      "seeds": [
+        11,
+        22,
+        33
+      ],
+      "waveforms": [
+        "sine"
+      ],
+      "scenarios": [
+        "step"
+      ],
+      "amplitude": 0.1,
+      "peak": 0.8,
+      "rate": 0.04,
+      "fs_hz": 100000000.0,
+      "initial_parameters": {
+        "gain": 1.94,
+        "history": 0.06,
+        "delta": 0.006,
+        "beta": 0.16
+      },
+      "final_parameters": {
+        "gain": 2.04,
+        "history": 0.12,
+        "delta": 0.012,
+        "beta": 0.24
+      },
+      "backend_bits": 13,
+      "backend_noise_rms": 0.0002,
+      "relative_parameter_bands": {
+        "gain": 0.01,
+        "history": 0.1,
+        "delta": 0.1,
+        "beta": 0.1
+      },
+      "python": "3.13.1",
+      "numpy": "2.4.3",
+      "scipy": "1.17.1",
+      "matplotlib": "3.10.8",
+      "git_head": "8e6f54136d6acbcd13b2ccc6bf8010b1a9027dbb",
+      "source_sha256": {
+        "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5",
+        "joint_dither_model.py": "d4cb60c0ace94a42978678dd826d29b5cb55ec8d64188d34d856260d4f0fc81d",
+        "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8"
+      },
+      "note": "Source hashes identify actual files, including uncommitted new example code; git_head alone is insufficient."
+    },
+    "joint_dither_strong_probe_20261101": {
+      "output": "E:\\ADCToolbox\\python\\src\\adctoolbox\\examples\\11_calibration\\output\\joint_dither_strong_probe_20261101",
+      "blocks": 256,
+      "block_size": 32768,
+      "seeds": [
+        11,
+        22,
+        33
+      ],
+      "waveforms": [
+        "sine"
+      ],
+      "scenarios": [
+        "step"
+      ],
+      "amplitude": 0.25,
+      "peak": 0.8,
+      "rate": 0.04,
+      "fs_hz": 100000000.0,
+      "initial_parameters": {
+        "gain": 1.94,
+        "history": 0.06,
+        "delta": 0.006,
+        "beta": 0.16
+      },
+      "final_parameters": {
+        "gain": 2.04,
+        "history": 0.12,
+        "delta": 0.012,
+        "beta": 0.24
+      },
+      "backend_bits": 13,
+      "backend_noise_rms": 0.0002,
+      "relative_parameter_bands": {
+        "gain": 0.01,
+        "history": 0.1,
+        "delta": 0.1,
+        "beta": 0.1
+      },
+      "python": "3.13.1",
+      "numpy": "2.4.3",
+      "scipy": "1.17.1",
+      "matplotlib": "3.10.8",
+      "git_head": "8e6f54136d6acbcd13b2ccc6bf8010b1a9027dbb",
+      "source_sha256": {
+        "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5",
+        "joint_dither_model.py": "d4cb60c0ace94a42978678dd826d29b5cb55ec8d64188d34d856260d4f0fc81d",
+        "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8"
+      },
+      "note": "Source hashes identify actual files, including uncommitted new example code; git_head alone is insufficient."
+    }
+  },
+  "normal_samples": 150994944,
+  "amplitude_comparison": [
+    {
+      "amplitude": 0.1,
+      "sndr_mean": 39.83985088591428,
+      "sfdr_mean": 47.825624147935166,
+      "minimum_headroom": 0.25907070063746485,
+      "overloads": 0,
+      "in_band_fraction": 0.036458333333333336
+    },
+    {
+      "amplitude": 0.2,
+      "sndr_mean": 52.749729597562684,
+      "sfdr_mean": 67.35703550248435,
+      "minimum_headroom": 0.11288890342173963,
+      "overloads": 0,
+      "in_band_fraction": 0.3645833333333333
+    },
+    {
+      "amplitude": 0.25,
+      "sndr_mean": 55.69845237025536,
+      "sfdr_mean": 71.62338614355002,
+      "minimum_headroom": 0.04579512881358039,
+      "overloads": 0,
+      "in_band_fraction": 0.6822916666666666
+    }
+  ]
+}

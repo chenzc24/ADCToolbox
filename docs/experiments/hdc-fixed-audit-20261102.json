@@ -1,0 +1,1100 @@
+{
+  "git_head": "8e6f54136d6acbcd13b2ccc6bf8010b1a9027dbb",
+  "runs": {
+    "main": {
+      "configuration": {
+        "arguments": {
+          "output": "..\\agent_playground\\hdc-fixed-20261102-main",
+          "total_log2": 27,
+          "window_log2": 24,
+          "seeds": [
+            101,
+            202,
+            303
+          ],
+          "kinds": [
+            "sine",
+            "multitone"
+          ],
+          "scenario": "step"
+        },
+        "sources": {
+          "hdc_fixed.py": "f35efb8be5c2e08205ebcc613581151f73f5fa72803f3740e2a92c1325034787",
+          "exp_cal08_hdc_fixed.py": "1ab686099c35b114fcd780da114ab87cf70e34c2a7b65ca58d2339096171dde5",
+          "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5",
+          "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8"
+        },
+        "python": "3.13.1",
+        "numpy": "2.4.3",
+        "scipy": "1.17.1",
+        "initial": {
+          "gain": 1.94,
+          "cubic": -0.16,
+          "history": 0.06,
+          "delta": 0.006
+        },
+        "final": {
+          "gain": 2.04,
+          "cubic": -0.24,
+          "history": 0.12,
+          "delta": 0.012
+        },
+        "physical_dither_peak": 0.2,
+        "pn_lengths": [
+          31,
+          29,
+          23
+        ],
+        "cap_switch_length": 27,
+        "fraction": 24,
+        "word_bits": 28,
+        "fft_size": 32768,
+        "noise_rms_backend": 0.0002,
+        "backend_bits": 13,
+        "controller_latency_samples": 512,
+        "bands": {
+          "gain": 0.01,
+          "cubic": 0.1,
+          "history": 0.1,
+          "delta": 0.1
+        },
+        "final_evaluation": "last quarter, sample active coefficients; arithmetic mean of per-FFT dB metrics",
+        "multitone_metrics": "desired-tone power / other power; strongest desired tone / largest unwanted bin, not single-tone SNDR/SFDR"
+      },
+      "raw_directory": "E:\\ADCToolbox\\agent_playground\\hdc-fixed-20261102-main",
+      "summaries": [
+        {
+          "seed": 101,
+          "kind": "sine",
+          "scenario": "step",
+          "total_log2": 27,
+          "window_log2": 24,
+          "peak": 0.8,
+          "diagnostics": {
+            "minimum_headroom": 0.005646780882419877,
+            "overloads": 0,
+            "maximum_probe_peak": 0.2,
+            "maximum_internal_peak": 0.5201480877027665,
+            "minimum_slope": 0.8252010961385916
+          },
+          "methods": {
+            "float": {
+              "spectral_ratio_db": 56.05317789725529,
+              "spur_ratio_db": 62.71228071660377,
+              "error_snr_db": 55.05241924420572,
+              "parameter_mean": {
+                "gain": 2.0468440152405107,
+                "cubic": -0.2651948302188281,
+                "history": 0.11863740598846957,
+                "delta": 0.012394242335565414
+              },
+              "parameter_rmse": {
+                "gain": 0.007756452584272659,
+                "cubic": 0.028342928834531666,
+                "history": 0.001402751516285038,
+                "delta": 0.000539689939300912
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.0038021826393493424,
+                "cubic": 0.11809553681054862,
+                "history": 0.011689595969041983,
+                "delta": 0.04497416160840934
+              },
+              "in_band_fraction": 0.5,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed24": {
+              "spectral_ratio_db": 56.05312124051522,
+              "spur_ratio_db": 62.71143191174494,
+              "error_snr_db": 55.052098744913565,
+              "parameter_mean": {
+                "gain": 2.046846908610217,
+                "cubic": -0.26520486250856296,
+                "history": 0.11863763731749481,
+                "delta": 0.012394219636917114
+              },
+              "parameter_rmse": {
+                "gain": 0.007758097471578174,
+                "cubic": 0.02834859944095121,
+                "history": 0.0014026842891877763,
+                "delta": 0.0005396753820138259
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.003802988956655968,
+                "cubic": 0.11811916433729672,
+                "history": 0.01168903574323147,
+                "delta": 0.04497294850115215
+              },
+              "in_band_fraction": 0.5,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "short24": {
+              "spectral_ratio_db": 50.95929524790485,
+              "spur_ratio_db": 60.3927504464348,
+              "error_snr_db": 49.87221258178926,
+              "parameter_mean": {
+                "gain": 2.0484807355400765,
+                "cubic": -0.27013134586272447,
+                "history": 0.11908818244549932,
+                "delta": 0.011973913758993149
+              },
+              "parameter_rmse": {
+                "gain": 0.029542463224811345,
+                "cubic": 0.10847835706621917,
+                "history": 0.006303167711345717,
+                "delta": 0.001417983104636107
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.014481599620005562,
+                "cubic": 0.45199315444257987,
+                "history": 0.05252639759454765,
+                "delta": 0.11816525871967558
+              },
+              "in_band_fraction": 0.09375,
+              "accepted": 128,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed16": {
+              "spectral_ratio_db": 56.0884940616248,
+              "spur_ratio_db": 62.56628345632693,
+              "error_snr_db": 55.07240065452636,
+              "parameter_mean": {
+                "gain": 2.0473508737989357,
+                "cubic": -0.26753961283391636,
+                "history": 0.11855531557290377,
+                "delta": 0.01239013671875
+              },
+              "parameter_rmse": {
+                "gain": 0.008226685968071024,
+                "cubic": 0.030521649441971232,
+                "history": 0.001466966893090638,
+                "delta": 0.0005350860772451899
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.004032689200034816,
+                "cubic": 0.1271735393415468,
+                "history": 0.01222472410908865,
+                "delta": 0.04459050643709915
+              },
+              "in_band_fraction": 0.5,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed20": {
+              "spectral_ratio_db": 56.05134296031468,
+              "spur_ratio_db": 62.721369177125496,
+              "error_snr_db": 55.05698319808757,
+              "parameter_mean": {
+                "gain": 2.046790363025672,
+                "cubic": -0.2650058352439459,
+                "history": 0.11862520627725083,
+                "delta": 0.012394428253173828
+              },
+              "parameter_rmse": {
+                "gain": 0.007726594649703709,
+                "cubic": 0.02824336447441636,
+                "history": 0.001413380826794417,
+                "delta": 0.0005398481377347487
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.0037875463969135833,
+                "cubic": 0.11768068531006817,
+                "history": 0.011778173556620143,
+                "delta": 0.04498734481122906
+              },
+              "in_band_fraction": 0.5,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "nominal": {
+              "spectral_ratio_db": 33.31976505843772,
+              "spur_ratio_db": 39.97927390232525,
+              "error_snr_db": 31.853140669238904
+            },
+            "oracle_hdc": {
+              "spectral_ratio_db": 56.78699399124832,
+              "spur_ratio_db": 66.49274623142065,
+              "error_snr_db": 56.0417927890085
+            },
+            "oracle_exact": {
+              "spectral_ratio_db": 74.36103462889025,
+              "spur_ratio_db": 106.33460407966783,
+              "error_snr_db": 74.36078000929461
+            }
+          },
+          "elapsed_seconds": 47.42911689999164
+        },
+        {
+          "seed": 202,
+          "kind": "sine",
+          "scenario": "step",
+          "total_log2": 27,
+          "window_log2": 24,
+          "peak": 0.8,
+          "diagnostics": {
+            "minimum_headroom": 0.005756300277199755,
+            "overloads": 0,
+            "maximum_probe_peak": 0.2,
+            "maximum_internal_peak": 0.5201480877027665,
+            "minimum_slope": 0.8252010961385916
+          },
+          "methods": {
+            "float": {
+              "spectral_ratio_db": 54.775686977257465,
+              "spur_ratio_db": 69.55132982512407,
+              "error_snr_db": 54.73456037319829,
+              "parameter_mean": {
+                "gain": 2.029127407692471,
+                "cubic": -0.20607000133758493,
+                "history": 0.12002163898810474,
+                "delta": 0.011743366666880362
+              },
+              "parameter_rmse": {
+                "gain": 0.011121061748509615,
+                "cubic": 0.035046215442987756,
+                "history": 0.0005065297189024179,
+                "delta": 0.00039468946146273455
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.005451500857112556,
+                "cubic": 0.14602589767911564,
+                "history": 0.004221080990853483,
+                "delta": 0.03289078845522788
+              },
+              "in_band_fraction": 0.0,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed24": {
+              "spectral_ratio_db": 54.7763666439422,
+              "spur_ratio_db": 69.55209733242113,
+              "error_snr_db": 54.735216496671654,
+              "parameter_mean": {
+                "gain": 2.0291302176613946,
+                "cubic": -0.2060785718870275,
+                "history": 0.12002138077095223,
+                "delta": 0.011743366718292236
+              },
+              "parameter_rmse": {
+                "gain": 0.011117929942613599,
+                "cubic": 0.03503616769292518,
+                "history": 0.0005068935819141133,
+                "delta": 0.0003946938543331813
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.005449965658143921,
+                "cubic": 0.14598403205385493,
+                "history": 0.004224113182617611,
+                "delta": 0.03289115452776511
+              },
+              "in_band_fraction": 0.0,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "short24": {
+              "spectral_ratio_db": 50.46067978765427,
+              "spur_ratio_db": 60.56288370027865,
+              "error_snr_db": 49.29455061846554,
+              "parameter_mean": {
+                "gain": 2.041721942217946,
+                "cubic": -0.25018440607914194,
+                "history": 0.11973505118461802,
+                "delta": 0.01187349483370781
+              },
+              "parameter_rmse": {
+                "gain": 0.03537484070784048,
+                "cubic": 0.11998436580995268,
+                "history": 0.006861183321848044,
+                "delta": 0.0012008757968848378
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.017340608190117884,
+                "cubic": 0.49993485754146955,
+                "history": 0.057176527682067026,
+                "delta": 0.10007298307373647
+              },
+              "in_band_fraction": 0.09375,
+              "accepted": 128,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "nominal": {
+              "spectral_ratio_db": 33.325952217810126,
+              "spur_ratio_db": 39.9842976262194,
+              "error_snr_db": 31.85796063830962
+            },
+            "oracle_hdc": {
+              "spectral_ratio_db": 56.80218833104388,
+              "spur_ratio_db": 66.4987249336465,
+              "error_snr_db": 56.056102437478096
+            },
+            "oracle_exact": {
+              "spectral_ratio_db": 74.3632604412291,
+              "spur_ratio_db": 106.25010200297226,
+              "error_snr_db": 74.36283932634434
+            }
+          },
+          "elapsed_seconds": 35.72773449998931
+        },
+        {
+          "seed": 303,
+          "kind": "sine",
+          "scenario": "step",
+          "total_log2": 27,
+          "window_log2": 24,
+          "peak": 0.8,
+          "diagnostics": {
+            "minimum_headroom": 0.005822119611898491,
+            "overloads": 0,
+            "maximum_probe_peak": 0.2,
+            "maximum_internal_peak": 0.5201480877027665,
+            "minimum_slope": 0.8252010961385916
+          },
+          "methods": {
+            "float": {
+              "spectral_ratio_db": 56.45236414038713,
+              "spur_ratio_db": 66.2668421241575,
+              "error_snr_db": 56.1976204175172,
+              "parameter_mean": {
+                "gain": 2.0369712186844717,
+                "cubic": -0.2339079560478104,
+                "history": 0.117477599295114,
+                "delta": 0.01172298891211163
+              },
+              "parameter_rmse": {
+                "gain": 0.0033854341731442104,
+                "cubic": 0.00610494084184032,
+                "history": 0.0026462242308091513,
+                "delta": 0.000408796177277027
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.001659526555462848,
+                "cubic": 0.025437253507668,
+                "history": 0.02205186859007626,
+                "delta": 0.03406634810641891
+              },
+              "in_band_fraction": 1.0,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed24": {
+              "spectral_ratio_db": 56.451818461484024,
+              "spur_ratio_db": 66.26604157031166,
+              "error_snr_db": 56.19693691964265,
+              "parameter_mean": {
+                "gain": 2.036971536777412,
+                "cubic": -0.23390666882807948,
+                "history": 0.11747759049693565,
+                "delta": 0.011722981929779053
+              },
+              "parameter_rmse": {
+                "gain": 0.003386428920007369,
+                "cubic": 0.006105516787469337,
+                "history": 0.002646351654076625,
+                "delta": 0.00040881160119461473
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.0016600141764742005,
+                "cubic": 0.02543965328112224,
+                "history": 0.02205293045063854,
+                "delta": 0.034067633432884555
+              },
+              "in_band_fraction": 1.0,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "short24": {
+              "spectral_ratio_db": 51.690065779084065,
+              "spur_ratio_db": 63.043941116139635,
+              "error_snr_db": 50.79744654377002,
+              "parameter_mean": {
+                "gain": 2.0280511974805435,
+                "cubic": -0.20920610611069868,
+                "history": 0.11736332436703927,
+                "delta": 0.011921914294362068
+              },
+              "parameter_rmse": {
+                "gain": 0.029127750471812347,
+                "cubic": 0.10176201413581111,
+                "history": 0.007653965724697406,
+                "delta": 0.0010600578655875798
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.014278309054809974,
+                "cubic": 0.42400839223254627,
+                "history": 0.06378304770581172,
+                "delta": 0.08833815546563166
+              },
+              "in_band_fraction": 0.1875,
+              "accepted": 128,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "nominal": {
+              "spectral_ratio_db": 33.331531583937846,
+              "spur_ratio_db": 39.99399916210546,
+              "error_snr_db": 31.86271224210275
+            },
+            "oracle_hdc": {
+              "spectral_ratio_db": 56.77961786477144,
+              "spur_ratio_db": 66.47744153404707,
+              "error_snr_db": 56.03382916071402
+            },
+            "oracle_exact": {
+              "spectral_ratio_db": 74.37015716201802,
+              "spur_ratio_db": 106.2871041273153,
+              "error_snr_db": 74.36978450544851
+            }
+          },
+          "elapsed_seconds": 35.615797499980545
+        },
+        {
+          "seed": 101,
+          "kind": "multitone",
+          "scenario": "step",
+          "total_log2": 27,
+          "window_log2": 24,
+          "peak": 0.8,
+          "diagnostics": {
+            "minimum_headroom": 0.011322293929702854,
+            "overloads": 0,
+            "maximum_probe_peak": 0.2,
+            "maximum_internal_peak": 0.5169827131848261,
+            "minimum_slope": 0.8275647894730003
+          },
+          "methods": {
+            "float": {
+              "spectral_ratio_db": 55.91483638742253,
+              "spur_ratio_db": 75.1181781594657,
+              "error_snr_db": 55.81101912208668,
+              "parameter_mean": {
+                "gain": 2.034838040438885,
+                "cubic": -0.2176019297190257,
+                "history": 0.12079983856860721,
+                "delta": 0.012233650392318817
+              },
+              "parameter_rmse": {
+                "gain": 0.005202557064309201,
+                "cubic": 0.022535858922942655,
+                "history": 0.0015928613928554093,
+                "delta": 0.00042199072352219486
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.002550273070739804,
+                "cubic": 0.09389941217892774,
+                "history": 0.013273844940461745,
+                "delta": 0.035165893626849576
+              },
+              "in_band_fraction": 0.5,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed24": {
+              "spectral_ratio_db": 55.91411069020522,
+              "spur_ratio_db": 75.11621369745868,
+              "error_snr_db": 55.810290179477924,
+              "parameter_mean": {
+                "gain": 2.0348370467363464,
+                "cubic": -0.2175954127521397,
+                "history": 0.12079920523249732,
+                "delta": 0.012233644723892212
+              },
+              "parameter_rmse": {
+                "gain": 0.005203786111286297,
+                "cubic": 0.022541540825158354,
+                "history": 0.001592658875486585,
+                "delta": 0.00042198488480965873
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.0025508755447481847,
+                "cubic": 0.09392308677149314,
+                "history": 0.013272157295721542,
+                "delta": 0.03516540706747156
+              },
+              "in_band_fraction": 0.5,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "short24": {
+              "spectral_ratio_db": 50.949587121253515,
+              "spur_ratio_db": 65.96536400199683,
+              "error_snr_db": 50.75031659984026,
+              "parameter_mean": {
+                "gain": 2.0362801471704053,
+                "cubic": -0.22139031497495887,
+                "history": 0.12069906160406386,
+                "delta": 0.012250302359461784
+              },
+              "parameter_rmse": {
+                "gain": 0.016609274526670468,
+                "cubic": 0.08459581754463566,
+                "history": 0.005969121168319194,
+                "delta": 0.0014384694974374005
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.008141801238563954,
+                "cubic": 0.35248257310264863,
+                "history": 0.049742676402659954,
+                "delta": 0.11987245811978336
+              },
+              "in_band_fraction": 0.1875,
+              "accepted": 128,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "nominal": {
+              "spectral_ratio_db": 30.73399174007801,
+              "spur_ratio_db": 42.64421770093645,
+              "error_snr_db": 30.35654745224736
+            },
+            "oracle_hdc": {
+              "spectral_ratio_db": 57.89632658276554,
+              "spur_ratio_db": 73.07076565512024,
+              "error_snr_db": 57.70171600412803
+            },
+            "oracle_exact": {
+              "spectral_ratio_db": 71.54511960719307,
+              "spur_ratio_db": 101.56000195003915,
+              "error_snr_db": 71.54459565794562
+            }
+          },
+          "elapsed_seconds": 48.65995039997506
+        },
+        {
+          "seed": 202,
+          "kind": "multitone",
+          "scenario": "step",
+          "total_log2": 27,
+          "window_log2": 24,
+          "peak": 0.8,
+          "diagnostics": {
+            "minimum_headroom": 0.011331461576880586,
+            "overloads": 0,
+            "maximum_probe_peak": 0.2,
+            "maximum_internal_peak": 0.5169827131848261,
+            "minimum_slope": 0.8275647894730003
+          },
+          "methods": {
+            "float": {
+              "spectral_ratio_db": 57.02931683820831,
+              "spur_ratio_db": 68.7936347315831,
+              "error_snr_db": 56.5811226049014,
+              "parameter_mean": {
+                "gain": 2.047350105105011,
+                "cubic": -0.27373304360798545,
+                "history": 0.12125657410757264,
+                "delta": 0.012034858393273676
+              },
+              "parameter_rmse": {
+                "gain": 0.007385330083941344,
+                "cubic": 0.033733236091961556,
+                "history": 0.0017305508306230918,
+                "delta": 0.00021441384781208236
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.003620259845069286,
+                "cubic": 0.14055515038317315,
+                "history": 0.014421256921859098,
+                "delta": 0.017867820651006863
+              },
+              "in_band_fraction": 0.0,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed24": {
+              "spectral_ratio_db": 57.02960559965314,
+              "spur_ratio_db": 68.79338696844164,
+              "error_snr_db": 56.58142599801485,
+              "parameter_mean": {
+                "gain": 2.0473506477734738,
+                "cubic": -0.27373768019292877,
+                "history": 0.12125650160004922,
+                "delta": 0.012034863233566284
+              },
+              "parameter_rmse": {
+                "gain": 0.007385957986366557,
+                "cubic": 0.033737884266209515,
+                "history": 0.0017308726586963005,
+                "delta": 0.0002144199336498341
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.0036205676403757636,
+                "cubic": 0.14057451777587301,
+                "history": 0.01442393882246917,
+                "delta": 0.01786832780415284
+              },
+              "in_band_fraction": 0.0,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "short24": {
+              "spectral_ratio_db": 50.997828041870484,
+              "spur_ratio_db": 64.05499795677845,
+              "error_snr_db": 50.7246087088955,
+              "parameter_mean": {
+                "gain": 2.04775046580843,
+                "cubic": -0.27270041727812905,
+                "history": 0.12127894837104525,
+                "delta": 0.012249058112502098
+              },
+              "parameter_rmse": {
+                "gain": 0.017982920736679297,
+                "cubic": 0.0821080237133687,
+                "history": 0.006470944729674887,
+                "delta": 0.0013462558212943344
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.008815157223862401,
+                "cubic": 0.34211676547236963,
+                "history": 0.0539245394139574,
+                "delta": 0.1121879851078612
+              },
+              "in_band_fraction": 0.0625,
+              "accepted": 128,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "nominal": {
+              "spectral_ratio_db": 30.73840058483386,
+              "spur_ratio_db": 42.59742595757923,
+              "error_snr_db": 30.35160274148026
+            },
+            "oracle_hdc": {
+              "spectral_ratio_db": 57.917163818964724,
+              "spur_ratio_db": 73.1106636685124,
+              "error_snr_db": 57.72155284074147
+            },
+            "oracle_exact": {
+              "spectral_ratio_db": 71.54620980666706,
+              "spur_ratio_db": 101.45158263037249,
+              "error_snr_db": 71.54560503007069
+            }
+          },
+          "elapsed_seconds": 61.89096170000266
+        },
+        {
+          "seed": 303,
+          "kind": "multitone",
+          "scenario": "step",
+          "total_log2": 27,
+          "window_log2": 24,
+          "peak": 0.8,
+          "diagnostics": {
+            "minimum_headroom": 0.011304204569759557,
+            "overloads": 0,
+            "maximum_probe_peak": 0.2,
+            "maximum_internal_peak": 0.5169827131848261,
+            "minimum_slope": 0.8275647894730003
+          },
+          "methods": {
+            "float": {
+              "spectral_ratio_db": 57.24630290389205,
+              "spur_ratio_db": 68.84084170217386,
+              "error_snr_db": 57.12827763341549,
+              "parameter_mean": {
+                "gain": 2.0413658400820416,
+                "cubic": -0.24756153198080819,
+                "history": 0.11795767426166955,
+                "delta": 0.011836088644201806
+              },
+              "parameter_rmse": {
+                "gain": 0.003550484539551972,
+                "cubic": 0.01568914727038471,
+                "history": 0.002062678124010931,
+                "delta": 0.00020940583249586575
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.001740433597819594,
+                "cubic": 0.06537144695993631,
+                "history": 0.017188984366757757,
+                "delta": 0.017450486041322145
+              },
+              "in_band_fraction": 1.0,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed24": {
+              "spectral_ratio_db": 57.246000071224664,
+              "spur_ratio_db": 68.83884213043902,
+              "error_snr_db": 57.12797681102328,
+              "parameter_mean": {
+                "gain": 2.0413675944260983,
+                "cubic": -0.24756922919023802,
+                "history": 0.11795706649665844,
+                "delta": 0.011836081743240356
+              },
+              "parameter_rmse": {
+                "gain": 0.0035511855252330794,
+                "cubic": 0.015692583603937143,
+                "history": 0.002063251508359697,
+                "delta": 0.0002094133362373613
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.0017407772182515095,
+                "cubic": 0.06538576501640476,
+                "history": 0.017193762569664144,
+                "delta": 0.017451111353113447
+              },
+              "in_band_fraction": 1.0,
+              "accepted": 8,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "short24": {
+              "spectral_ratio_db": 51.30912219250051,
+              "spur_ratio_db": 64.89096692728373,
+              "error_snr_db": 51.145336895635296,
+              "parameter_mean": {
+                "gain": 2.0397503050519457,
+                "cubic": -0.23587746189349426,
+                "history": 0.1187349243933197,
+                "delta": 0.012157050892710686
+              },
+              "parameter_rmse": {
+                "gain": 0.016872176445175177,
+                "cubic": 0.08910635930332596,
+                "history": 0.005158252078623282,
+                "delta": 0.001222558993983133
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.008270674728027047,
+                "cubic": 0.3712764970971915,
+                "history": 0.042985433988527354,
+                "delta": 0.10187991616526108
+              },
+              "in_band_fraction": 0.1875,
+              "accepted": 128,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "nominal": {
+              "spectral_ratio_db": 30.732126970880937,
+              "spur_ratio_db": 42.65183838828585,
+              "error_snr_db": 30.346428622225478
+            },
+            "oracle_hdc": {
+              "spectral_ratio_db": 57.89511784731813,
+              "spur_ratio_db": 73.1131543213204,
+              "error_snr_db": 57.696044819480505
+            },
+            "oracle_exact": {
+              "spectral_ratio_db": 71.55315122969583,
+              "spur_ratio_db": 101.52119692865625,
+              "error_snr_db": 71.55252482664301
+            }
+          },
+          "elapsed_seconds": 67.9269537999935
+        }
+      ]
+    },
+    "long": {
+      "configuration": {
+        "arguments": {
+          "output": "..\\agent_playground\\hdc-fixed-20261102-long",
+          "total_log2": 30,
+          "window_log2": 28,
+          "seeds": [
+            404
+          ],
+          "kinds": [
+            "sine"
+          ],
+          "scenario": "constant"
+        },
+        "sources": {
+          "hdc_fixed.py": "f35efb8be5c2e08205ebcc613581151f73f5fa72803f3740e2a92c1325034787",
+          "exp_cal08_hdc_fixed.py": "1ab686099c35b114fcd780da114ab87cf70e34c2a7b65ca58d2339096171dde5",
+          "exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5",
+          "dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8"
+        },
+        "python": "3.13.1",
+        "numpy": "2.4.3",
+        "scipy": "1.17.1",
+        "initial": {
+          "gain": 1.94,
+          "cubic": -0.16,
+          "history": 0.06,
+          "delta": 0.006
+        },
+        "final": {
+          "gain": 2.04,
+          "cubic": -0.24,
+          "history": 0.12,
+          "delta": 0.012
+        },
+        "physical_dither_peak": 0.2,
+        "pn_lengths": [
+          31,
+          29,
+          23
+        ],
+        "cap_switch_length": 27,
+        "fraction": 24,
+        "word_bits": 28,
+        "fft_size": 32768,
+        "noise_rms_backend": 0.0002,
+        "backend_bits": 13,
+        "controller_latency_samples": 512,
+        "bands": {
+          "gain": 0.01,
+          "cubic": 0.1,
+          "history": 0.1,
+          "delta": 0.1
+        },
+        "final_evaluation": "last quarter, sample active coefficients; arithmetic mean of per-FFT dB metrics",
+        "multitone_metrics": "desired-tone power / other power; strongest desired tone / largest unwanted bin, not single-tone SNDR/SFDR"
+      },
+      "raw_directory": "E:\\ADCToolbox\\agent_playground\\hdc-fixed-20261102-long",
+      "summaries": [
+        {
+          "seed": 404,
+          "kind": "sine",
+          "scenario": "constant",
+          "total_log2": 30,
+          "window_log2": 28,
+          "peak": 0.8,
+          "diagnostics": {
+            "minimum_headroom": 0.005648906035197854,
+            "overloads": 0,
+            "maximum_probe_peak": 0.2,
+            "maximum_internal_peak": 0.5201480877027665,
+            "minimum_slope": 0.8252010961385916
+          },
+          "methods": {
+            "float": {
+              "spectral_ratio_db": 56.93493645147694,
+              "spur_ratio_db": 67.11744553257145,
+              "error_snr_db": 56.5414932452676,
+              "parameter_mean": {
+                "gain": 2.038284523896728,
+                "cubic": -0.23641846104607248,
+                "history": 0.11917848679478048,
+                "delta": 0.011920741054162716
+              },
+              "parameter_rmse": {
+                "gain": 0.001715476103271829,
+                "cubic": 0.003581538953927516,
+                "history": 0.0008215132052195455,
+                "delta": 7.925894583728396e-05
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.0008409196584665828,
+                "cubic": 0.014923078974697985,
+                "history": 0.006845943376829548,
+                "delta": 0.006604912153106997
+              },
+              "in_band_fraction": 1.0,
+              "accepted": 4,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed24": {
+              "spectral_ratio_db": 56.93389673422422,
+              "spur_ratio_db": 67.1188689974442,
+              "error_snr_db": 56.54057036097925,
+              "parameter_mean": {
+                "gain": 2.038281463036441,
+                "cubic": -0.2364044993235682,
+                "history": 0.11917906801669947,
+                "delta": 0.011920750141143799
+              },
+              "parameter_rmse": {
+                "gain": 0.0017185369635588368,
+                "cubic": 0.0035955006764317454,
+                "history": 0.000820931983300563,
+                "delta": 7.924985885620142e-05
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.0008424200801759002,
+                "cubic": 0.014981252818465607,
+                "history": 0.006841099860838024,
+                "delta": 0.006604154904683451
+              },
+              "in_band_fraction": 1.0,
+              "accepted": 4,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "short24": {
+              "spectral_ratio_db": 50.851327424702696,
+              "spur_ratio_db": 61.575218636132774,
+              "error_snr_db": 49.89440659340514,
+              "parameter_mean": {
+                "gain": 2.036927148013954,
+                "cubic": -0.23131637388545837,
+                "history": 0.11935066424242453,
+                "delta": 0.011972101870924234
+              },
+              "parameter_rmse": {
+                "gain": 0.029547126871262975,
+                "cubic": 0.1041499147344821,
+                "history": 0.006878235570423001,
+                "delta": 0.0013088946729333498
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.014483885721207342,
+                "cubic": 0.4339579780603421,
+                "history": 0.057318629753525016,
+                "delta": 0.10907455607777915
+              },
+              "in_band_fraction": 0.09375,
+              "accepted": 1024,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed16": {
+              "spectral_ratio_db": 57.36806127709633,
+              "spur_ratio_db": 65.89985906776514,
+              "error_snr_db": 56.756654203786425,
+              "parameter_mean": {
+                "gain": 2.040761673439519,
+                "cubic": -0.24561321562582708,
+                "history": 0.11910878602456915,
+                "delta": 0.0119171142578125
+              },
+              "parameter_rmse": {
+                "gain": 0.0007616734395190506,
+                "cubic": 0.005613215625827145,
+                "history": 0.0008912139754308908,
+                "delta": 8.288574218750024e-05
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.00037336933309757385,
+                "cubic": 0.023388398440946433,
+                "history": 0.007426783128590755,
+                "delta": 0.006907145182291688
+              },
+              "in_band_fraction": 1.0,
+              "accepted": 4,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "fixed20": {
+              "spectral_ratio_db": 56.92508963630745,
+              "spur_ratio_db": 67.10276536310643,
+              "error_snr_db": 56.533821132768395,
+              "parameter_mean": {
+                "gain": 2.0382684623900147,
+                "cubic": -0.2363345317133336,
+                "history": 0.11916737374002447,
+                "delta": 0.011920928955078125
+              },
+              "parameter_rmse": {
+                "gain": 0.0017315376099853452,
+                "cubic": 0.003665468286666473,
+                "history": 0.0008326262599755578,
+                "delta": 7.907104492187524e-05
+              },
+              "parameter_relative_rmse": {
+                "gain": 0.0008487929460712475,
+                "cubic": 0.015272784527776974,
+                "history": 0.006938552166462983,
+                "delta": 0.006589253743489604
+              },
+              "in_band_fraction": 1.0,
+              "accepted": 4,
+              "held": 0,
+              "saturations": 0,
+              "accumulator_saturations": 0,
+              "controller_saturations": 0
+            },
+            "nominal": {
+              "spectral_ratio_db": 33.32371985215036,
+              "spur_ratio_db": 39.98169465642524,
+              "error_snr_db": 31.855525769402924
+            },
+            "oracle_hdc": {
+              "spectral_ratio_db": 56.79213527210568,
+              "spur_ratio_db": 66.4856413282426,
+              "error_snr_db": 56.04684641993363
+            },
+            "oracle_exact": {
+              "spectral_ratio_db": 74.36472875903274,
+              "spur_ratio_db": 106.26333069299632,
+              "error_snr_db": 74.36436690236317
+            }
+          },
+          "elapsed_seconds": 742.3738466000068
+        }
+      ]
+    }
+  },
+  "current_source_sha256": {
+    "hdc_fixed.py": "0054c3a00fd4bc0352ae2093b33a3601c4abf11062342e0207fbb144d0299b1e",
+    "exp_cal08_hdc_fixed.py": "1ab686099c35b114fcd780da114ab87cf70e34c2a7b65ca58d2339096171dde5",
+    "hdc_fixed_controls.py": "901769f35447e6f06d50412214e0ee81122e53c51d7a5a5bb7f62d55c09fac83",
+    "HDC_FIXED.md": "e6db230a239eaba497a271873edf5df4bb3c3fce3a79993adc5cac22c68c5974"
+  },
+  "postrun_source_diff": "--- run_source\n+++ final_source\n@@ -66,7 +66,8 @@\n         backend = truth.gain*t+2*truth.cubic*t**3\n         analog = backend+self.rng.normal(0., self.noise, len(x))\n         measured, rail, overload = quantize(analog, self.bits)\n-        capture = dict(r=measured/2, p=p, pp=pp, s=s, q=q, rail=rail)\n+        capture = dict(r=measured/2, p=p, pp=pp, s=s, q=q, rail=rail,\n+                       rails=abs(measured) >= 1-2.**(-self.bits))\n         diagnostics = dict(headroom=float(1-np.max(abs(analog))), overloads=overload,\n                            probe_peak=float(np.max(abs(actual_d))),\n                            internal_peak=float(np.max(abs(t))),\n@@ -74,7 +75,7 @@\n         return capture, diagnostics\n \n \n-@njit(cache=True)\n+@njit(cache=False)\n def rounded_shift(value, shift):\n     if shift == 0:\n         return value\n@@ -82,19 +83,19 @@\n     return (value+half) >> shift if value >= 0 else -((-value+half) >> shift)\n \n \n-@njit(cache=True)\n+@njit(cache=False)\n def saturate(value, bits):\n     return min(max(value, -(1 << (bits-1))), (1 << (bits-1))-1)\n \n \n-@njit(cache=True)\n+@njit(cache=False)\n def mul(a, b, fraction, bits):\n     raw = rounded_shift(a*b, fraction)\n     result = saturate(raw, bits)\n     return result, int(raw != result)\n \n \n-@njit(cache=True)\n+@njit(cache=False)\n def fixed_block(r, p, pp, s, q, coeff, prev, a, fraction, bits, accumulator_bits, sums):\n     \"\"\"Six general products/sample: four HDC + memory + eta square.\n     DAC correction and every correlation are sign/zero selections. Full product\n@@ -131,7 +132,7 @@\n     return output, prev, saturations, accumulator_saturations\n \n \n-@njit(cache=True)\n+@njit(cache=False)\n def float_block(r, p, pp, s, q, coeff, prev, a, sums):\n     output = np.empty(len(r))\n     for i in range(len(r)):\n@@ -286,7 +287,7 @@\n                 y, self.previous = float_block(capture['r'][sl], p, pp, s, q,\n                     self.coefficients, self.previous, self.a, self.sums)\n                 outputs.append(y)\n-            self.window_bad |= bool(capture['rail'])\n+            self.window_bad |= bool(np.any(capture['rails'][sl])) if 'rails' in capture else bool(capture['rail'])\n             self.count += size; self.samples += size; offset += size\n             if self.count == self.window:\n                 old_overflow = self.controller_saturations\n",
+  "postrun_change_reason": "Disabled numba disk caching to fix direct-module/package cache collisions; replaced chunk-level rail invalidation by per-sample rail flags. Main and long captures have minimum headroom >0.0056, so no rail flags and no arithmetic result changes. Range controls rerun using final source.",
+  "validation": {
+    "focused_and_previous_joint_tests": "28 passed",
+    "new_tests_with_NUMBA_DISABLE_JIT": "11 passed"
+  },
+  "budget_scope": "Arithmetic architecture only, not synthesized RTL or verified 100 MS/s timing",
+  "controls_source_sha256": "901769f35447e6f06d50412214e0ee81122e53c51d7a5a5bb7f62d55c09fac83"
+}

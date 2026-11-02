@@ -1,0 +1,181 @@
+{
+  "date": "2026-11-02",
+  "base": "cd72061",
+  "scope": "standalone Dither examples; no public calibration API changes",
+  "unit_tests": {
+    "passed": 107,
+    "seconds": 52.02
+  },
+  "strict_sphinx_passed": true,
+  "wheel_and_sdist_build_passed": true,
+  "numba_installed_in_smoke_environment": false,
+  "smoke_only": true,
+  "historical_full_experiments_rerun": false,
+  "eight_case_wheel_sha256": "db818b58d5cd6522ec659a6ce7eaedc29366605be2a3408abb402174577f3df1",
+  "smoke_cases": [
+    {
+      "name": "gain",
+      "returncode": 0,
+      "seconds": 1.88,
+      "arguments": [
+        "exp_cal01_dither_background.py",
+        "--blocks",
+        "64",
+        "--block-size",
+        "1024",
+        "--foreground-blocks",
+        "2",
+        "--seeds",
+        "11",
+        "--scenarios",
+        "constant",
+        "--waveforms",
+        "sine",
+        "--output",
+        "E:\\ADCToolbox\\agent_playground\\dither-pr-wheel\\gain"
+      ]
+    },
+    {
+      "name": "mechanisms",
+      "returncode": 0,
+      "seconds": 5.02,
+      "arguments": [
+        "exp_cal02_dither_coverage.py",
+        "--blocks",
+        "16",
+        "--block-size",
+        "1024",
+        "--foreground-blocks",
+        "2",
+        "--seeds",
+        "11",
+        "--scenarios",
+        "constant",
+        "--waveforms",
+        "sine",
+        "--output",
+        "E:\\ADCToolbox\\agent_playground\\dither-pr-wheel\\mechanisms"
+      ]
+    },
+    {
+      "name": "joint",
+      "returncode": 0,
+      "seconds": 15.42,
+      "arguments": [
+        "exp_cal06_joint_dither.py",
+        "--blocks",
+        "16",
+        "--block-size",
+        "1024",
+        "--seeds",
+        "11",
+        "--scenarios",
+        "constant",
+        "--waveforms",
+        "sine",
+        "--output",
+        "E:\\ADCToolbox\\agent_playground\\dither-pr-wheel\\joint"
+      ]
+    },
+    {
+      "name": "convergence",
+      "returncode": 0,
+      "seconds": 6.5,
+      "arguments": [
+        "exp_cal07_joint_convergence.py",
+        "--blocks",
+        "8",
+        "--long-blocks",
+        "8",
+        "--block-size",
+        "1024",
+        "--seeds",
+        "11",
+        "--output",
+        "E:\\ADCToolbox\\agent_playground\\dither-pr-wheel\\convergence"
+      ]
+    },
+    {
+      "name": "architectures",
+      "returncode": 0,
+      "seconds": 11.58,
+      "arguments": [
+        "exp_cal09_pn_architectures.py",
+        "--quick",
+        "--seeds",
+        "707",
+        "--output",
+        "E:\\ADCToolbox\\agent_playground\\dither-pr-wheel\\architectures"
+      ]
+    },
+    {
+      "name": "correlation",
+      "returncode": 0,
+      "seconds": 2.7,
+      "arguments": [
+        "hdc_correlation.py",
+        "--quick",
+        "--seeds",
+        "601",
+        "--noise-rms",
+        "0",
+        "--output",
+        "E:\\ADCToolbox\\agent_playground\\dither-pr-wheel\\correlation"
+      ]
+    },
+    {
+      "name": "headroom",
+      "returncode": 0,
+      "seconds": 7.59,
+      "arguments": [
+        "hdc_fixed_controls.py",
+        "--output",
+        "E:\\ADCToolbox\\agent_playground\\dither-pr-wheel\\headroom"
+      ]
+    },
+    {
+      "name": "fixed_hdc",
+      "returncode": 0,
+      "seconds": 7.82,
+      "arguments": [
+        "-c",
+        "from pathlib import Path; import exp_cal08_hdc_fixed as e; e.run_case(Path(r'E:\\ADCToolbox\\agent_playground\\dither-pr-wheel\\fixed_hdc'),71,'sine',16,12,formats=True,scenario='constant')"
+      ]
+    }
+  ],
+  "final_artifacts": {
+    "wheel_sha256": "02f7d78358f399d73d2a11778ea88aba9de0f0281750d6d59a7584df4c4460b8",
+    "sdist_sha256": "ae7d856dacfbfa9cd9f73ab96ea2615a84c2a8642632eb7fe3721c878db69869",
+    "changes_from_eight_case_smoke_wheel": [
+      "adctoolbox/examples/11_calibration/dither_gain.py",
+      "adctoolbox/examples/11_calibration/pipeline_dither_model.py",
+      "adctoolbox-0.9.1.dist-info/RECORD"
+    ],
+    "changes_are_line_endings_and_record_only": true,
+    "final_wheel_gain_smoke_passed": true
+  },
+  "algebra_checks": {
+    "charge_identities": 216,
+    "ideal_state_transitions": 512,
+    "finite_gain_state_transitions": 1536,
+    "finite_gain_static_identities": 384
+  },
+  "example_source_sha256": {
+    "python/src/adctoolbox/examples/11_calibration/dither_gain.py": "51c83cd91065672c7216deb1fb8eef7357b9a7c0a5568f401b69d8a1b9dc2a4e",
+    "python/src/adctoolbox/examples/11_calibration/dither_mechanisms.py": "d4349d2287b53377a97067a75d908792a6292f3257da10a1f146652eb54855f8",
+    "python/src/adctoolbox/examples/11_calibration/exp_cal01_dither_background.py": "5a37cf9bf67d5e443870ab7e47ad5462b80f7e7cb5b20bbb56407b0be2081477",
+    "python/src/adctoolbox/examples/11_calibration/exp_cal02_dither_coverage.py": "18fbf9996b65b943a1722a5887de7462e1cbf5c473b1af3d52a34a0a6a308c28",
+    "python/src/adctoolbox/examples/11_calibration/exp_cal06_joint_dither.py": "151f7af6e73c6878cd2d68030db45a00dd7881c23a75617e7c8eafd1a0cf1aa5",
+    "python/src/adctoolbox/examples/11_calibration/exp_cal07_joint_convergence.py": "601759118e3896e718ab22399329db956ae8e26392badd340cb88c1495c276ab",
+    "python/src/adctoolbox/examples/11_calibration/exp_cal08_hdc_fixed.py": "0a35a36e942fdeb97715dd1ee253e2b9e227f835e38f5e5d754f3d0a9d7c50db",
+    "python/src/adctoolbox/examples/11_calibration/exp_cal09_pn_architectures.py": "652274db7e2c807848b80c37ac5d53732a3b69debcd591404678d1c9fdbd1bd6",
+    "python/src/adctoolbox/examples/11_calibration/hdc_correlation.py": "7b4cbb460b24a2f46c8cf71d1da7e07fad3bf7513106241b054c8a6f02fefc7f",
+    "python/src/adctoolbox/examples/11_calibration/hdc_fixed.py": "c3fe7d13a73994459ef29fdf8fb6378dadcf47d854cb8cf537f10361a60f0e5b",
+    "python/src/adctoolbox/examples/11_calibration/hdc_fixed_controls.py": "901769f35447e6f06d50412214e0ee81122e53c51d7a5a5bb7f62d55c09fac83",
+    "python/src/adctoolbox/examples/11_calibration/hdc_small_signal.py": "61df29b7a21471ccc87eef4baeab01d735d9360f378b46adc04593ae22574334",
+    "python/src/adctoolbox/examples/11_calibration/joint_dither_convergence.py": "9f1ef29c32953029c7cbc10ac4b576189ca6f3894afb86c423ab5e451cd589c7",
+    "python/src/adctoolbox/examples/11_calibration/joint_dither_model.py": "d4cb60c0ace94a42978678dd826d29b5cb55ec8d64188d34d856260d4f0fc81d",
+    "python/src/adctoolbox/examples/11_calibration/pipeline_dither_model.py": "c4f42471360763c16a1031512577451cb1e12d26e75a069094c14d56e7dec21f",
+    "python/src/adctoolbox/examples/11_calibration/pn_architectures.py": "37d5a7c17e1250e92bc7e27530fdb67ef813ac15ce4571abcd0ea33aa745e813"
+  }
+}
