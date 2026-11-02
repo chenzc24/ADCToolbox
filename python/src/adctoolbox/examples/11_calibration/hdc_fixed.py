@@ -42,6 +42,8 @@ class Plant:
     This is a forward cubic, NOT the previous exact-inverse-cubic plant.
     """
     def __init__(self, seed=101, peak=.2, bits=13, noise=.0002, probe_error=0.):
+        if not np.isfinite(peak) or not 0 < peak < 1:
+            raise ValueError('Dither peak must be finite and in (0,1) in residue-input units')
         self.peak, self.bits, self.noise, self.probe_error = peak, bits, noise, probe_error
         self.pn = [PRBS(seed, 31), PRBS(seed+100, 29), PRBS(seed+300, 23)]
         self.switch = PRBS(seed+200, 27)
@@ -67,7 +69,7 @@ class Plant:
         analog = backend+self.rng.normal(0., self.noise, len(x))
         measured, rail, overload = quantize(analog, self.bits)
         capture = dict(r=measured/2, p=p, pp=pp, s=s, q=q, rail=rail,
-                       rails=abs(measured) >= 1-2.**(-self.bits))
+                       rails=abs(measured) >= 1-2.**(-self.bits), dither_peak=self.peak)
         diagnostics = dict(headroom=float(1-np.max(abs(analog))), overloads=overload,
                            probe_peak=float(np.max(abs(actual_d))),
                            internal_peak=float(np.max(abs(t))),
@@ -193,13 +195,15 @@ class Tracker:
     the controller delay. Sampling and accumulation continue during the delay.
     """
     def __init__(self, fixed=True, fraction=24, bits=28, window_log2=20,
-                 accumulator_bits=None, controller_latency=512):
+                 accumulator_bits=None, controller_latency=512, dither_peak=.2):
         if not 8 <= fraction <= 26 or not fraction+2 <= bits <= 30:
             raise ValueError('Require 8 <= fraction <= 26 and fraction+2 <= bits <= 30')
         if not 8 <= window_log2 <= 30:
             raise ValueError('window_log2 must be in [8,30]')
         if not 0 <= controller_latency < 2**window_log2:
             raise ValueError('controller latency must fit within one window')
+        if not np.isfinite(dither_peak) or not 0 < dither_peak < 1:
+            raise ValueError('Dither peak must be finite and in (0,1) in residue-input units')
         self.fixed, self.fraction, self.bits = fixed, fraction, bits
         self.window_log2, self.window = window_log2, 1 << window_log2
         self.accumulator_bits = accumulator_bits or bits+window_log2
@@ -207,7 +211,16 @@ class Tracker:
             raise ValueError('Accumulator width must be in [8,62]')
         self.scale = 1 << fraction
         self.divider_width = max(2*bits, self.accumulator_bits+1)
-        self.a = divide_round(self.scale, 15) if fixed else 1/15
+        self.dither_peak = float(dither_peak)
+        self.a = int(np.floor(self.scale*dither_peak/3+.5)) if fixed else dither_peak/3
+        if fixed:
+            # Check the SAME staged rounding used by the controller. Testing
+            # ideal A**3 or only A != 0 misses underflow at F=8,9,10 for peak=.2.
+            a2, ov2 = mul(self.a, self.a, fraction, bits)
+            a3, ov3 = mul(a2, self.a, fraction, bits)
+            if self.a == 0 or a3 == 0 or ov2 or ov3:
+                raise ValueError('Dither moment denominator is zero or saturated after '
+                                 'fixed-point rounding; increase fraction or dither_peak')
         self.coefficients = np.array([self.scale, 0, 0, 0], dtype=np.int64) if fixed else np.array([1., 0., 0., 0.])
         self.sums = np.zeros(6, dtype=np.int64 if fixed else float)
         self.previous = 0 if fixed else 0.
@@ -264,6 +277,8 @@ class Tracker:
         return result if valid else None
 
     def process(self, capture, learn=True):
+        if 'dither_peak' in capture and capture['dither_peak'] != self.dither_peak:
+            raise ValueError('Capture dither_peak must match the Tracker injection scale')
         outputs = []
         offset = 0
         while offset < len(capture['r']):

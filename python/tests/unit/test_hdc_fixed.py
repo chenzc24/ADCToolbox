@@ -149,3 +149,54 @@ def test_cli_refuses_overwrite(tmp_path):
     with pytest.raises(SystemExit):
         ex.main(['--output',str(tmp_path)])
     assert (tmp_path/'existing.txt').read_text() == 'retain'
+
+
+@pytest.mark.parametrize('fraction', [8, 9, 10])
+def test_reject_unrepresentable_cubic_denominator_before_capture(fraction):
+    with pytest.raises(ValueError, match='moment denominator'):
+        hdc.Tracker(fraction=fraction, bits=fraction+4)
+
+
+@pytest.mark.parametrize('fraction', [11, 16, 24, 26])
+def test_supported_denominator_survives_a_balanced_update(fraction):
+    c, _ = balanced_capture()
+    tracker = hdc.Tracker(fraction=fraction, bits=fraction+4, window_log2=12)
+    tracker.process(c)
+    assert tracker.updates+tracker.held == 1
+    assert np.all(np.isfinite(tracker.values()))
+
+
+def test_denominator_validation_depends_on_probe_scale_and_arithmetic():
+    with pytest.raises(ValueError, match='moment denominator'):
+        hdc.Tracker(dither_peak=.001)
+    # Float mode has no staged fixed-point underflow at these settings.
+    assert hdc.Tracker(False, fraction=8, bits=12).a > 0
+    assert hdc.Tracker(fraction=10, bits=14, dither_peak=.4).a > 0
+
+
+@pytest.mark.parametrize('peak', [0., -1., 1., np.nan, np.inf])
+def test_invalid_probe_scale_rejected(peak):
+    with pytest.raises(ValueError): hdc.Tracker(dither_peak=peak)
+    with pytest.raises(ValueError): hdc.Plant(peak=peak)
+
+
+def test_custom_probe_scale_shared_by_plant_tracker_and_oracle():
+    peak = .15
+    x = .3*np.sin(np.arange(4096)*.137)
+    c, d = hdc.Plant(9, peak=peak, bits=24, noise=0).convert(x)
+    assert d['probe_peak'] == pytest.approx(peak)
+    with pytest.raises(ValueError, match='injection scale'):
+        hdc.Tracker().process(c)
+    tracker = hdc.Tracker(dither_peak=peak, window_log2=12)
+    y = tracker.process(c, learn=False)
+    np.testing.assert_allclose(y, c['q']/2+c['r']-peak/3*c['p'].sum(axis=1), atol=2e-7)
+    exact = ex.oracle(c, hdc.FINAL, True, dither_peak=peak)
+    np.testing.assert_allclose(exact[64:], x[64:], atol=5e-8)
+
+
+def test_cli_custom_peak_propagates_to_every_method(tmp_path):
+    _, result = ex.run_case(tmp_path/'custom', 71, 'sine', 16, 12,
+        formats=True, scenario='constant', peak=.4, dither_peak=.15, noise=0)
+    assert result['dither_peak'] == .15
+    assert result['diagnostics']['maximum_probe_peak'] == pytest.approx(.15)
+    assert result['methods']['oracle_exact']['error_snr_db'] > 65

@@ -16,6 +16,7 @@ From `python/`, with a new output directory each time:
 uv run --no-sync --with numba python src/adctoolbox/examples/11_calibration/exp_cal08_hdc_fixed.py --output ../agent_playground/hdc-main
 uv run --no-sync --with numba python src/adctoolbox/examples/11_calibration/exp_cal08_hdc_fixed.py --output ../agent_playground/hdc-long --total-log2 30 --window-log2 28 --seeds 404 --kinds sine --scenario constant
 uv run --no-sync --with numba python src/adctoolbox/examples/11_calibration/hdc_fixed_controls.py --output ../agent_playground/hdc-controls
+uv run --no-sync --with numba python src/adctoolbox/examples/11_calibration/hdc_small_signal.py --output ../agent_playground/hdc-small
 ```
 
 Numba only accelerates the scalar reference loops. Without it, the same Python
@@ -23,23 +24,64 @@ integer operations run, but billion-sample experiments are slow. No matrix
 inversion, SVD, GMM, sine fit, or simulator truth enters the tracker. The
 Newton inverse in `oracle()` is strictly an evaluation control.
 
+### Exposed parameters
+
+| Parameter | CLI / Python interface | Default and meaning |
+|---|---|---|
+| Physical Dither peak | `--dither-peak`; `Plant(peak=...)`, `Tracker(dither_peak=...)` | 0.2, in residue-input/reference units; one PN amplitude is peak/3 |
+| Signal amplitude | `--input-peak`; `run_case(peak=...)` | 0.8, distinct from Dither amplitude |
+| Backend resolution | `--backend-bits`; `Plant(bits=...)` | 13 bits |
+| Backend noise RMS | `--noise-rms`; `Plant(noise=...)` | 0.0002, before backend quantization |
+| Record/window size | `--total-log2`, `--window-log2` | 27 and 24; samples and correlations per dump |
+| PN seed and input scenario | `--seeds`, `--kinds`, `--scenario` | Recorded in each run configuration |
+| Fixed word format | `Tracker(fraction=..., bits=...)` | F=24, W=28; Python interface, not a main CLI option |
+| Accumulator/delay | `Tracker(accumulator_bits=..., controller_latency=...)` | W+L and 512 clocks; Python interface |
+
+The CLI now routes the same Dither scale through physical injection, every
+tracker, nominal subtraction and evaluation oracles. `Plant` captures carry
+their nominal scale, and a mismatched tracker rejects them. Legacy captures
+without that metadata still work; their scale remains the caller's contract.
+Setting only `Plant.peak` was not a valid way to change the old fixed-0.2
+experiment. Changing the physical scale still requires the appropriate
+injection capacitor/reference in a circuit, not just a digital coefficient.
+These are run/design-time settings, not an automatic amplitude controller.
+The resource inventory assumes fixed constants; runtime-programmable Dither
+amplitude would also need configuration registers and a coordinated analog
+switching/update protocol, neither of which is budgeted here.
+
+For example, from the copied `11_calibration` directory:
+
+```python
+from hdc_fixed import Plant, Tracker
+plant = Plant(peak=0.15)
+tracker = Tracker(dither_peak=0.15, fraction=24, bits=28, window_log2=24)
+```
+
+Peak must be finite and in (0,1), and its actual fixed-point cubic denominator
+must be nonzero without saturation. This is an arithmetic validity check,
+not a headroom or convergence guarantee. At peak=0.2, F=8/9/10 are rejected
+at initialization because staged rounding makes A^3 zero; F>=11 passes this
+particular check, but low precision can still be inaccurate. The main CLI's
+first case also runs F=16/20 controls, so its chosen peak must pass F=16 too.
+All historical acceptance runs and the small-signal study retain peak 0.2.
+
 ## Physical charge convention and model scope
 
 All voltages are normalized to the reference magnitude; the backend range is
 [-1, 1]. The input-referred probe is
 
 ```
-d = A*(p1+p2+p3), A = 1/15;  p_i in {-1,+1}
+d = A*(p1+p2+p3), A = dither_peak/3;  p_i in {-1,+1}
 ```
 
-Its physical peak stays 0.2. The levels are {-0.2, -1/15, 1/15, 0.2}, with
+At the default peak 0.2, A=1/15 and the levels are {-0.2, -1/15, 1/15, 0.2}, with
 ideal probabilities {1/8, 3/8, 3/8, 1/8}. These are three equal probes, not the
 previous two weighted probes `(2*p1+p2)/3` with equal level probabilities.
 Three separate persistent LFSRs have lengths 31, 29, and 23. Their product is
 an XOR/sign operation. A separate 27-bit LFSR selects the DAC element; it is
 not a fourth analog dither injection.
 
-A charge-consistent ideal switched-capacitor interpretation is fixed feedback
+A charge-consistent ideal switched-capacitor interpretation at the default peak is fixed feedback
 `Cf=15 Cu`, input sampling `Cs=30 Cu`, two selectable DAC capacitors
 `CD+/-=15(1+/-delta) Cu`, and three injection capacitors of `2 Cu` each.
 With appropriate reset/reference phases, charge conservation gives
@@ -161,6 +203,46 @@ Newton oracle measures the noise/quantization reference separately.
 This is a dump estimator, so there is no LMS update step size to tune. Window
 length sets its variance/tracking tradeoff. A rejected window can retain
 previous estimates; it cannot reconstruct already clipped samples.
+
+## Small-signal acceptance and quantization-correlated bias
+
+DC/low-frequency headroom tests do not establish unbiased parameter learning.
+[Rakuljic and Galton, TCAS-I 2013](https://doi.org/10.1109/TCSI.2012.2215754)
+identifies small variations around particular DC levels as a failure condition
+for earlier HDC. The four-level probe here does not implement that paper's
+modified correlations and residue-decorrelation circuitry.
+
+`hdc_small_signal.py` separates three questions:
+
+1. An offset/amplitude scan enumerates all eight current PN states, with phase
+   quadrature, and compares unquantized, 13-bit and 24-bit backends. Memory,
+   DAC mismatch and analog noise are disabled only in this diagnostic. The
+   cubic coefficient bias is exactly `E[e*p1*p2*p3]/(6*A^3)`, where e is the
+   backend quantization error in r units. Repeating the table cannot reduce it.
+2. Continuous joint-model runs retain gain/cubic/memory/DAC errors and compare
+   zero versus default backend noise. Large-signal training is followed by
+   the same small-input captures for float/fixed continued adaptation, a
+   shorter fixed window, frozen active coefficients and cold fixed startup.
+   Freeze snapshots discard pending estimates and partial old-input windows;
+   filter state is retained. No true coefficient enters the learners.
+3. Final active coefficients are tested on an independent larger sine with
+   updates disabled. This exposes coefficient damage hidden by a nearly-DC
+   input. DC itself gets bias/RMS metrics, not SNDR. Small tones may be below
+   the noise floor; poor small-tone SNDR is not alone proof of bad calibration.
+
+The scan uses a simplified single-backend quantizer, not a reproduction of the
+2013 multi-stage ADC. More samples reduce sampling fluctuations but cannot
+remove its deterministic correlation bias. Added analog noise may weaken the
+correlation while increasing output noise. Freezing protects the learned
+coefficients only while the analog parameters remain stable; it cannot track
+later drift. Low coarse-code occupancy also leaves the DAC mismatch mode
+unobservable, so holding its value is not evidence of convergence.
+
+The small-signal runner exposes `--train-log2`, `--test-log2`, `--window-log2`,
+`--short-log2`, `--seeds`, `--noise-rms`, and `--dither-peak`. Its declared
+offset/amplitude matrix and the balanced-scan grid are recorded with source
+hashes. See `docs/experiments/2026-11-02-hdc-small-signal.md` for the dated
+results and acceptance limits.
 
 ## Explicit resource budget, one stage
 

@@ -29,6 +29,13 @@ dither. They are historical controls, not implementations of this shared
 three-PN contract. Changing their distributions without re-deriving their
 moments would invalidate the estimators.
 
+HDC's `--dither-peak` now configures the plant, tracker and subtraction together;
+the default and all published acceptance results remain 0.2. See the exposed
+parameter table in [HDC_FIXED.md](HDC_FIXED.md). A nonzero cubic denominator,
+adequate analog headroom and convergence are separate requirements. That
+guide also documents the offset/amplitude scan and large-to-small input
+continue/freeze controls in `hdc_small_signal.py`.
+
 ## Architecture and injection map
 
 | Architecture / objective | Physical node or action | Observable information | Identification / correction |

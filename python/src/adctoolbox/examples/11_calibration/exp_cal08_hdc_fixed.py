@@ -30,7 +30,7 @@ PARAMETERS = ('gain', 'cubic', 'history', 'delta')
 BANDS = dict(gain=.01, cubic=.10, history=.10, delta=.10)
 
 
-def oracle(c, truth, exact=False):
+def oracle(c, truth, exact=False, dither_peak=.2):
     """Evaluation only, 64-sample warm-up before the measured FFT segment."""
     g, k, h = truth.gain/2, truth.cubic, truth.history/truth.gain
     linear = c['r']/g
@@ -41,20 +41,21 @@ def oracle(c, truth, exact=False):
     else:
         w = linear-(k/g)*linear**3
     v = lfilter([1], [1, h], w)
-    return c['q']/2+v-.2/3*c['p'].sum(axis=1)+truth.delta/2*c['s']*c['q']
+    return c['q']/2+v-dither_peak/3*c['p'].sum(axis=1)+truth.delta/2*c['s']*c['q']
 
 
 def run_case(output, seed, kind, total_log2, window_log2, formats=False,
-             scenario='step', device=None, peak=.8):
+             scenario='step', device=None, peak=.8, dither_peak=.2,
+             backend_bits=13, noise=.0002):
     size, fft_size = 65536, 32768
     blocks = 2**total_log2//size
-    plant = Plant(seed)
+    plant = Plant(seed, peak=dither_peak, bits=backend_bits, noise=noise)
     short_log2 = min(20, window_log2)
-    trackers = dict(float=Tracker(False, window_log2=window_log2),
-                    fixed24=Tracker(window_log2=window_log2),
-                    short24=Tracker(window_log2=short_log2))
+    trackers = dict(float=Tracker(False, window_log2=window_log2, dither_peak=dither_peak),
+                    fixed24=Tracker(window_log2=window_log2, dither_peak=dither_peak),
+                    short24=Tracker(window_log2=short_log2, dither_peak=dither_peak))
     if formats:
-        trackers.update({f'fixed{f}':Tracker(fraction=f, bits=f+4, window_log2=window_log2)
+        trackers.update({f'fixed{f}':Tracker(fraction=f, bits=f+4, window_log2=window_log2, dither_peak=dither_peak)
                          for f in (16, 20)})
     clean, bins = waveform(np.arange(size), fft_size, kind, peak)
     rows = []
@@ -78,10 +79,10 @@ def run_case(output, seed, kind, total_log2, window_log2, formats=False,
                 row.update({name+'_'+k:v for k,v in metrics(y[-fft_size:], clean[-fft_size:], bins).items()})
                 row.update({name+'_'+k:v for k,v in tracker.physical().items()})
         if evaluate:
-            nominal = c['q']/2+c['r']-.2/3*c['p'].sum(axis=1)
+            nominal = c['q']/2+c['r']-dither_peak/3*c['p'].sum(axis=1)
             tail = {k:(v[-fft_size-64:] if isinstance(v, np.ndarray) else v) for k,v in c.items()}
-            for name, y in [('nominal',nominal), ('oracle_hdc',oracle(tail, truth)),
-                            ('oracle_exact',oracle(tail, truth, True))]:
+            for name, y in [('nominal',nominal), ('oracle_hdc',oracle(tail, truth, dither_peak=dither_peak)),
+                            ('oracle_exact',oracle(tail, truth, True, dither_peak=dither_peak))]:
                 row.update({name+'_'+k:v for k,v in metrics(y[-fft_size:],clean[-fft_size:],bins).items()})
             rows.append(row)
     final = [r for r in rows if r['sample'] > 3*2**total_log2//4]
@@ -102,7 +103,8 @@ def run_case(output, seed, kind, total_log2, window_log2, formats=False,
                         controller_saturations=tracker.controller_saturations)
         summaries[name] = item
     result = dict(seed=seed, kind=kind, scenario=scenario, total_log2=total_log2,
-                  window_log2=window_log2, peak=peak, diagnostics=diag, methods=summaries,
+                  window_log2=window_log2, peak=peak, dither_peak=dither_peak,
+                  backend_bits=backend_bits, noise=noise, diagnostics=diag, methods=summaries,
                   elapsed_seconds=time.monotonic()-t0)
     output.mkdir()
     save_csv(output/'trajectory.csv', rows)
@@ -135,9 +137,22 @@ def main(argv=None):
     parser.add_argument('--seeds', type=int, nargs='+', default=[101,202,303])
     parser.add_argument('--kinds', nargs='+', choices=['sine','multitone'], default=['sine','multitone'])
     parser.add_argument('--scenario', choices=['step','constant'], default='step')
+    parser.add_argument('--dither-peak', type=float, default=.2)
+    parser.add_argument('--input-peak', type=float, default=.8)
+    parser.add_argument('--backend-bits', type=int, default=13)
+    parser.add_argument('--noise-rms', type=float, default=.0002)
     args = parser.parse_args(argv)
     if not 20 <= args.total_log2 <= 30 or not 16 <= args.window_log2 <= args.total_log2-2:
         parser.error('Require 20 <= total-log2 <= 30 and 16 <= window-log2 <= total-log2-2')
+    if not np.isfinite(args.input_peak) or not 0 < args.input_peak < 1:
+        parser.error('input-peak must be finite and in (0,1)')
+    if not 2 <= args.backend_bits <= 24 or not np.isfinite(args.noise_rms) or args.noise_rms < 0:
+        parser.error('Require backend-bits in [2,24] and finite nonnegative noise-rms')
+    try:
+        # Every run includes the first-case format controls, including F=16.
+        Tracker(fraction=16, bits=20, dither_peak=args.dither_peak)
+    except ValueError as error:
+        parser.error(str(error))
     if args.output.exists() and any(args.output.iterdir()):
         parser.error('Output directory is not empty; choose a new directory')
     args.output.mkdir(parents=True, exist_ok=True)
@@ -146,9 +161,9 @@ def main(argv=None):
     write_json(args.output/'config.json', dict(arguments={**vars(args),'output':str(args.output)},
         sources={name:hashlib.sha256((here/name).read_bytes()).hexdigest() for name in sources},
         python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__,
-        initial=asdict(INITIAL), final=asdict(FINAL), physical_dither_peak=.2, pn_lengths=[31,29,23],
+        initial=asdict(INITIAL), final=asdict(FINAL), physical_dither_peak=args.dither_peak, pn_lengths=[31,29,23],
         cap_switch_length=27, fraction=24, word_bits=28, fft_size=32768,
-        noise_rms_backend=.0002, backend_bits=13, controller_latency_samples=512,
+        noise_rms_backend=args.noise_rms, backend_bits=args.backend_bits, controller_latency_samples=512,
         bands=BANDS, final_evaluation='last quarter, sample active coefficients; arithmetic mean of per-FFT dB metrics',
         multitone_metrics='desired-tone power / other power; strongest desired tone / largest unwanted bin, not single-tone SNDR/SFDR'))
     write_json(args.output/'resources.json', resource_budget(window_log2=args.window_log2))
@@ -156,7 +171,9 @@ def main(argv=None):
     for kind in args.kinds:
         for seed in args.seeds:
             rows, result = run_case(args.output/f'{kind}_{seed}', seed, kind, args.total_log2,
-                                   args.window_log2, formats=(kind == args.kinds[0] and seed == args.seeds[0]), scenario=args.scenario)
+                                   args.window_log2, formats=(kind == args.kinds[0] and seed == args.seeds[0]), scenario=args.scenario,
+                                   peak=args.input_peak, dither_peak=args.dither_peak,
+                                   backend_bits=args.backend_bits, noise=args.noise_rms)
             all_summaries.append(result)
             for method, item in result['methods'].items():
                 table.append(dict(kind=kind, seed=seed, method=method,

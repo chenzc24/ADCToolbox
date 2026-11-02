@@ -35,6 +35,9 @@ Nine experiments are available:
   fixed-point gain/cubic correction and joint memory/DAC mismatch tests.
   See [HDC_FIXED.md](HDC_FIXED.md) for the charge model, fixed arithmetic,
   range limitations, long averaging windows and explicit hardware budget.
+  `hdc_small_signal.py` adds DC-offset/amplitude scans and large-signal training
+  followed by continued versus frozen small-signal operation. HDC exposes
+  `--dither-peak` consistently across injection, identification and subtraction.
 - `exp_cal09_pn_architectures.py`: common three-PN construction across Pipeline
   placement controls, redundant SAR paired weight calibration, TI timing
   observability and Delta-sigma transfer-aware subtraction. See DITHER_GUIDE.md.
